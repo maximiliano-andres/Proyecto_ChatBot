@@ -1,0 +1,9 @@
+
+1-> crear contenedor de docker -----------
+
+docker build -t proyecto-chatbot .
+
+
+2-> iniciar proyecto sin docker
+
+npm run dev
