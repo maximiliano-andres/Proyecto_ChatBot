@@ -11,7 +11,8 @@ const app = createServer();
 
 // Cargar rutas
 app.use("/",router);
-
+app.use("/login", router)
+app.use("/registro_usuario", router)
 
 
 
