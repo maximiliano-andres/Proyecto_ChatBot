@@ -1,7 +1,13 @@
 
 1-> crear contenedor de docker -----------
 
-docker build -t proyecto-chatbot .
+docker build -t chatbot-image .
+
+
+2-> Mapear al servidor 1010 en docker ----------------
+
+docker run -p 1010:1010 --name chatbot-container chatbot-image
+
 
 
 2-> iniciar proyecto sin docker

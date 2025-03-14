@@ -21,6 +21,9 @@ export const createServer = () => {
     // Seguridad: Configurar CORS
     app.use(cors());
 
+    // Habilita confianza en el proxy
+    app.set('trust proxy', 1);
+
     // Seguridad: Limitar peticiones (Rate Limiting)
     const limiter = rateLimit({
         windowMs: 15 * 60 * 1000, // 15 minutos
@@ -31,9 +34,9 @@ export const createServer = () => {
 
     // Configurar motor de vistas EJS
     app.set('view engine', 'ejs');
-    app.set('views', path.join(__dirname, '../../src/interfaces/views'));
+    app.set('views', path.join(__dirname, '../interfaces/views'));
 
-    DEBUG_SERVER("Ruta de views:", path.join(__dirname, '../../src/interfaces/views'));
+    DEBUG_SERVER("Ruta de views:", path.join(__dirname, '../interfaces/views'));
 
     // Servir archivos estáticos
     app.use(express.static(path.join(__dirname, '../../public')));
