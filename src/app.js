@@ -32,7 +32,7 @@ app.use(ErrorHandler.error500);
 
 
 // Iniciar servidor
-app.listen(config.port || 4000, () => {
+app.listen(config.port || 2025, () => {
     DEBUG("Servidor corriendo en http://localhost:" + config.port);
-    //console.log("Servidor corriendo en http://localhost:" + config.port);
+    console.log("Servidor corriendo en http://localhost:" + config.port);
 });

@@ -14,10 +14,10 @@ RUN npm install
 COPY . .
 
 # Expone el puerto en el que la aplicación va a correr
-EXPOSE 3000
+EXPOSE 1010:2025
 
 # Configura la variable de entorno DEBUG (puedes cambiar esto según tu configuración)
-ENV DEBUG=PROYECTO-CHATBOT
+#ENV DEBUG=PROYECTO-CHATBOT
 
 # Comando para iniciar la aplicación
 CMD ["npm", "run", "dev"]
