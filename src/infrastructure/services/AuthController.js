@@ -4,7 +4,7 @@ class AuthControllers {
 
     static loginpage (req,res){
         try {
-            res.render("login",
+            return res.status(200).render("login",
                 {
                     title: "Login ChatBot"
                 }
@@ -18,7 +18,7 @@ class AuthControllers {
 
     static registropage (req,res){
         try {
-            res.render("registro",
+            return res.status(200).render("registro",
                 {
                     title: "Registro de Usuario"
                 })

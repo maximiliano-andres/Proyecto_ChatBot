@@ -9,6 +9,7 @@ const DEBUG = debug("app:INDEX_PAG-VALERIA");
 
 const app = createServer();
 
+
 // Cargar rutas
 app.use("/",router);
 app.use("/login", router)
@@ -20,7 +21,7 @@ app.use("/registro_usuario", router)
 
 
 // Middleware para manejo de errores
-app.use(ErrorHandler.error400);  
+app.use(ErrorHandler.error404);  
 app.use(ErrorHandler.error500);  
 
 

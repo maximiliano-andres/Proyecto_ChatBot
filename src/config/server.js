@@ -5,6 +5,7 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import { fileURLToPath } from 'url';
 import debug from 'debug';
+import morgan from 'morgan';
 
 const DEBUG_SERVER = debug("app: SERVER.JS");
 
@@ -14,7 +15,8 @@ const __dirname = path.dirname(__filename);
 
 export const createServer = () => {
     const app = express();
-
+    
+    app.use(morgan("dev"));
     // Seguridad: Configurar Helmet
     app.use(helmet());
 
@@ -43,6 +45,8 @@ export const createServer = () => {
 
     DEBUG_SERVER("RUTA PUBLIC: " + path.join(__dirname, '../../public'));
     DEBUG_SERVER("Creador del Servidor Activado")
+
+    app.use(express.json());
 
     return app;
 };

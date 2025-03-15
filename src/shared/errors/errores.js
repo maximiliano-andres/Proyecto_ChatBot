@@ -1,9 +1,12 @@
 
 
 class ErrorHandler {
-    static error400(err, req, res, next) {
+    static error404(err, req, res, next) {
         console.error('Error:', err.message);
-        res.status(400).json({ error: 'Error Navegador' });
+        
+        return res.status(404).render("error404",{
+            title: "Error 404"
+        });
     }
 
     static error500(err, req, res, next) {
