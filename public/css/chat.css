@@ -21,7 +21,7 @@
 
 /* Botón flotante de apertura */
 #chat-button {
-    background: #A59D6D; /* Color dorado */
+    background: #ffc451; /* Color dorado */
     color: white;
     border: none;
     border-radius: 50%;
@@ -54,7 +54,7 @@
 
 /* Encabezado del chat */
 #chat-header {
-    background: #A59D6D;
+    background: #ffc451;
     color: white;
     padding: 12px;
     font-weight: bold;
@@ -84,7 +84,7 @@
 
 /* Mensajes del bot */
 .bot-message {
-    background: #E0D6B6;
+    background: #ffc451;
     color: black;
     padding: 10px;
     border-radius: 8px;
@@ -111,7 +111,7 @@
 }
 
 #send-button {
-    background: #A59D6D;
+    background: #ffc451;
     color: white;
     border: none;
     margin-left: 8px;

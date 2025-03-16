@@ -1341,6 +1341,120 @@ section,
   margin: 0 auto 15px auto;
 }
 
+/* Estilos generales para la tarjeta */
+.testimonial-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+.testimonial-item .card {
+  background: rgba(255, 255, 255, 0.1); /* Transparente con leve opacidad */
+  border: 1px solid rgba(255, 196, 81, 0.5); /* Borde dorado sutil */
+  border-radius: 12px; /* Bordes más elegantes */
+  backdrop-filter: blur(10px); /* Efecto de vidrio esmerilado */
+  box-shadow: 0px 4px 10px rgba(255, 196, 81, 0.3); /* Sombra elegante */
+  transition: transform 0.3s ease-in-out;
+  max-height: 180px; /* Ajustar altura de la tarjeta */
+  overflow: hidden; /* Evita que el contenido sobresalga */
+  margin-top: 30px; /* Desplaza la tarjeta hacia abajo */
+}
+
+/* Efecto al pasar el mouse */
+.testimonial-item .card:hover {
+  transform: scale(1.05);
+}
+
+/* Estilo del título */
+.testimonial-item .card-title {
+  color: #ffc451; /* Color dorado */
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+/* Texto dentro de la tarjeta */
+.testimonial-item .card-text {
+  color: white;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  margin-bottom: 5px;
+}
+
+/* Texto secundario */
+.testimonial-item .card small {
+  color: rgba(255, 196, 81, 0.8);
+  font-size: 0.8rem;
+}
+
+/* Imagen dentro de la tarjeta */
+.testimonial-item img {
+  border-radius: 12px 0 0 12px;
+  filter: grayscale(20%) contrast(1.2);
+  height: 100%; /* Asegura que la imagen se mantenga dentro del tamaño reducido */
+  object-fit: cover; /* Recorta la imagen sin deformarla */
+}
+
+/* Ajuste del contenedor */
+.testimonial-item .row {
+  height: 100%;
+}
+
+/* Media Query para pantallas pequeñas */
+@media (max-width: 768px) {
+  .testimonial-item .card {
+    max-width: 100%; /* Ocupa el 100% del ancho en pantallas pequeñas */
+    margin-top: 20px; /* Menos margen superior en dispositivos pequeños */
+    max-height: none; /* Quitar altura máxima para que se ajuste automáticamente */
+  }
+
+  .testimonial-item .card-body {
+    padding: 15px; /* Aumentar espacio en el cuerpo de la tarjeta */
+  }
+
+  .testimonial-item .card-title {
+    font-size: 1.1rem; /* Reducir tamaño del título */
+  }
+
+  .testimonial-item .card-text {
+    font-size: 0.85rem; /* Reducir tamaño del texto */
+  }
+
+  .testimonial-item .card small {
+    font-size: 0.75rem; /* Reducir tamaño del texto secundario */
+  }
+
+  .testimonial-item img {
+    border-radius: 10px 0 0 10px; /* Ajustar borde de la imagen */
+  }
+}
+
+/* Media Query para pantallas extra pequeñas (móviles) */
+@media (max-width: 576px) {
+  .testimonial-item .card {
+    max-width: 100%; /* Ocupa el 100% del ancho */
+    margin-top: 15px; /* Menos margen superior */
+  }
+
+  .testimonial-item .card-title {
+    font-size: 1rem; /* Reducir aún más el tamaño del título */
+  }
+
+  .testimonial-item .card-text {
+    font-size: 0.8rem; /* Reducir tamaño del texto */
+  }
+
+  .testimonial-item .card small {
+    font-size: 0.7rem; /* Reducir tamaño del texto secundario */
+  }
+
+  .testimonial-item img {
+    border-radius: 8px 0 0 8px; /* Ajustar borde de la imagen */
+  }
+}
+/* ========================================================== */
+
 .testimonials .swiper-wrapper {
   height: auto;
 }
