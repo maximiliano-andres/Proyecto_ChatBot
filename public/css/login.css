@@ -45,8 +45,8 @@ body::before {
 
 /* Botón */
 .btn-theme {
-    background-color: #2d89ef;
-    border: 2px solid #2d89ef;
+    background-color: #ffc451;
+    border: 2px solid #00000096;
     color: #fff;
     font-size: 18px;
     padding: 12px 20px;
@@ -60,7 +60,7 @@ body::before {
 }
 
 .btn-theme:hover {
-    background-color: #1d5bbf;
+    background-color: #000000;
     border-color: #1d5bbf;
     transform: scale(1.05); /* Efecto de escala al pasar el ratón */
 }
@@ -101,7 +101,7 @@ h3, h6 {
 }
 
 .text-theme {
-    color: #2d89ef !important;
+    color: #ffc451 !important;
 }
 
 .text-muted {

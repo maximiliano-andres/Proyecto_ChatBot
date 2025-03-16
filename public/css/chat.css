@@ -1,0 +1,153 @@
+/* Fuente personalizada */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Contenedor del chat */
+#chat-container {
+    position: fixed;
+    bottom: clamp(15px, 3vw, 20px); /* Ajusta según el tamaño de pantalla */
+    right: clamp(70px, 10vw, 90px); /* Evita que se superponga con la flecha */
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/* Botón flotante de apertura */
+#chat-button {
+    background: #A59D6D; /* Color dorado */
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+#chat-button:hover {
+    background: #8F8650;
+}
+
+/* Caja del chat */
+#chat-box {
+    display: none;
+    flex-direction: column;
+    width: clamp(280px, 30vw, 350px); /* Se adapta al tamaño */
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    position: absolute;
+    right: 60px; /* Mueve el chat hacia la izquierda */
+    bottom: 0;
+}
+
+/* Encabezado del chat */
+#chat-header {
+    background: #A59D6D;
+    color: white;
+    padding: 12px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px 10px 0 0;
+}
+
+#close-chat {
+    background: transparent;
+    color: white;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* Contenedor de mensajes */
+#chat-messages {
+    height: 250px;
+    padding: 15px;
+    overflow-y: auto;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Mensajes del bot */
+.bot-message {
+    background: #E0D6B6;
+    color: black;
+    padding: 10px;
+    border-radius: 8px;
+    max-width: 80%;
+    align-self: flex-start;
+    font-size: 14px;
+}
+
+/* Pie del chat */
+#chat-footer {
+    display: flex;
+    padding: 10px;
+    background: white;
+    border-top: 1px solid #ddd;
+}
+
+#chat-input {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    outline: none;
+}
+
+#send-button {
+    background: #A59D6D;
+    color: white;
+    border: none;
+    margin-left: 8px;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#send-button:hover {
+    background: #8F8650;
+}
+
+/* RESPONSIVIDAD */
+/* Para pantallas más pequeñas */
+@media (max-width: 768px) {
+    #chat-container {
+        right: clamp(20px, 8vw, 50px); /* Ajusta para evitar superposición */
+    }
+    #chat-box {
+        width: 90vw; /* Hace el chat más ancho en móviles */
+        right: 0;
+    }
+}
+
+/* Para dispositivos muy pequeños */
+@media (max-width: 480px) {
+    #chat-box {
+        width: 95vw;
+    }
+}
+
+/* Evitar superposición con la flecha */
+@media (max-width: 400px) {
+    #chat-container {
+        bottom: 70px; /* Sube el chat para evitar la flecha */
+        right: 20px;
+    }
+}
