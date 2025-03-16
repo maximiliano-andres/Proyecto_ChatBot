@@ -2,8 +2,8 @@ class HomeController {
     static index(req, res) {
         try {
             return res.status(200).render('index', { 
-                title: 'ChatBot',
-                titulo_1: "Prueba de Vista Del Futuro Chat-Bot",
+                title: 'Raíz Finanziera',
+                titulo_1: "Bienvenido a Raíz Finanziera",
                 
             });
         } catch (error) {
