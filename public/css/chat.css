@@ -11,8 +11,8 @@
 /* Contenedor del chat */
 #chat-container {
     position: fixed;
-    bottom: clamp(15px, 3vw, 20px); /* Ajusta según el tamaño de pantalla */
-    right: clamp(70px, 10vw, 90px); /* Evita que se superponga con la flecha */
+    bottom: 20px;
+    right: 80px;
     z-index: 1000;
     display: flex;
     flex-direction: column;
@@ -21,7 +21,7 @@
 
 /* Botón flotante de apertura */
 #chat-button {
-    background: #ffc451; /* Color dorado */
+    background: #ffc451;
     color: white;
     border: none;
     border-radius: 50%;
@@ -31,7 +31,6 @@
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
-    position: relative;
 }
 
 #chat-button:hover {
@@ -42,13 +41,13 @@
 #chat-box {
     display: none;
     flex-direction: column;
-    width: clamp(280px, 30vw, 350px); /* Se adapta al tamaño */
+    width: 350px;
     background: white;
     border-radius: 12px;
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
     overflow: hidden;
     position: absolute;
-    right: 60px; /* Mueve el chat hacia la izquierda */
+    right: 60px;
     bottom: 0;
 }
 
@@ -74,23 +73,44 @@
 
 /* Contenedor de mensajes */
 #chat-messages {
-    height: 250px;
+    height: 200px;
     padding: 15px;
     overflow-y: auto;
     background: #f4f4f4;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 /* Mensajes del bot */
 .bot-message {
     background: #ffc451;
     color: black;
-    padding: 10px;
+    padding: 12px;
     border-radius: 8px;
-    max-width: 80%;
-    align-self: flex-start;
+    max-width: 90%;
     font-size: 14px;
+}
+
+/* Botón de inicio de sesión */
+.login-button-container {
+    margin-top: 10px;
+}
+
+.login-button {
+    background: #ff8c00;
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+    transition: background 0.3s;
+}
+
+.login-button:hover {
+    background: #e67e22;
 }
 
 /* Pie del chat */
@@ -125,29 +145,13 @@
     background: #8F8650;
 }
 
-/* RESPONSIVIDAD */
-/* Para pantallas más pequeñas */
+/* Responsividad */
 @media (max-width: 768px) {
     #chat-container {
-        right: clamp(20px, 8vw, 50px); /* Ajusta para evitar superposición */
+        right: 50px;
     }
     #chat-box {
-        width: 90vw; /* Hace el chat más ancho en móviles */
+        width: 90vw;
         right: 0;
-    }
-}
-
-/* Para dispositivos muy pequeños */
-@media (max-width: 480px) {
-    #chat-box {
-        width: 95vw;
-    }
-}
-
-/* Evitar superposición con la flecha */
-@media (max-width: 400px) {
-    #chat-container {
-        bottom: 70px; /* Sube el chat para evitar la flecha */
-        right: 20px;
     }
 }
