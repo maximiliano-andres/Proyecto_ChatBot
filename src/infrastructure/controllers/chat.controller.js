@@ -56,8 +56,17 @@ export class ChatController {
                 headers: { Authorization: `Bearer ${WIT_AI_TOKEN}` }
             });
 
-            const intent = response.data.entities?.intent?.[0]?.value || "unknown";
+            //console.log("Respuesta completa de Wit.ai:", JSON.stringify(response.data, null, 2));
 
+            
+
+            const intent = response.data.intents?.[0]?.name || "unknown";
+            console.log("Intención detectada:", intent);
+
+            const entities = response.data.entities || {};
+            //console.log("Entidades detectadas:", JSON.stringify(entities, null, 2));
+            
+            DEBUG(intent);
             // Responder según la intención detectada
             let reply;
             switch (intent) {

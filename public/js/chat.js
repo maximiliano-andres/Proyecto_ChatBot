@@ -40,7 +40,7 @@ document.getElementById("send-button").addEventListener("click", async function 
         const data = await response.json();
         const botMessage = document.createElement("p");
         botMessage.className = "bot-message";
-        botMessage.textContent = "🤖 " + (data.response ? data.response.text : "Lo siento, no entendí eso.");
+        botMessage.textContent = "🤖 " + (data.reply ? data.reply : "Lo siento, no entendí eso.");
         chatMessages.appendChild(botMessage);
     } catch (error) {
         console.error("Error enviando mensaje:", error);
