@@ -58,8 +58,12 @@
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a class="btn-getstarted" href="/login">Login</a>
-
+      <% if (!token) { %>
+        <a class="btn-getstarted" href="/login">Login</a>
+    <% } else { %>
+        <a class="btn-getstarted" href="/logout">Cerrar Sesion</a>
+    <% } %>
+    
     </div>
   </header>
 

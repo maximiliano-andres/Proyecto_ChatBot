@@ -29,25 +29,27 @@
                                         <h6 class="h5 mb-0">¡Bienvenido al registro!</h6>
                                         <p class="text-muted mt-2 mb-5">Por favor, complete los campos a continuación para crear una cuenta.</p>
     
-                                        <form>
+                                        <form action="/registro_usuario" method="POST">
                                             <div class="form-group mb-3">
                                                 <label for="inputName">Nombre Completo</label>
-                                                <input type="text" class="form-control" id="inputName" placeholder="Ingresa tu nombre completo" required>
+                                                <input type="text" class="form-control" id="inputName" name="name" required>
                                             </div>
                                             <div class="form-group mb-3">
                                                 <label for="inputEmail">Correo Electrónico</label>
-                                                <input type="email" class="form-control" id="inputEmail" placeholder="Ingresa tu correo electrónico" required>
+                                                <input type="email" class="form-control" id="inputEmail" name="email" required>
                                             </div>
                                             <div class="form-group mb-3">
                                                 <label for="inputPassword">Contraseña</label>
-                                                <input type="password" class="form-control" id="inputPassword" placeholder="Ingresa tu contraseña" required>
+                                                <input type="password" class="form-control" id="inputPassword" name="password" required>
                                             </div>
                                             <div class="form-group mb-4">
                                                 <label for="inputConfirmPassword">Confirmar Contraseña</label>
-                                                <input type="password" class="form-control" id="inputConfirmPassword" placeholder="Confirma tu contraseña" required>
+                                                <input type="password" class="form-control" id="inputConfirmPassword" required>
                                             </div>
                                             <button type="submit" class="btn-theme">Registrarse</button>
                                         </form>
+                                        
+                                        
                                     </div>
                                 </div>
     
@@ -71,6 +73,7 @@
             </div>
         </div>
     </section>
+
 </body>
 
 </html>

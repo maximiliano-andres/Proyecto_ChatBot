@@ -16,7 +16,7 @@ class ErrorHandler {
     static error500(err, req, res, next) {
         console.error('Error 500:', err.message);
         return res.status(404).render("error500", {
-            title: "Error 404"
+            title: "Error 500"
         });
     }
 }

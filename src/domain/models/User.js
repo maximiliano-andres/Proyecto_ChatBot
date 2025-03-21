@@ -14,7 +14,9 @@ const userSchema = new mongoose.Schema({
 // Middleware para encriptar contraseña antes de guardar
 userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
+    console.log("Contraseña al ser encriptada:", this.password);  // Verifica cómo es la contraseña antes de encriptarla
     this.password = await bcrypt.hash(this.password, 10);
+    console.log("Contraseña encriptada:", this.password);
     next();
 });
 

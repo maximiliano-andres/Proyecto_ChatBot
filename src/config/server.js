@@ -6,11 +6,14 @@ import rateLimit from 'express-rate-limit';
 import { fileURLToPath } from 'url';
 import debug from 'debug';
 import morgan from 'morgan';
+import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
 
 const DEBUG_SERVER = debug("app: SERVER.JS");
 
 // Configuración para __dirname en ES Modules
 const __filename = fileURLToPath(import.meta.url);
+
 const __dirname = path.dirname(__filename);
 
 export const createServer = () => {
@@ -28,7 +31,14 @@ export const createServer = () => {
     // Habilita confianza en el proxy
     app.set('trust proxy', 1);
 
+    // Configurar middleware para procesar datos JSON y URL encoded
     app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    app.use(cookieParser());
+
+    // Middleware para analizar los datos del cuerpo de la solicitud
+    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(bodyParser.json());
 
     // Seguridad: Limitar peticiones (Rate Limiting)
     const limiter = rateLimit({
