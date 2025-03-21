@@ -4,6 +4,8 @@ import LoginViewsControllers from "../../infrastructure/services/LoginViewsContr
 import { ChatController } from "../../infrastructure/controllers/chat.controller.js";
 import AuthControllers from "../../infrastructure/services/AuthController.js";
 
+import { authenticateUser } from "../../shared/middleware/authMiddleware.js";
+
 const router = Router();
 
 

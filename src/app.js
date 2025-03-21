@@ -29,6 +29,7 @@ app.use("/Finanzas_Raiz",router);
 app.use("/login", router);
 app.use("/logout", router);
 app.use("/registro_usuario", router);
+app.use("/chatbot", router);
 
 
 

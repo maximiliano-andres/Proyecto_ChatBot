@@ -3,11 +3,35 @@ import { config } from "../../config/env.js";
 import { ChatMessage, validateChatMessage } from "../../domain/models/ChatMessage.js";
 import { User } from "../../domain/models/User.js";
 
+import dotenv from 'dotenv';
+import env from "env-var";
+import debug from "debug";
+
+const DEBUG = debug("app: CHAT:CONTROLLER:JS : ")
+
+dotenv.config();
+
+const WIT_AI_TOKEN = env.get("WIT_TOKEN").required().asString();
+
+DEBUG(WIT_AI_TOKEN)
+
 export class ChatController {
     static async handleMessage(req, res) {
         try {
+            DEBUG("cuerpo chat handleMessage: ")
+            DEBUG(req.body)
+
+
             const { userId, message } = req.body;
-            if (!message || !userId) return res.status(400).json({ error: "Mensaje y userId son requeridos" });
+
+            DEBUG(userId);
+            DEBUG(message);
+
+            if (!message || !userId) {
+                console.log("Mensaje y userId son requeridos");
+                return res.status(400).json({ error: "Mensaje y userId son requeridos" });
+            }
+            
 
             // Validar existencia del usuario
             const user = await User.findById(userId);
@@ -15,7 +39,7 @@ export class ChatController {
 
             // Llamar a Wit.ai para analizar el mensaje
             const response = await axios.get(`https://api.wit.ai/message?v=20230320&q=${encodeURIComponent(message)}`, {
-                headers: { Authorization: `Bearer ${config.WIT_AI_TOKEN}` }
+                headers: { Authorization: `Bearer ${WIT_AI_TOKEN}` }
             });
 
             const intent = response.data.entities?.intent?.[0]?.value || "unknown";

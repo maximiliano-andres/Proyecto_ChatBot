@@ -78,6 +78,7 @@
       </div>
       <div id="chat-messages">
           <p class="bot-message">🤖 ¡Hola! Para brindarte una mejor experiencia, por favor <strong>inicia sesión</strong> con tu cuenta.</p>
+          <% if (!token) { %>
           <div class="login-button-container">
               <a href="/login" class="login-button">🔐 Iniciar Sesión</a>
           </div>
@@ -86,6 +87,15 @@
           <input type="text" id="chat-input" placeholder="Escribe un mensaje..." disabled>
           <button id="send-button" disabled>➤</button>
       </div>
+      <% } else { %>
+        
+  </div>
+  <div id="chat-footer">
+      <input type="text" id="chat-input" placeholder="Escribe un mensaje..." >
+      <button id="send-button" >➤</button>
+  </div>
+  <% } %>
+
   </div>
 </div>
   
