@@ -8,6 +8,8 @@ import debug from 'debug';
 import morgan from 'morgan';
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
+import mongoSanitize from "express-mongo-sanitize";
+import hpp from "hpp";
 
 const DEBUG_SERVER = debug("app: SERVER.JS");
 
@@ -23,17 +25,41 @@ export const createServer = () => {
     app.use(morgan("dev"));
 
     // Seguridad: Configurar Helmet
-    app.use(helmet());
+    app.use(
+        helmet({
+            contentSecurityPolicy: {
+                directives: {
+                    defaultSrc: ["'self'"],
+                    scriptSrc: ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com"],
+                    styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com"],
+                    fontSrc: ["'self'", "fonts.gstatic.com"],
+                    imgSrc: ["'self'", "data:"],
+                    connectSrc: ["'self'"],
+                },
+            },
+            xssFilter: true, // Evita ataques XSS
+            noSniff: true, // Evita ataques de MIME sniffing
+            frameguard: { action: "deny" }, // Previene Clickjacking
+        })
+    );
 
-    // Seguridad: Configurar CORS
-    app.use(cors());
+    
+    // Seguridad: Configurar CORS de manera más estricta
+    app.use(
+        cors({
+            origin: ["https://midominio.com", "https://subdominio.midominio.com"], // Restringir a dominios específicos
+            methods: ["GET", "POST", "PUT", "DELETE"],
+            credentials: true, // Permite cookies en CORS
+            optionsSuccessStatus: 200,
+        })
+    );
 
     // Habilita confianza en el proxy
     app.set('trust proxy', 1);
 
-    // Configurar middleware para procesar datos JSON y URL encoded
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
+    // Middleware para procesar JSON y URL encoded
+    app.use(express.json({ limit: "10kb" })); // Evita payloads demasiado grandes
+    app.use(express.urlencoded({ extended: true, limit: "10kb" }));
     app.use(cookieParser());
 
     // Middleware para analizar los datos del cuerpo de la solicitud
@@ -43,10 +69,18 @@ export const createServer = () => {
     // Seguridad: Limitar peticiones (Rate Limiting)
     const limiter = rateLimit({
         windowMs: 15 * 60 * 1000, // 15 minutos
-        max: 1000, // Máximo 100 peticiones por IP
-        message: 'Demasiadas peticiones, intenta más tarde'
+        max: 200, // Máximo 200 peticiones por IP
+        message: "Demasiadas peticiones, intenta más tarde.",
+        standardHeaders: true, // Muestra límites en headers
+        legacyHeaders: false, // No usa headers obsoletos
     });
     app.use(limiter);
+
+    // Seguridad: Evita inyecciones NoSQL
+    app.use(mongoSanitize());
+
+    // Seguridad: Evita ataques de contaminación de parámetros HTTP
+    app.use(hpp());
 
     // Configurar motor de vistas EJS
     app.set('view engine', 'ejs');
@@ -60,7 +94,6 @@ export const createServer = () => {
     //DEBUG_SERVER("RUTA PUBLIC: " + path.join(__dirname, '../../public'));
     DEBUG_SERVER("Servidor Activado")
 
-    app.use(express.json());
 
     return app;
 };

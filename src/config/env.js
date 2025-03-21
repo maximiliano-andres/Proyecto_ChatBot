@@ -1,12 +1,25 @@
+import debug from 'debug';
 import dotenv from 'dotenv';
 import env from "env-var";
 
 dotenv.config();
 
+const DEBUG = debug("app: ENV.JS")
+
 export const config = {
-    port: env.get("Puerto").required().asIntPositive(),
-    nodeEnv: env.get("Contraseña_Obligatoria").required() || "Jocelyn-Lisette-Maximiliano-Ramiro",
-    WIT_AI_TOKEN: env.get("token").required(),
-    MONGO_URI: env.get("mongo").required().asString()
+    port: env.get("PUERTO").required().asIntPositive(),
+    nodeEnv: env.get("APP_SECRET").default("Jocelyn-Lisette-Maximiliano-Ramiro").asString(),
+    WIT_AI_TOKEN: env.get("WIT_TOKEN").required().asString(),
+    MONGO_URI: env.get("MONGO_URI").required().asString()
 };
 
+// Verificar si alguna variable importante no está definida
+Object.entries(config).forEach(([key, value]) => {
+    if (!value) {
+        DEBUG("ERROR");
+        console.error(`ERROR: La variable de entorno ${key} no está definida.`);
+        process.exit(1); // Detiene la ejecución si faltan variables críticas
+    }
+});
+
+DEBUG("TODO OK!!! => Configuración cargada correctamente");

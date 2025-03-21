@@ -155,7 +155,7 @@ export default class AuthController {
             // Forzar expiración
             res.cookie("token", "", { expires: new Date(0), httpOnly: true });
     
-            return res.redirect("/login");
+            return res.redirect("/");
         } catch (error) {
             console.error("Error en logout:", error);
             return res.status(500).json({ error: "Error al cerrar sesión" });
