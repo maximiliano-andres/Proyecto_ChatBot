@@ -2,7 +2,7 @@ import axios from "axios";
 import { config } from "../../config/env.js";
 import { ChatMessage, validateChatMessage } from "../../domain/models/ChatMessage.js";
 import { User } from "../../domain/models/User.js";
-
+import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import env from "env-var";
 import debug from "debug";
@@ -18,20 +18,34 @@ DEBUG(WIT_AI_TOKEN)
 export class ChatController {
     static async handleMessage(req, res) {
         try {
-            DEBUG("cuerpo chat handleMessage: ")
-            DEBUG(req.body)
-
-
-            const { userId, message } = req.body;
-
-            DEBUG(userId);
-            DEBUG(message);
-
-            if (!message || !userId) {
-                console.log("Mensaje y userId son requeridos");
-                return res.status(400).json({ error: "Mensaje y userId son requeridos" });
-            }
             
+            DEBUG("cuerpo chat handleMessage: " + req.body)
+
+            // Verificar si el token está presente en las cookies
+            const token = req.cookies.token;
+            DEBUG("TOKEN: "+ token);
+            if (!token) {
+                return res.status(400).json({ error: "No se ha encontrado el token en las cookies" });
+            }
+
+            // Verificar y decodificar el token
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const userId = decoded.id;
+            DEBUG("userId: "+ userId);
+
+            if (!userId) {
+                return res.status(400).json({ error: "User ID no disponible en el token" });
+            }
+
+            const { message } = req.body;
+
+            
+            DEBUG("MENSAJE: " + message);
+
+            if (!message) {
+                console.log("Mensaje es requerido");
+                return res.status(400).json({ error: "Mensaje es requerido" });
+            }
 
             // Validar existencia del usuario
             const user = await User.findById(userId);
@@ -66,10 +80,12 @@ export class ChatController {
 
             await ChatMessage.create({ userId, message, response: reply });
 
+            DEBUG("CHAT FUNCIONa AL 100%");
+
             return res.json({ reply });
         } catch (error) {
             console.error("Error en Wit.ai:", error);
             return res.status(500).json({ error: "Error procesando la solicitud" });
-        };
-    };
-};
+        }
+    }
+}
