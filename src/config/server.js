@@ -16,7 +16,9 @@ const __dirname = path.dirname(__filename);
 export const createServer = () => {
     const app = express();
     
+    // Ayuda a Ver solicitudes en consola
     app.use(morgan("dev"));
+
     // Seguridad: Configurar Helmet
     app.use(helmet());
 
@@ -25,6 +27,8 @@ export const createServer = () => {
 
     // Habilita confianza en el proxy
     app.set('trust proxy', 1);
+
+    app.use(express.json());
 
     // Seguridad: Limitar peticiones (Rate Limiting)
     const limiter = rateLimit({
@@ -38,13 +42,13 @@ export const createServer = () => {
     app.set('view engine', 'ejs');
     app.set('views', path.join(__dirname, '../interfaces/views'));
 
-    DEBUG_SERVER("Ruta de views:", path.join(__dirname, '../interfaces/views'));
+    //DEBUG_SERVER("Ruta de views:", path.join(__dirname, '../interfaces/views'));
 
     // Servir archivos estáticos
     app.use(express.static(path.join(__dirname, '../../public')));
 
-    DEBUG_SERVER("RUTA PUBLIC: " + path.join(__dirname, '../../public'));
-    DEBUG_SERVER("Creador del Servidor Activado")
+    //DEBUG_SERVER("RUTA PUBLIC: " + path.join(__dirname, '../../public'));
+    DEBUG_SERVER("Servidor Activado")
 
     app.use(express.json());
 
