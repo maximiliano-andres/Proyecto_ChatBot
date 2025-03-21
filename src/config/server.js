@@ -31,7 +31,7 @@ export const createServer = () => {
                 directives: {
                     defaultSrc: ["'self'"],
                     scriptSrc: ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com"],
-                    styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com"],
+                    styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com", "cdn.jsdelivr.net"],
                     fontSrc: ["'self'", "fonts.gstatic.com"],
                     imgSrc: ["'self'", "data:"],
                     connectSrc: ["'self'"],
@@ -74,6 +74,7 @@ export const createServer = () => {
         standardHeaders: true, // Muestra límites en headers
         legacyHeaders: false, // No usa headers obsoletos
     });
+    
     app.use(limiter);
 
     // Seguridad: Evita inyecciones NoSQL
