@@ -11,8 +11,10 @@ class AuthControllers {
             )
             
         } catch (error) {
-            console.error('Error en AuthController.loginPage:', error);
-            res.status(500).send('Error interno del servidor');            
+            console.error("Error en login_page:", error);
+            return res.status(500).render("error500", {
+                title: "Error 500"
+            });
         }
     };
 
@@ -23,8 +25,10 @@ class AuthControllers {
                     title: "Registro de Usuario"
                 })
         } catch (error) {
-            console.error('Error en AuthController.registerPage:', error);
-            res.status(500).send('Error interno del servidor');
+            console.error("Error en registro_page:", error);
+            return res.status(500).render("error500", {
+                title: "Error 500"
+            });
         }
     };
 };

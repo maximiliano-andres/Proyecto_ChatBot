@@ -11,8 +11,10 @@ class HomeController {
                 
             });
         } catch (error) {
-            console.error('Error en HomeController.index:', error);
-            res.status(500).send('Error interno del servidor');
+            console.error("Error en Home:", error);
+            return res.status(500).render("error500", {
+                title: "Error 500"
+            });
         }
     }
 }

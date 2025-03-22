@@ -27,9 +27,21 @@ export const User = mongoose.model("User", userSchema);
 export const validateUser = (data) => {
     const schema = Joi.object({
         name: Joi.string().min(3).max(50).required(),
-        email: Joi.string().email().required(),
-        password: Joi.string().min(6).required(),
+        email: Joi.string().email().required().messages({
+            "string.email": "El formato del email es inválido.",
+            "any.required": "El email es obligatorio."
+        }),
+        password: Joi.string()
+            .min(8)
+            .pattern(new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"))
+            .required()
+            .messages({
+                "string.min": "La contraseña debe tener al menos 8 caracteres.",
+                "string.pattern.base": "La contraseña debe incluir al menos una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&).",
+                "any.required": "La contraseña es obligatoria."
+            }),
         role: Joi.string().valid("user", "admin")
     });
-    return schema.validate(data);
+
+    return schema.validate(data, { abortEarly: false }); // `abortEarly: false` para devolver todos los errores juntos
 };

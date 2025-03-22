@@ -6,6 +6,7 @@ import debug from "debug";
 
 import dotenv from 'dotenv';
 import env from "env-var";
+import validator from 'validator';
 
 const DEBUG = debug("app:AuthControoller ");
 
@@ -17,18 +18,14 @@ export default class AuthController {
     static async register(req, res) {
         try {
             // Validar datos con Joi
-            DEBUG("Datos recibidos:", req.body);
+            //DEBUG("Datos recibidos:", req.body);
             const { error } = validateUser(req.body);
-            if (error) return res.status(400).json({ error: error.details[0].message, nombre: "Validador" });
+            if (error) return res.status(400).render("registro",{title:"Login", error: error.details.map(err => err.message) });
 
             // Verificar si el usuario ya existe
             const existingUser = await User.findOne({ email: req.body.email });
-            if (existingUser) return res.status(400).json({ error: "El usuario ya está registrado" });
-
-            // Hashear la contraseña antes de guardar
-            //const salt = await bcrypt.genSalt(10);
-            //const hashedPassword = await bcrypt.hash(req.body.password.trim(), salt);
-
+            if (existingUser) return res.status(400).render("registro",{ error: "El usuario ya está registrado" });
+            
             // Crear nuevo usuario con la contraseña hasheada
             const user = new User({
                 name: req.body.name.trim(),
@@ -46,7 +43,7 @@ export default class AuthController {
                 { expiresIn: "1h" }                  // Tiempo de expiración del token
             );
 
-            DEBUG("Token Exitoso");
+            //DEBUG("Token Exitoso");
             // Guardar el token en una cookie HTTP-only (más seguro)
             res.cookie("token", token, {
                 httpOnly: true,
@@ -54,8 +51,8 @@ export default class AuthController {
                 maxAge: 3600000 // 1 hora en milisegundos
             });
 
-            DEBUG("Usuario registrado");
-            DEBUG("TOKEN: " + token);
+            //DEBUG("Usuario registrado");
+            //DEBUG("TOKEN: " + token);
             DEBUG("TODO SALIO BIEN SIIIIIIIIIIIIIIIIIIIIUUUUUUUUUUUUUUUUUU!!!!!!!");
 
             return res.render("index", { token: token ,
@@ -69,9 +66,10 @@ export default class AuthController {
             
 
         } catch (error) {
-            DEBUG("ERROR");
-            console.error("Error en registro:", error);
-            return res.status(500).json({ error: "Error interno del servidor" });
+            console.error("Error en Registro:", error);
+            return res.status(500).render("error500", {
+                title: "Error 500"
+            });
         }
     }
 
@@ -80,35 +78,41 @@ export default class AuthController {
     static async login(req, res) {
         try {
 
-            console.log("Datos recibidos:", req.body);
+            //console.log("Datos recibidos:", req.body);
 
-            const { email, password } = req.body;
+            let { email, password } = req.body;
 
-            DEBUG("Datos recibidos:", req.body);
+            email = email.trim();
 
-            if (!email || !password) return res.status(400).json({ error: "Email y contraseña son requeridos" });
+            //DEBUG(email)
+
+            //DEBUG("Datos recibidos:", req.body);
+
+            if (!email || !password) return res.status(400).render("login", { title: "Login", error: "Email y contraseña son requeridos" });
 
             // Verificar usuario
             const user = await User.findOne({ email });
 
-            DEBUG("USUARIO ");
-            DEBUG("EMAIL: " + user.email);
-            DEBUG("NOMBRE: " + user.name);
-            DEBUG("CONTRASEÑA: " + user.password);
+            //DEBUG("USUARIO ");
 
-            if (!user) return res.status(400).json({ error: "Credenciales incorrectas EMAIL" });
-
-            // Verificar contraseña
-
-             // Verifica el valor del hash
+            if (!user) {
+                DEBUG("NO HAY USER QUE COINCIDA CON LAS CREDENCIALES INGRESADAS")
+                return res.status(400).render("login", { title: "Login", error: "Usuario o Contraseña No son Validas" });
+            }
+            //DEBUG("EMAIL: " + user.email);
+            //DEBUG("NOMBRE: " + user.name);
+            //DEBUG("CONTRASEÑA: " + user.password);
 
             
-            console.log("Contraseña ingresada en bcrypt:", password);
-            console.log("Contraseña encriptada en bcrypt:", user.password);
+            //DEBUG("Contraseña ingresada en bcrypt:", password);
+            //DEBUG("Contraseña encriptada en bcrypt:", user.password);
             const validPassword = await bcrypt.compare(password, user.password);
-            console.log("Resultado de bcrypt.compare:", validPassword); // Esto debería ser 'true' si las contraseñas coinciden.
+            //DEBUG("Resultado de bcrypt.compare:", validPassword); // Esto debería ser 'true' si las contraseñas coinciden.
             
-            if (!validPassword) return res.status(400).json({ error: "Credenciales incorrectas PASSWORD" });
+            if (!validPassword) {
+                DEBUG("CONTRASEÑA INVALIDA")
+                return res.status(400).render("login", { title: "Login", error: "Usuario o Contraseña No son Validas" });
+            }
 
             // Generar token JWT
             const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: "1h" });
@@ -154,11 +158,25 @@ export default class AuthController {
     
             // Forzar expiración
             res.cookie("token", "", { expires: new Date(0), httpOnly: true });
-    
-            return res.redirect("/");
+
+            DEBUG("TOKEN ELIMINADO CON EXITO")
+            
+            return res.status(200).render('index', { 
+                token: "",
+                title: 'Raíz Finanziera',
+                titulo_1: "Bienvenido a Raíz Finanziera",
+                subtitulo:"Seguridad, crecimiento y confianza en cada inversión.",
+                titulo_NH:"Nuestra Historia",
+                texto_NH1:"En Raíz Finanziera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes."
+
+                
+            });
+
         } catch (error) {
-            console.error("Error en logout:", error);
-            return res.status(500).json({ error: "Error al cerrar sesión" });
+            console.error("Error en login:", error);
+            return res.status(500).render("error500", {
+                title: "Error 500"
+            });
         }
     }
     

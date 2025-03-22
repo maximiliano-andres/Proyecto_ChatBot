@@ -19,37 +19,45 @@ export class ChatController {
     static async handleMessage(req, res) {
         try {
             
-            DEBUG("cuerpo chat handleMessage: " + req.body)
+            //DEBUG("cuerpo chat handleMessage: " + req.body)
 
             // Verificar si el token está presente en las cookies
             const token = req.cookies.token;
-            DEBUG("TOKEN: "+ token);
+            
+            //DEBUG("TOKEN: "+ token);
+            
             if (!token) {
-                return res.status(400).json({ error: "No se ha encontrado el token en las cookies" });
+                DEBUG("No se ha encontrado el token en las cookies");
+                return res.status(400).render("error404");
             }
 
             // Verificar y decodificar el token
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             const userId = decoded.id;
-            DEBUG("userId: "+ userId);
+            //DEBUG("userId: "+ userId);
 
             if (!userId) {
-                return res.status(400).json({ error: "User ID no disponible en el token" });
+                DEBUG("User ID no disponible en el token")
+                return res.status(400).render("error404");
             }
 
             const { message } = req.body;
 
             
-            DEBUG("MENSAJE: " + message);
+            //DEBUG("MENSAJE: " + message);
 
             if (!message) {
-                console.log("Mensaje es requerido");
-                return res.status(400).json({ error: "Mensaje es requerido" });
+                DEBUG("Mensaje es requerido");
+                return res.status(400).render("error404");
             }
 
             // Validar existencia del usuario
             const user = await User.findById(userId);
-            if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+            if (!user) {
+                DEBUG("Usuario No encontrado")
+                return res.status(400).render("error404");
+
+            }
 
             // Llamar a Wit.ai para analizar el mensaje
             const response = await axios.get(`https://api.wit.ai/message?v=20230320&q=${encodeURIComponent(message)}`, {
@@ -58,10 +66,10 @@ export class ChatController {
 
             //console.log("Respuesta completa de Wit.ai:", JSON.stringify(response.data, null, 2));
 
-            
+            let intent = "unknown";
 
-            const intent = response.data.intents?.[0]?.name || "unknown";
-            console.log("Intención detectada:", intent);
+            intent = response.data.intents?.[0]?.name || "unknown";
+            DEBUG("INTENT RECIBIDO: ", intent);
 
             const entities = response.data.entities || {};
             //console.log("Entidades detectadas:", JSON.stringify(entities, null, 2));
@@ -83,6 +91,7 @@ export class ChatController {
                     reply = "Lo siento, no entiendo tu consulta. ¿Podrías reformularla?";
             }
 
+            
             // Validar y guardar en MongoDB
             const { error } = validateChatMessage({ userId, message, response: reply });
             if (error) return res.status(400).json({ error: error.details[0].message });
@@ -90,6 +99,9 @@ export class ChatController {
             await ChatMessage.create({ userId, message, response: reply });
 
             DEBUG("CHAT FUNCIONa AL 100%");
+            // Limpiar la intención después de usarla
+            intent = "unknown";
+            DEBUG("INTENT CLEAR: ", intent);
 
             return res.json({ reply });
         } catch (error) {
