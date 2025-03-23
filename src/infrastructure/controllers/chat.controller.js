@@ -44,7 +44,7 @@ export class ChatController {
             const { message } = req.body;
 
             
-            //DEBUG("MENSAJE: " + message);
+            DEBUG("MENSAJE: " + message);
 
             if (!message) {
                 DEBUG("Mensaje es requerido");
@@ -74,7 +74,7 @@ export class ChatController {
             const entities = response.data.entities || {};
             //console.log("Entidades detectadas:", JSON.stringify(entities, null, 2));
             
-            DEBUG(intent);
+            //DEBUG(entities);
             // Responder según la intención detectada
             let reply;
             switch (intent) {
@@ -98,15 +98,17 @@ export class ChatController {
 
             await ChatMessage.create({ userId, message, response: reply });
 
-            DEBUG("CHAT FUNCIONa AL 100%");
             // Limpiar la intención después de usarla
             intent = "unknown";
             DEBUG("INTENT CLEAR: ", intent);
+            DEBUG("CHAT FUNCIONa AL 100%");
 
             return res.json({ reply });
+
         } catch (error) {
             console.error("Error en Wit.ai:", error);
-            return res.status(500).json({ error: "Error procesando la solicitud" });
+            DEBUG("ERROR EN CHATCONTROLLER:JS")
+            return res.status(500).render("error500");
         }
     }
 }
