@@ -43,5 +43,6 @@ export const validateUser = (data) => {
         role: Joi.string().valid("user", "admin")
     });
 
-    return schema.validate(data, { abortEarly: false }); // `abortEarly: false` para devolver todos los errores juntos
+    // `abortEarly: false` para devolver todos los errores juntos
+    return schema.validate(data, { abortEarly: false }); 
 };
