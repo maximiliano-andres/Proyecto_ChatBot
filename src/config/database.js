@@ -34,6 +34,7 @@ export const connectDB = async (retries = 5, delay = 5000) => {
             return;
         } catch (error) {
             console.error(`Error al conectar a MongoDB (Intentos restantes: ${retries - 1}):`, error);
+            DEBUG("------ BASE DE DATOS DESCONECTADA ------");
             retries--;
             await new Promise(res => setTimeout(res, delay));
         }

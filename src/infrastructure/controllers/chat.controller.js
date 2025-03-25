@@ -7,13 +7,29 @@ import dotenv from 'dotenv';
 import env from "env-var";
 import debug from "debug";
 
-const DEBUG = debug("app: CHAT:CONTROLLER:JS : ")
+const DEBUG = debug("app: CHAT:CONTROLLER:JS : ");
 
 dotenv.config();
 
 const WIT_AI_TOKEN = env.get("WIT_TOKEN").required().asString();
 
-DEBUG(WIT_AI_TOKEN)
+DEBUG(WIT_AI_TOKEN);
+
+const intentResponses = {
+    saludo: "¡Hola! ¿En qué puedo ayudarte hoy?",
+    despedida: "¡Hasta luego! Si necesitas algo más, aquí estaré.",
+    consulta_prestamo: "Ofrecemos préstamos personales con tasas competitivas. ¿Te gustaría saber los requisitos?",
+    consulta_tarjeta: "Tenemos tarjetas de crédito con diferentes beneficios. ¿Qué te gustaría saber en detalle?",
+    consulta_seguro: "Brindamos seguros de vida, salud y auto. ¿Cuál te interesa?",
+    monto_prestamo: "El monto máximo depende de tu historial crediticio y capacidad de pago.",
+    interes_prestamo: "Nuestra tasa de interés varía según el producto financiero que elijas.",
+    plazos_prestamo: "Los plazos de pago pueden ir de 6 a 60 meses.",
+    requisitos_prestamo: "Para un préstamo necesitas identificación oficial, comprobante de ingresos y un buen historial.",
+    solicitud_prestamo: "Puedes solicitarlo en línea o visitando una sucursal.",
+    forma_pago: "Aceptamos pagos con tarjeta, transferencia o directamente en sucursal.",
+    contacto: "Puedes comunicarte con un asesor llamando al 800-123-4567 o escribiéndonos en WhatsApp.",
+    unknown: "Lo siento, no entiendo tu consulta. ¿Podrías reformularla?"
+};
 
 export class ChatController {
     static async handleMessage(req, res) {
@@ -76,7 +92,10 @@ export class ChatController {
             
             //DEBUG(entities);
             // Responder según la intención detectada
-            let reply;
+            
+            // Obtener la respuesta según la intención o usar la de unknown
+            const reply = intentResponses[intent] || intentResponses["unknown"];
+            /*let reply;
             switch (intent) {
                 case "saludo":
                     reply = "Hola! ¿En qué puedo ayudarte hoy?";
@@ -90,7 +109,7 @@ export class ChatController {
                 default:
                     reply = "Lo siento, no entiendo tu consulta. ¿Podrías reformularla?";
             }
-
+            */
             
             // Validar y guardar en MongoDB
             const { error } = validateChatMessage({ userId, message, response: reply });
