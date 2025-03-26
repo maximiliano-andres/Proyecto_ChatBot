@@ -24,24 +24,53 @@ export default class AuthController {
 
             // Verificar si el usuario ya existe
             const existingUser = await User.findOne({ email: req.body.email });
-            if (existingUser) return res.status(400).render("registro",{ error: "El usuario ya está registrado" });
+            if (existingUser) return res.status(400).render("registro",{ error: "El Email ya está registrado" });
+
+            const existingRut = await User.findOne({ rut: req.body.rut });
+            if (existingRut) return res.status(400).render("registro",{ error: "El rut ya está registrado" });
+
+            const existingNumero_documento = await User.findOne({ numero_documento: req.body.numero_documento });
+            if (existingNumero_documento) return res.status(400).render("registro",{ error: "El Numero de Documento ya está registrado" });
+
+            const existingTelefono = await User.findOne({ telefono: req.body.telefono });
+            if (existingTelefono) return res.status(400).render("registro",{ error: "El telefono ya está registrado" });
             
             // Crear nuevo usuario con la contraseña hasheada
             const user = new User({
-                name: req.body.name.trim(),
+                nombre1: req.body.nombre1.trim(),
+                nombre2: req.body.nombre2.trim(),
+                apellido1: req.body.apellido1.trim(),
+                apellido2: req.body.apellido2.trim(),
+                rut: req.body.rut.trim(),
+                numero_documento: req.body.numero_documento.trim(),
+                telefono: req.body.telefono.trim(),
+                fecha_nacimiento: req.body.fecha_nacimiento,
                 email: req.body.email.trim(),
-                password: req.body.password.trim()
+                password: req.body.password.trim(),
+                role: req.body.role || 'user',  // Asignación de rol por defecto si no se especifica
             });
+            
 
             await user.save();
             DEBUG("Usuario registrado exitosamente");
 
             // Generar el token JWT
             const token = jwt.sign(
-                { id: user._id, email: user.email },  // Payload del token
-                JWT_SECRET,                   // Clave secreta desde configuración
-                { expiresIn: "1h" }                  // Tiempo de expiración del token
+                {
+                    id: user._id,
+                    email: user.email,
+                    nombre1: user.nombre1,
+                    nombre2: user.nombre2,
+                    apellido1: user.apellido1,
+                    apellido2: user.apellido2,
+                    rut: user.rut,
+                    role: user.role,
+                    telefono: user.telefono
+                },
+                JWT_SECRET,  // Clave secreta desde configuración
+                { expiresIn: "1h" }  // Tiempo de expiración del token
             );
+            
 
             //DEBUG("Token Exitoso");
             // Guardar el token en una cookie HTTP-only (más seguro)
@@ -115,7 +144,21 @@ export default class AuthController {
             }
 
             // Generar token JWT
-            const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: "1h" });
+            const token = jwt.sign(
+                {
+                    id: user._id,
+                    email: user.email,
+                    nombre1: user.nombre1,
+                    nombre2: user.nombre2,
+                    apellido1: user.apellido1,
+                    apellido2: user.apellido2,
+                    rut: user.rut,
+                    role: user.role,
+                    telefono: user.telefono
+                },
+                JWT_SECRET,  // Clave secreta desde configuración
+                { expiresIn: "1h" }  // Tiempo de expiración del token
+            );
 
             // Establecer la cookie con el token
             res.cookie("token", token, {

@@ -68,7 +68,7 @@ body::before {
 /* Imagen Derecha */
 .account-block {
     padding: 0;
-    background: url("../imagenes/login/EL_CLOYD.jpg") no-repeat center center;
+    background: url("../imagenes/login/banner_maxi.jpg") no-repeat center center;
     background-size: cover;
     height: 100%;
     position: relative;

@@ -4,7 +4,29 @@ import bcrypt from "bcryptjs";
 
 // Esquema de usuario
 const userSchema = new mongoose.Schema({
-    name: { type: String, required: true, trim: true },
+    nombre1: { type: String, required: true, uppercase: true, trim: true },
+    nombre2: { type: String, required: true, uppercase: true, trim: true },
+    apellido1: { type: String, required: true, uppercase: true, trim: true },
+    apellido2: { type: String, required: true, uppercase: true, trim: true },
+    rut: { 
+        type: String, 
+        required: true, 
+        unique: true, 
+        match: /^\d{7,8}-[0-9kK]{1}$/, 
+        trim: true
+    },
+    numero_documento: { 
+        type: String, 
+        required: true, 
+        unique: true, 
+        match: /^\d{3}\.\d{3}\.\d{3}$/ 
+    },
+    telefono: { 
+        type: String, 
+        required: true, 
+        match: /^\+569\d{8}$/ 
+    },
+    fecha_nacimiento: { type: Date, required: true },
     email: { type: String, required: true, unique: true, trim: true, lowercase: true },
     password: { type: String, required: true },
     role: { type: String, enum: ["user", "admin"], default: "user" },
@@ -14,9 +36,7 @@ const userSchema = new mongoose.Schema({
 // Middleware para encriptar contraseña antes de guardar
 userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
-    console.log("Contraseña al ser encriptada:", this.password);  // Verifica cómo es la contraseña antes de encriptarla
     this.password = await bcrypt.hash(this.password, 10);
-    console.log("Contraseña encriptada:", this.password);
     next();
 });
 
@@ -26,23 +46,30 @@ export const User = mongoose.model("User", userSchema);
 // Validación con Joi
 export const validateUser = (data) => {
     const schema = Joi.object({
-        name: Joi.string().min(3).max(50).required(),
-        email: Joi.string().email().required().messages({
-            "string.email": "El formato del email es inválido.",
-            "any.required": "El email es obligatorio."
-        }),
+        nombre1: Joi.string().uppercase().trim().required(),
+        nombre2: Joi.string().uppercase().trim().required(),
+        apellido1: Joi.string().uppercase().trim().required(),
+        apellido2: Joi.string().uppercase().trim().required(),
+        rut: Joi.string().pattern(/^\d{7,8}-[0-9kK]{1}$/).required()
+            .messages({ "string.pattern.base": "El RUT debe tener el formato 12345678-9." }),
+        numero_documento: Joi.string().pattern(/^\d{3}\.\d{3}\.\d{3}$/).required()
+            .messages({ "string.pattern.base": "El número de documento debe tener el formato 123.123.123." }),
+        telefono: Joi.string().pattern(/^\+569\d{8}$/).required()
+            .messages({ "string.pattern.base": "El teléfono debe tener el formato +569XXXXXXXX." }),
+        fecha_nacimiento: Joi.date().iso().required()
+            .messages({ "date.base": "Debe ser una fecha válida en formato ISO (YYYY-MM-DD)." }),
+        email: Joi.string().email().required()
+            .messages({ "string.email": "El formato del email es inválido." }),
         password: Joi.string()
             .min(8)
-            .pattern(new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"))
+            .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
             .required()
             .messages({
                 "string.min": "La contraseña debe tener al menos 8 caracteres.",
-                "string.pattern.base": "La contraseña debe incluir al menos una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&).",
-                "any.required": "La contraseña es obligatoria."
+                "string.pattern.base": "La contraseña debe incluir al menos una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&)."
             }),
         role: Joi.string().valid("user", "admin")
     });
 
-    // `abortEarly: false` para devolver todos los errores juntos
-    return schema.validate(data, { abortEarly: false }); 
+    return schema.validate(data, { abortEarly: false });
 };

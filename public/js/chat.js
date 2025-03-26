@@ -12,6 +12,14 @@ document.getElementById("chat-input").addEventListener("input", function () {
     sendButton.disabled = !this.value.trim();
 });
 
+document.getElementById("chat-input").addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+        event.preventDefault(); // Evita saltos de línea en el input
+        document.getElementById("send-button").click(); // Simula el clic en el botón de enviar
+    }
+});
+
+
 document.getElementById("send-button").addEventListener("click", async function () {
     const inputField = document.getElementById("chat-input");
     const message = inputField.value.trim();
@@ -21,7 +29,7 @@ document.getElementById("send-button").addEventListener("click", async function 
     const chatMessages = document.getElementById("chat-messages");
     const userMessage = document.createElement("p");
     userMessage.className = "user-message";
-    userMessage.textContent = "🙋 " + message;
+    userMessage.textContent = "👤 " + message;
     chatMessages.appendChild(userMessage);
     
     inputField.value = "";
