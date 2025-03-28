@@ -4,7 +4,7 @@ import debug from "debug";
 
 const DEBUG = debug("app:BASE_DE_DATOS");
 
-const MONGO_URI = config.MONGO_URI || "mongodb://localhost:27017/miBaseDeDatos"; // URI por defecto
+const MONGO_URI = config.MONGO_URI ;//|| "mongodb://localhost:27017/miBaseDeDatos"; // URI por defecto
 
 //DEBUG("BASE DE DATOS :"+ MONGO_URI);
 

@@ -25,7 +25,7 @@ const intentResponses = {
 };
 
 const intentFollowUp = {
-    consulta_prestamo: { si: `Requisitos para Solicitar un Préstamo Financiero...`, no: "Bueno, ¿en qué más te puedo ayudar?" },
+    consulta_prestamo: { si: `Requisitos para Solicitar un Préstamo Financiero... LOS TENGO QUE CREAR AUN JAAJAJ`, no: "Bueno, ¿en qué más te puedo ayudar?" },
     consulta_tarjeta: {
         clasica: "La tarjeta Clásica tiene un límite de crédito estándar y pocos requisitos. ¿Te gustaría solicitarla o conocer sus requisitos?",
         oro: "La tarjeta Oro requiere ingresos comprobables de al menos $50,000 mensuales. ¿Te interesa solicitarla o conocer sus requisitos?",
@@ -39,12 +39,12 @@ const intentFollowUp = {
 };
 
 const requisitosDetails = {
-    tarjeta_clasica: "Requisitos de la Tarjeta Clásica: Ingreso mínimo de $20,000, identificación oficial vigente y comprobante de domicilio.",
-    tarjeta_oro: "Requisitos de la Tarjeta Oro: Ingreso mínimo de $50,000, identificación oficial vigente, comprobante de domicilio y buen historial crediticio.",
-    tarjeta_black: "Requisitos de la Tarjeta Black: Ingreso mínimo de $100,000, identificación oficial vigente, comprobante de domicilio, excelente historial crediticio y antigüedad laboral de 2 años.",
-    seguro_vida: "Requisitos del Seguro de Vida: Identificación oficial vigente, cuestionario médico y comprobante de domicilio.",
-    seguro_salud: "Requisitos del Seguro de Salud: Identificación oficial vigente, cuestionario médico y comprobante de domicilio.",
-    seguro_auto: "Requisitos del Seguro de Auto: Identificación oficial vigente, documentos del vehículo y comprobante de domicilio."
+    clasica: "Requisitos de la Tarjeta Clásica: Ingreso mínimo de $20,000, identificación oficial vigente y comprobante de domicilio.",
+    oro: "Requisitos de la Tarjeta Oro: Ingreso mínimo de $50,000, identificación oficial vigente, comprobante de domicilio y buen historial crediticio.",
+    black: "Requisitos de la Tarjeta Black: Ingreso mínimo de $100,000, identificación oficial vigente, comprobante de domicilio, excelente historial crediticio y antigüedad laboral de 2 años.",
+    vida: "Requisitos del Seguro de Vida: Identificación oficial vigente, cuestionario médico y comprobante de domicilio.",
+    salud: "Requisitos del Seguro de Salud: Identificación oficial vigente, cuestionario médico y comprobante de domicilio.",
+    auto: "Requisitos del Seguro de Auto: Identificación oficial vigente, documentos del vehículo y comprobante de domicilio."
 };
 
 const intentFinalSteps = {
@@ -85,11 +85,11 @@ export class ChatController {
                 DEBUG("========== userState.intent ==========");
                 DEBUG(userState.intent);  // Verificamos el intent
 
-                const intentKey = userState.intent.split('_')[1];  // Extrae la parte relevante del intent (ej. "oro")
+                const intentKey = userState.intent;  // Extrae la parte relevante del intent (ej. "oro")
                 DEBUG("========== intentKey ==========");
                 DEBUG(intentKey);
 
-                const requisitos = requisitosDetails[`tarjeta_${intentKey}`] || "No se encontraron requisitos para esta opción.";
+                const requisitos = requisitosDetails[`${intentKey}`] || "No se encontraron requisitos para esta opción.";
 
                 // Mantener awaitingRequisitos en false para no repetir la respuesta
                 ChatController.conversationState[userId] = {
@@ -132,7 +132,7 @@ export class ChatController {
                     if (["clasica", "oro", "black", "vida", "salud", "auto"].includes(opcionSeleccionada)) {
                         // Actualizar el estado para saber que el usuario seleccionó una tarjeta o seguro
                         //const tipoConsulta = userState.intent.split('_')[1]; // Extrae "tarjeta" o "seguro"
-                        ChatController.conversationState[userId] = { intent: `tarjeta_${opcionSeleccionada}`, awaitingRequisitos: true };
+                        ChatController.conversationState[userId] = { intent: `${opcionSeleccionada}`, awaitingRequisitos: true };
                         DEBUG("============== SELECCION TARJETA O SEGURO ==============");
                         DEBUG(ChatController.conversationState[userId].intent);
                         DEBUG("======================================================");
