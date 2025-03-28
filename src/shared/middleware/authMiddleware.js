@@ -9,7 +9,7 @@ dotenv.config();
 
 const JWT_SECRET = env.get("JWT_SECRET").required().asString();
 
-DEBUG(JWT_SECRET)
+//DEBUG(JWT_SECRET)
 
 export const authenticateUser = (req, res, next) => {
     const token = req.header("Authorization");

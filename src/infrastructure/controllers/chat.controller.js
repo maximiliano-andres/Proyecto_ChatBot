@@ -1,3 +1,5 @@
+// ChatController.js - Manejo avanzado de intents y selección de tarjetas y seguros
+
 import axios from "axios";
 import { config } from "../../config/env.js";
 import { ChatMessage, validateChatMessage } from "../../domain/models/ChatMessage.js";
@@ -8,126 +10,127 @@ import env from "env-var";
 import debug from "debug";
 
 const DEBUG = debug("app: CHAT:CONTROLLER:JS : ");
-
 dotenv.config();
 
 const WIT_AI_TOKEN = env.get("WIT_TOKEN").required().asString();
-
-DEBUG(WIT_AI_TOKEN);
 
 const intentResponses = {
     saludo: "¡Hola! ¿En qué puedo ayudarte hoy?",
     despedida: "¡Hasta luego! Si necesitas algo más, aquí estaré.",
     consulta_prestamo: "Ofrecemos préstamos personales con tasas competitivas. ¿Te gustaría saber los requisitos?",
-    consulta_tarjeta: "Tenemos tarjetas de crédito con diferentes beneficios. ¿Qué te gustaría saber en detalle?",
+    consulta_tarjeta: "Tenemos tarjetas de crédito con diferentes beneficios. ¿Te interesa la Clásica, Oro o Black? (Solo escribe :'CLASICA' , 'ORO' o 'BLACK')",
     consulta_seguro: "Brindamos seguros de vida, salud y auto. ¿Cuál te interesa?",
-    monto_prestamo: "El monto máximo depende de tu historial crediticio y capacidad de pago.",
-    interes_prestamo: "Nuestra tasa de interés varía según el producto financiero que elijas.",
-    plazos_prestamo: "Los plazos de pago pueden ir de 6 a 60 meses.",
-    requisitos_prestamo: "Para un préstamo necesitas identificación oficial, comprobante de ingresos y un buen historial.",
-    solicitud_prestamo: "Puedes solicitarlo en línea o visitando una sucursal.",
-    forma_pago: "Aceptamos pagos con tarjeta, transferencia o directamente en sucursal.",
-    contacto: "Puedes comunicarte con un asesor llamando al 800-123-4567 o escribiéndonos en WhatsApp.",
+    requisitos: "Puedo proporcionarte los requisitos para tarjetas o seguros. ¿Te gustaría conocerlos antes de contratar?",
     unknown: "Lo siento, no entiendo tu consulta. ¿Podrías reformularla?"
 };
 
+const intentFollowUp = {
+    consulta_prestamo: { si: `Requisitos para Solicitar un Préstamo Financiero...`, no: "Bueno, ¿en qué más te puedo ayudar?" },
+    consulta_tarjeta: {
+        clasica: "La tarjeta Clásica tiene un límite de crédito estándar y pocos requisitos. ¿Te gustaría solicitarla o conocer sus requisitos?",
+        oro: "La tarjeta Oro requiere ingresos comprobables de al menos $50,000 mensuales. ¿Te interesa solicitarla o conocer sus requisitos?",
+        black: "La tarjeta Black ofrece beneficios premium y altos límites de crédito. ¿Te gustaría solicitarla o conocer sus requisitos?"
+    },
+    consulta_seguro: {
+        vida: "El seguro de vida ofrece cobertura total en caso de fallecimiento o invalidez. ¿Te interesa contratarlo o conocer sus requisitos?",
+        salud: "El seguro de salud cubre emergencias y consultas médicas. ¿Te interesa contratarlo o conocer sus requisitos?",
+        auto: "El seguro de auto protege contra daños y robos. ¿Te interesa contratarlo o conocer sus requisitos?"
+    }
+};
+
+const requisitosDetails = {
+    tarjeta_clasica: "Requisitos de la Tarjeta Clásica: Ingreso mínimo de $20,000, identificación oficial vigente y comprobante de domicilio.",
+    tarjeta_oro: "Requisitos de la Tarjeta Oro: Ingreso mínimo de $50,000, identificación oficial vigente, comprobante de domicilio y buen historial crediticio.",
+    tarjeta_black: "Requisitos de la Tarjeta Black: Ingreso mínimo de $100,000, identificación oficial vigente, comprobante de domicilio, excelente historial crediticio y antigüedad laboral de 2 años.",
+    seguro_vida: "Requisitos del Seguro de Vida: Identificación oficial vigente, cuestionario médico y comprobante de domicilio.",
+    seguro_salud: "Requisitos del Seguro de Salud: Identificación oficial vigente, cuestionario médico y comprobante de domicilio.",
+    seguro_auto: "Requisitos del Seguro de Auto: Identificación oficial vigente, documentos del vehículo y comprobante de domicilio."
+};
+
+const intentFinalSteps = {
+    tarjeta_clasica: { si: "Perfecto, aquí tienes el enlace para firmar el contrato de la Tarjeta Clásica", no: "Entendido, ¿en qué más puedo ayudarte?" },
+    tarjeta_oro: { si: "Perfecto, aquí tienes el enlace para firmar el contrato de la Tarjeta Oro", no: "Entendido, ¿en qué más puedo ayudarte?" },
+    tarjeta_black: { si: "Perfecto, aquí tienes el enlace para firmar el contrato de la Tarjeta Black", no: "Entendido, ¿en qué más puedo ayudarte?" },
+    seguro_vida: { si: "Perfecto, aquí tienes el enlace para contratar el Seguro de Vida", no: "Entendido, ¿en qué más puedo ayudarte?" },
+    seguro_salud: { si: "Perfecto, aquí tienes el enlace para contratar el Seguro de Salud", no: "Entendido, ¿en qué más puedo ayudarte?" },
+    seguro_auto: { si: "Perfecto, aquí tienes el enlace para contratar el Seguro de Auto", no: "Entendido, ¿en qué más puedo ayudarte?" }
+};
+
 export class ChatController {
+    static conversationState = {};
+
     static async handleMessage(req, res) {
         try {
-            
-            //DEBUG("cuerpo chat handleMessage: " + req.body)
-
-            // Verificar si el token está presente en las cookies
             const token = req.cookies.token;
-            
-            //DEBUG("TOKEN: "+ token);
-            
-            if (!token) {
-                DEBUG("No se ha encontrado el token en las cookies");
-                return res.status(400).render("error404");
-            }
+            if (!token) return res.status(400).render("error404", { title: "Error 404" });
 
-            // Verificar y decodificar el token
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             const userId = decoded.id;
-            //DEBUG("userId: "+ userId);
-
-            if (!userId) {
-                DEBUG("User ID no disponible en el token")
-                return res.status(400).render("error404");
-            }
 
             const { message } = req.body;
+            if (!message) return res.status(400).render("error404", { title: "Error 404" });
 
-            
-            DEBUG("MENSAJE: " + message);
+            const userState = ChatController.conversationState[userId] || {};
+            DEBUG(userState);
 
-            if (!message) {
-                DEBUG("Mensaje es requerido");
-                return res.status(400).render("error404");
+            if (userState.awaitingRequisitos) {
+                const requisitos = requisitosDetails[userState.intent] || "No se encontraron requisitos para esta opción.";
+                ChatController.conversationState[userId] = {};
+                DEBUG("requisitos");
+                DEBUG(requisitos);
+                return res.json({ reply: requisitos });
             }
 
-            // Validar existencia del usuario
-            const user = await User.findById(userId);
-            if (!user) {
-                DEBUG("Usuario No encontrado")
-                return res.status(400).render("error404");
+            if (userState.awaitingResponse && userState.intent) {
+                const followUp = intentFollowUp[userState.intent];
+                const response = followUp[message.toLowerCase()] || "No entendí tu respuesta XD.";
+                DEBUG("follow");
+                DEBUG(followUp);
+                DEBUG("response");
+                DEBUG(response);
 
+                if (message.toLowerCase() === "requisitos") {
+                    ChatController.conversationState[userId] = { intent: userState.intent, awaitingRequisitos: true };
+
+                    DEBUG("MENSAJE");
+                    DEBUG(ChatController.conversationState[userId].intent);
+                    
+                    return res.json({ reply: "Entendido, te detallo los requisitos." });
+                }
+
+                if (userState.intent === "consulta_tarjeta" || userState.intent === "consulta_seguro") {
+                    const opcionSeleccionada = message.toLowerCase();
+                    DEBUG("opcion: "+ opcionSeleccionada);
+
+                    if (["clasica", "oro", "black", "vida", "salud", "auto"].includes(opcionSeleccionada)) {
+                        ChatController.conversationState[userId] = { intent: `${userState.intent}_${opcionSeleccionada}`, awaitingFinalResponse: true };
+                    } else {
+                        return res.json({ reply: "Opción no válida. Solo puedes elegir entre las opciones disponibles." });
+                    }
+                } else {
+                    ChatController.conversationState[userId] = {};
+                }
+                return res.json({ reply: response });
             }
 
-            // Llamar a Wit.ai para analizar el mensaje
-            const response = await axios.get(`https://api.wit.ai/message?v=20230320&q=${encodeURIComponent(message)}`, {
-                headers: { Authorization: `Bearer ${WIT_AI_TOKEN}` }
-            });
+            const response = await axios.get(`https://api.wit.ai/message?v=20230320&q=${encodeURIComponent(message)}`, { headers: { Authorization: `Bearer ${WIT_AI_TOKEN}` } });
 
-            //console.log("Respuesta completa de Wit.ai:", JSON.stringify(response.data, null, 2));
-
-            let intent = "unknown";
-
-            intent = response.data.intents?.[0]?.name || "unknown";
-            DEBUG("INTENT RECIBIDO: ", intent);
-
-            const entities = response.data.entities || {};
-            //console.log("Entidades detectadas:", JSON.stringify(entities, null, 2));
-            
-            //DEBUG(entities);
-            // Responder según la intención detectada
-            
-            // Obtener la respuesta según la intención o usar la de unknown
+            let intent = response.data.intents?.[0]?.name || "unknown";
             const reply = intentResponses[intent] || intentResponses["unknown"];
-            /*let reply;
-            switch (intent) {
-                case "saludo":
-                    reply = "Hola! ¿En qué puedo ayudarte hoy?";
-                    break;
-                case "consulta_producto":
-                    reply = "Claro, ¿qué producto financiero te interesa?";
-                    break;
-                case "proceso_venta":
-                    reply = "Voy a guiarte en el proceso de compra. Primero, ¿estás registrado?";
-                    break;
-                default:
-                    reply = "Lo siento, no entiendo tu consulta. ¿Podrías reformularla?";
+
+            if (intentFollowUp[intent]) {
+                ChatController.conversationState[userId] = { awaitingResponse: true, intent };
             }
-            */
-            
-            // Validar y guardar en MongoDB
+
             const { error } = validateChatMessage({ userId, message, response: reply });
             if (error) return res.status(400).json({ error: error.details[0].message });
 
             await ChatMessage.create({ userId, message, response: reply });
 
-            // Limpiar la intención después de usarla
-            intent = "unknown";
-            DEBUG("INTENT CLEAR: ", intent);
-            DEBUG("CHAT FUNCIONa AL 100%");
-
             return res.json({ reply });
-
         } catch (error) {
-            console.error("Error en Wit.ai:", error);
-            DEBUG("ERROR EN CHATCONTROLLER:JS")
-            return res.status(500).render("error500");
+            DEBUG("ERROR EN CHATCONTROLLER:JS", error);
+            return res.status(500).render("error500", { title: "Error 500" });
         }
     }
 }

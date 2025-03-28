@@ -22,4 +22,4 @@ Object.entries(config).forEach(([key, value]) => {
     }
 });
 
-DEBUG("TODO OK!!! => Configuración cargada correctamente");
+DEBUG("Configuración cargada correctamente");

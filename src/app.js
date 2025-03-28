@@ -7,7 +7,7 @@ import router from "./interfaces/routes/rutas_vistas.js";
 import { connectDB } from "./config/database.js";
 
 
-const DEBUG = debug("app:APLICACION_CHATBOT");
+const DEBUG = debug("app:APP_CHATBOT");
 
 
 // Creador del Servidor
@@ -16,7 +16,7 @@ const app = createServer();
 
 // Conectar a MongoDB
 connectDB().then(() => {
-    DEBUG("MongoDB conectado exitosamente");
+    DEBUG("BD conectada Exitosamente");
 }).catch(error => {
     console.error("Error conectando a MongoDB:", error);
     process.exit(1); // Detener si no se puede conectar a la BD

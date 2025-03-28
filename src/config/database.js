@@ -23,14 +23,15 @@ const mongooseOptions = {
 export const connectDB = async (retries = 5, delay = 5000) => {
     while (retries > 0) {
         try {
-            await mongoose.connect(MONGO_URI, mongooseOptions);
-            DEBUG("Conexión a MongoDB");
+            await mongoose.connect(MONGO_URI, mongooseOptions); 
             
             // Manejador de eventos de conexión
             mongoose.connection.on("connected", () => DEBUG("MongoDB conectado"));
             mongoose.connection.on("error", err => DEBUG("Error en MongoDB:", err));
             mongoose.connection.on("disconnected", () => DEBUG("MongoDB desconectado"));
             
+            DEBUG("Conectado a MongoDB");
+
             return;
         } catch (error) {
             console.error(`Error al conectar a MongoDB (Intentos restantes: ${retries - 1}):`, error);
