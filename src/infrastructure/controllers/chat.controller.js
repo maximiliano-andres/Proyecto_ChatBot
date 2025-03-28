@@ -61,6 +61,8 @@ export class ChatController {
 
     static async handleMessage(req, res) {
         try {
+            DEBUG("================== MENSAJE NUEVO ==================");
+
             const token = req.cookies.token;
             if (!token) return res.status(400).render("error404", { title: "Error 404" });
 
@@ -71,51 +73,89 @@ export class ChatController {
             if (!message) return res.status(400).render("error404", { title: "Error 404" });
 
             const userState = ChatController.conversationState[userId] || {};
+            DEBUG("========== USER STATE ==========");
             DEBUG(userState);
+            DEBUG("================================");
+            if (!userState.awaitingRequisitos) {
+                userState.awaitingRequisitos = false;
+            }
 
+            // Si el usuario está esperando los requisitos
             if (userState.awaitingRequisitos) {
-                const requisitos = requisitosDetails[userState.intent] || "No se encontraron requisitos para esta opción.";
-                ChatController.conversationState[userId] = {};
-                DEBUG("requisitos");
+                DEBUG("========== userState.intent ==========");
+                DEBUG(userState.intent);  // Verificamos el intent
+
+                const intentKey = userState.intent.split('_')[1];  // Extrae la parte relevante del intent (ej. "oro")
+                DEBUG("========== intentKey ==========");
+                DEBUG(intentKey);
+
+                const requisitos = requisitosDetails[`tarjeta_${intentKey}`] || "No se encontraron requisitos para esta opción.";
+
+                // Mantener awaitingRequisitos en false para no repetir la respuesta
+                ChatController.conversationState[userId] = {
+                    intent: userState.intent,
+                    awaitingRequisitos: false
+                };
+                DEBUG("========== requisitos ==========");
                 DEBUG(requisitos);
+
                 return res.json({ reply: requisitos });
             }
 
+            // Si el usuario está esperando una respuesta
             if (userState.awaitingResponse && userState.intent) {
                 const followUp = intentFollowUp[userState.intent];
                 const response = followUp[message.toLowerCase()] || "No entendí tu respuesta XD.";
-                DEBUG("follow");
+                DEBUG("========== follow ==========");
                 DEBUG(followUp);
-                DEBUG("response");
+                DEBUG("========== response ==========");
                 DEBUG(response);
 
                 if (message.toLowerCase() === "requisitos") {
+                    // Establecer que el usuario está esperando los requisitos
+                    const intentKey = userState.intent.split('_')[1];  // Extraer la parte relevante del intent
                     ChatController.conversationState[userId] = { intent: userState.intent, awaitingRequisitos: true };
 
-                    DEBUG("MENSAJE");
+                    DEBUG("========== MENSAJE ==========");
                     DEBUG(ChatController.conversationState[userId].intent);
-                    
+
+                    DEBUG("FIN REQUISITOS");
+
                     return res.json({ reply: "Entendido, te detallo los requisitos." });
                 }
 
                 if (userState.intent === "consulta_tarjeta" || userState.intent === "consulta_seguro") {
                     const opcionSeleccionada = message.toLowerCase();
-                    DEBUG("opcion: "+ opcionSeleccionada);
+                    DEBUG("========== OPCION ==========");
+                    DEBUG(opcionSeleccionada);
 
                     if (["clasica", "oro", "black", "vida", "salud", "auto"].includes(opcionSeleccionada)) {
-                        ChatController.conversationState[userId] = { intent: `${userState.intent}_${opcionSeleccionada}`, awaitingFinalResponse: true };
+                        // Actualizar el estado para saber que el usuario seleccionó una tarjeta o seguro
+                        //const tipoConsulta = userState.intent.split('_')[1]; // Extrae "tarjeta" o "seguro"
+                        ChatController.conversationState[userId] = { intent: `tarjeta_${opcionSeleccionada}`, awaitingRequisitos: true };
+                        DEBUG("============== SELECCION TARJETA O SEGURO ==============");
+                        DEBUG(ChatController.conversationState[userId].intent);
+                        DEBUG("======================================================");
                     } else {
                         return res.json({ reply: "Opción no válida. Solo puedes elegir entre las opciones disponibles." });
                     }
                 } else {
                     ChatController.conversationState[userId] = {};
                 }
+
                 return res.json({ reply: response });
             }
 
+            // Llamada a Wit.ai para obtener la intención del usuario
             const response = await axios.get(`https://api.wit.ai/message?v=20230320&q=${encodeURIComponent(message)}`, { headers: { Authorization: `Bearer ${WIT_AI_TOKEN}` } });
 
-            let intent = response.data.intents?.[0]?.name || "unknown";
+            DEBUG("========== response.data.intents ==========");
+            DEBUG(response.data.intents);  // Ver qué datos devuelve Wit.ai
+
+            let intent = response.data.intents?.[0]?.name || "unknown";  
+            DEBUG("========== intent ==========");
+            DEBUG(intent);
+
             const reply = intentResponses[intent] || intentResponses["unknown"];
 
             if (intentFollowUp[intent]) {
