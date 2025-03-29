@@ -20,7 +20,7 @@ const intentResponses = {
     consulta_prestamo: "Ofrecemos préstamos personales con tasas competitivas. ¿Te gustaría saber los requisitos?",
     consulta_tarjeta: "Tenemos tarjetas de crédito con diferentes beneficios. ¿Te interesa la Clásica, Oro o Black? (Solo escribe :'CLASICA' , 'ORO' o 'BLACK')",
     consulta_seguro: "Brindamos seguros de vida, salud y auto. ¿Cuál te interesa?",
-    requisitos: "Puedo proporcionarte los requisitos para tarjetas o seguros. ¿Te gustaría conocerlos antes de contratar?",
+    requisitos: "Puedo proporcionarte los requisitos para Tarjetas o Seguros. ¿Te gustaría conocerlos antes de contratar,  escribe 'tarjetas' o 'seguros'?",
     unknown: "Lo siento, no entiendo tu consulta. ¿Podrías reformularla?"
 };
 
@@ -32,19 +32,58 @@ const intentFollowUp = {
         black: "La tarjeta Black ofrece beneficios premium y altos límites de crédito. ¿Te gustaría solicitarla o conocer sus requisitos?"
     },
     consulta_seguro: {
-        vida: "El seguro de vida ofrece cobertura total en caso de fallecimiento o invalidez. ¿Te interesa contratarlo o conocer sus requisitos?",
-        salud: "El seguro de salud cubre emergencias y consultas médicas. ¿Te interesa contratarlo o conocer sus requisitos?",
-        auto: "El seguro de auto protege contra daños y robos. ¿Te interesa contratarlo o conocer sus requisitos?"
+        vida: "El seguro de vida ofrece cobertura total en caso de fallecimiento o invalidez. ¿Te interesa conocer sus requisitos?",
+        salud: "El seguro de salud cubre emergencias y consultas médicas. ¿Te interesa conocer sus requisitos?",
+        auto: "El seguro de auto protege contra daños y robos. ¿Te interesa conocer sus requisitos?"
     }
 };
 
 const requisitosDetails = {
-    clasica: "Requisitos de la Tarjeta Clásica: Ingreso mínimo de $20,000, identificación oficial vigente y comprobante de domicilio.",
-    oro: "Requisitos de la Tarjeta Oro: Ingreso mínimo de $50,000, identificación oficial vigente, comprobante de domicilio y buen historial crediticio.",
-    black: "Requisitos de la Tarjeta Black: Ingreso mínimo de $100,000, identificación oficial vigente, comprobante de domicilio, excelente historial crediticio y antigüedad laboral de 2 años.",
-    vida: "Requisitos del Seguro de Vida: Identificación oficial vigente, cuestionario médico y comprobante de domicilio.",
-    salud: "Requisitos del Seguro de Salud: Identificación oficial vigente, cuestionario médico y comprobante de domicilio.",
-    auto: "Requisitos del Seguro de Auto: Identificación oficial vigente, documentos del vehículo y comprobante de domicilio."
+    clasica: `
+        Requisitos de la Tarjeta Clásica: 
+        \n - Ingreso mínimo de $20,000 
+        \n - Identificación oficial vigente 
+        \n - Comprobante de domicilio 
+        \n - Aquí tienes el enlace para firmar el contrato de la Tarjeta Clásica: ENLACE 
+    `,
+    oro: `
+        Requisitos de la Tarjeta Oro:
+        - Ingreso mínimo de $50,000
+        - Identificación oficial vigente
+        - Comprobante de domicilio
+        - Buen historial crediticio
+        - Aquí tienes el enlace para firmar el contrato de la Tarjeta Oro: ENLACE
+    `,
+    black: `
+        Requisitos de la Tarjeta Black:
+        - Ingreso mínimo de $100,000
+        - Identificación oficial vigente
+        - Comprobante de domicilio
+        - Excelente historial crediticio
+        - Antigüedad laboral de 2 años
+        - Aquí tienes el enlace para firmar el contrato de la Tarjeta Black: ENLACE
+    `,
+    vida: `
+        Requisitos del Seguro de Vida:
+        - Identificación oficial vigente
+        - Cuestionario médico
+        - Comprobante de domicilio
+        - Aquí tienes el enlace para contratar el Seguro de Vida: ENLACE
+    `,
+    salud: `
+        Requisitos del Seguro de Salud:
+        - Identificación oficial vigente
+        - Cuestionario médico
+        - Comprobante de domicilio
+        - Aquí tienes el enlace para contratar el Seguro de Salud: ENLACE
+    `,
+    auto: `
+        Requisitos del Seguro de Auto:
+        - Identificación oficial vigente
+        - Documentos del vehículo
+        - Comprobante de domicilio
+        - Aquí tienes el enlace para contratar el Seguro de Auto: ENLACE
+    `
 };
 
 const intentFinalSteps = {
@@ -88,18 +127,29 @@ export class ChatController {
                 const intentKey = userState.intent;  // Extrae la parte relevante del intent (ej. "oro")
                 DEBUG("========== intentKey ==========");
                 DEBUG(intentKey);
+                DEBUG("========== MENSAJE REQUISITOS ==========");
+                
+                DEBUG( message );
 
-                const requisitos = requisitosDetails[`${intentKey}`] || "No se encontraron requisitos para esta opción.";
+                const requisitos = requisitosDetails[`${intentKey}`];
+                const otro_mensaje = "OK, en que más te puedo ayudar";
 
-                // Mantener awaitingRequisitos en false para no repetir la respuesta
-                ChatController.conversationState[userId] = {
-                    intent: userState.intent,
-                    awaitingRequisitos: false
+                if (message.toLowerCase().includes("si")) {
+                    // Mantener awaitingRequisitos en false para no repetir la respuesta
+                    ChatController.conversationState[userId] = {
+                        intent: userState.intent,
+                        awaitingRequisitos: false
+                    };
+                    DEBUG("========== requisitos ==========");
+                    DEBUG(requisitos);
+
+                    return res.json({ reply: requisitos });
                 };
-                DEBUG("========== requisitos ==========");
-                DEBUG(requisitos);
 
-                return res.json({ reply: requisitos });
+                ChatController.conversationState[userId] = {}
+                return res.json({ reply: otro_mensaje});
+
+                
             }
 
             // Si el usuario está esperando una respuesta
