@@ -1,5 +1,3 @@
-// ChatController.js - Manejo avanzado de intents y selección de tarjetas y seguros
-
 import axios from "axios";
 import { config } from "../../config/env.js";
 import { ChatMessage, validateChatMessage } from "../../domain/models/ChatMessage.js";
