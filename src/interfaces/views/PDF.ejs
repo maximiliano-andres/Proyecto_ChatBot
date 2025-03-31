@@ -3,31 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualización de PDF</title>
+    <title>Visualización del Contrato</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background-color: #e9ecef; color: #333; }
-        .container { max-width: 900px; margin: 50px auto; padding: 30px; background: #ffffff; box-shadow: 0px 0px 20px rgba(0,0,0,0.1); border-radius: 15px; }
+        body { font-family: Arial, sans-serif; background-image: url("../../img/banco_lateral.jpg"); color: #333; }
+        .container { display: flex; gap: 20px; max-width: 1200px; margin: 50px auto; padding: 30px; background: #0000007c; box-shadow: 0px 0px 20px rgba(0,0,0,0.1); border-radius: 15px; flex-wrap: wrap; }
+        .pdf-viewer, .legal-info { width: 100%; }
+        .pdf-viewer { flex: 2; }
+        .legal-info { flex: 1; background-color: #1f1f1f; padding: 20px; border-radius: 10px; color: #fff; }
         .btn { padding: 15px 30px; margin: 15px 0; text-decoration: none; color: #ffffff; border-radius: 10px; font-size: 16px; font-weight: bold; display: inline-block; transition: background-color 0.3s ease; }
         .btn-primary { background-color: #4CAF50; }
         .btn-secondary { background-color: #2196F3; }
         .btn:hover { opacity: 0.9; }
         iframe { width: 100%; height: 700px; border-radius: 10px; border: none; margin-bottom: 20px; }
         .error { color: red; font-size: 18px; margin-top: 10px; font-weight: bold; }
-        h1 { font-size: 32px; margin-bottom: 20px; }
+        h1 { font-size: 32px; margin-bottom: 20px; color: whitesmoke;}
+        h2 { font-size: 20px; margin-bottom: 10px; }
+        p { font-size: 16px; line-height: 1.5; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            h1 { font-size: 24px; }
+            h2 { font-size: 18px; }
+            .btn { padding: 10px 20px; font-size: 14px; }
+            iframe { height: 500px; }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 20px; }
+            h2 { font-size: 16px; }
+            .btn { padding: 8px 16px; font-size: 12px; }
+            iframe { height: 400px; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📄 Vista de Documento PDF</h1>
-        <% if (vista_pdf) { %>
-            <iframe src="../../PDF/contrato_123.456.789.pdf" allowfullscreen type="application/pdf"></iframe>
-        <% } else { %>
-            <p class="error">❌ El archivo PDF no está disponible.</p>
-        <% } %>
-        <div>
-            <a href="/" class="btn btn-secondary">🏠 Volver al Home</a>
-            <a href="/firmar-contrato" class="btn btn-primary">🖋️ Firmar Contrato</a>
+        <div class="pdf-viewer">
+            <h1>📄 Visualización del Contrato Antes de la Firma</h1>
+            <% if (vista_pdf) { %>
+                <iframe src="../../PDF/<%= vista_pdf %>" allowfullscreen type="application/pdf"></iframe>
+            <% } else { %>
+                <p class="error">❌ El archivo PDF no está disponible.</p>
+            <% } %>
+            <div>
+                <a href="/" class="btn btn-secondary">🏠 Volver al Home</a>
+                <form action="/pdf" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-primary">🖋️ Firmar Contrato</button>
+                </form>
+                
+            </div>
+        </div>
+        <div class="legal-info">
+            <h2>📜 Instrucciones Legales para la Firma</h2>
+            <p>1. Revise el contenido del contrato antes de proceder con la firma.</p>
+            <p>2. Asegúrese de que todos los datos personales sean correctos.</p>
+            <p>3. La firma del contrato implica la aceptación de los términos y condiciones estipulados.</p>
+            <p>4. En caso de dudas o discrepancias, comuníquese con nuestro servicio de atención al cliente antes de firmar.</p>
+            <p>5. Una vez firmado, el contrato será vinculante y se almacenará de manera segura.</p>
         </div>
     </div>
 </body>

@@ -37,6 +37,7 @@ router.post("/login", AuthControllers.login);
 router.get("/logout", AuthControllers.logout);
 
 router.get("/pdf",PdfController.crear_contrato);
+router.post("/pdf",PdfController.Firma_contrato);
 
 
 export default router;

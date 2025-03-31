@@ -28,6 +28,7 @@ export function generarContratoPDF(user, logoPath) {
     const firma_oficial = Firma_Validadora();
     const doc = new PDFDocument({ size: 'A4', margin: 50 });
     const rutaArchivo = `./public/PDF/contrato_${user.numero_documento}.pdf`;
+    const nombre_contrato = `contrato_${user.numero_documento}.pdf`;
     doc.pipe(fs.createWriteStream(rutaArchivo));
 
     // Insertar logo como fondo
@@ -89,6 +90,7 @@ export function generarContratoPDF(user, logoPath) {
     DEBUG(`FIRMA: ${firma_oficial}`);
     return {
         codigo_verificador: firma_oficial,
+        nombre_contrato: nombre_contrato,
         rutaPDF:rutaArchivo
     }
 }
