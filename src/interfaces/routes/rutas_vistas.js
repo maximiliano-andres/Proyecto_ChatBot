@@ -5,11 +5,13 @@ import { ChatController } from "../../infrastructure/controllers/chat.controller
 import AuthControllers from "../../infrastructure/services/AuthController.js";
 
 import { authenticateUser } from "../../shared/middleware/authMiddleware.js";
+import { verifyToken } from "../../shared/middleware/Verificar_Token.js";
+import PdfController from "../../infrastructure/services/PdfControllers.js"
 
 const router = Router();
 
 
-router.get("/", (req, res) => { return res.render("index", { 
+router.get("/",   (req, res) => { return res.render("index", { 
     token:"",
     title: 'Raíz Finanziera',
     titulo_1: "Bienvenido a Raíz Finanziera",
@@ -20,10 +22,10 @@ router.get("/", (req, res) => { return res.render("index", {
 })});
 
 // Definir la ruta HOME
-router.get("/Finanzas_Raiz", HomeController.index);
+router.get("/Finanzas_Raiz", verifyToken, HomeController.index);
 
 // Rutas del chatbot
-router.post("/chatbot", ChatController.handleMessage);
+router.post("/chatbot", verifyToken, ChatController.handleMessage);
 
 // Rutas LOGIN
 router.get("/login", LoginViewsControllers.loginpage);
@@ -33,6 +35,8 @@ router.get("/registro_usuario", LoginViewsControllers.registropage);
 router.post("/registro_usuario", AuthControllers.register);
 router.post("/login", AuthControllers.login);
 router.get("/logout", AuthControllers.logout);
+
+router.get("/pdf",PdfController.crear_contrato);
 
 
 export default router;

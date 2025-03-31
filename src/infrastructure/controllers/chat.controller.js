@@ -11,6 +11,7 @@ import { intentResponses } from "../../shared/utils/mensajes.js";
 import { intentFollowUp } from "../../shared/utils/mensajes.js";
 import { requisitosDetails } from "../../shared/utils/mensajes.js";
 
+
 const DEBUG = debug("app: CHAT:CONTROLLER:JS : ");
 dotenv.config();
 

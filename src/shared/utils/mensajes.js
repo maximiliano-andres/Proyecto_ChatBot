@@ -30,7 +30,7 @@ export const requisitosDetails = {
         \n - Ingreso mínimo de $20,000 
         \n - Identificación oficial vigente 
         \n - Comprobante de domicilio 
-        \n - Aquí tienes el enlace para firmar el contrato de la Tarjeta Clásica: ENLACE 
+        \n - Aquí tienes el enlace para firmar el contrato de la Tarjeta Clásica: <a>"/pdf"</a> 
     `,
     oro: `
         Requisitos de la Tarjeta Oro:

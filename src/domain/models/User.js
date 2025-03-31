@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
     fecha_nacimiento: { type: Date, required: true },
     email: { type: String, required: true, unique: true, trim: true, lowercase: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ["user", "admin"], default: "user" },
+    role: { type: String, enum: ["cliente", "admin"], default: "cliente" },
     createdAt: { type: Date, default: Date.now }
 });
 
@@ -68,7 +68,7 @@ export const validateUser = (data) => {
                 "string.min": "La contraseña debe tener al menos 8 caracteres.",
                 "string.pattern.base": "La contraseña debe incluir al menos una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&)."
             }),
-        role: Joi.string().valid("user", "admin")
+        role: Joi.string().valid("cliente", "admin")
     });
 
     return schema.validate(data, { abortEarly: false });

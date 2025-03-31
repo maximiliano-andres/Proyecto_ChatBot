@@ -7,6 +7,7 @@ import router from "./interfaces/routes/rutas_vistas.js";
 import { connectDB } from "./config/database.js";
 
 
+
 const DEBUG = debug("app:APP_CHATBOT");
 
 
@@ -31,12 +32,13 @@ app.use("/logout", router);
 app.use("/registro_usuario", router);
 app.use("/chatbot", router);
 
+app.use("/pdf", router);
 
 
-// Middleware para manejo de errores
-app.use(ErrorHandler.error404);  
-app.use(ErrorHandler.error500);  
+//./public/img/Logo_Cuadro.png
 
+app.use(ErrorHandler.error404);
+app.use(ErrorHandler.error500);
 
 
 // Iniciar servidor
