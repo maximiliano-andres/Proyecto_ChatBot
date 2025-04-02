@@ -20,6 +20,11 @@ export default class Contrato {
 
             if (!token) return res.status(400).render("error404", { title: "Error 404" });
 
+            const { intent } = req.query;
+
+
+            DEBUG(`INTENT : => ${intent}`);
+
             const decorador = jwt.verify(token, process.env.JWT_SECRET);
             const userId = decorador.id;
             DEBUG(`ID USUARIO: ${userId}`);
@@ -152,6 +157,9 @@ export default class Contrato {
             await guardar_contrato.save();
 
             DEBUG("GUARDADO CON EXITO!!!!!");
+            const { intent } = req.query;
+
+            DEBUG(`INTENT : ${intent}`);
 
             return res.render("index", { token: token ,
                 title: 'Raíz Finanziera',

@@ -65,7 +65,12 @@ export class ChatController {
                     DEBUG("========== requisitos ==========");
                     DEBUG(requisitos);
 
-                    return res.json({ reply: requisitos });
+                    // Agregar intent a la URL
+                    const intentUrl = `/pdf?intent=${intentKey}`;
+
+                    const requisitosConIntent = requisitos.replace("/pdf", intentUrl);
+
+                    return res.json({ reply: requisitosConIntent });
                 };
 
                 ChatController.conversationState[userId] = {}

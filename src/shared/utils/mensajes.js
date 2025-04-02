@@ -27,48 +27,60 @@ export const intentFollowUp = {
 export const requisitosDetails = {
     clasica: `
         Requisitos de la Tarjeta Clásica: 
-        \n - Ingreso mínimo de $20,000 
-        \n - Identificación oficial vigente 
-        \n - Comprobante de domicilio 
-        \n - Aquí tienes el enlace para firmar el contrato de la Tarjeta Clásica: <a>"/pdf"</a> 
+        <ul>
+            <li>Ingreso mínimo de $20,000</li>
+            <li>Identificación oficial vigente</li>
+            <li>Comprobante de domicilio</li>
+            <li>Aquí tienes el enlace para firmar el contrato de la Tarjeta Clásica: <a href="/pdf" color:rgb(0, 26, 255) >Contrato Tarjeta Clásica</a></li>
+        </ul>
     `,
     oro: `
         Requisitos de la Tarjeta Oro:
-        - Ingreso mínimo de $50,000
-        - Identificación oficial vigente
-        - Comprobante de domicilio
-        - Buen historial crediticio
-        - Aquí tienes el enlace para firmar el contrato de la Tarjeta Oro: ENLACE
+        <ul>
+            <li>Ingreso mínimo de $50,000</li>
+            <li>Identificación oficial vigente</li>
+            <li>Comprobante de domicilio</li>
+            <li>Buen historial crediticio</li>
+            <li>Aquí tienes el enlace para firmar el contrato de la Tarjeta Oro: <a href="/pdf">Contrato Tarjeta Oro</a></li>
+        </ul>
     `,
     black: `
         Requisitos de la Tarjeta Black:
-        - Ingreso mínimo de $100,000
-        - Identificación oficial vigente
-        - Comprobante de domicilio
-        - Excelente historial crediticio
-        - Antigüedad laboral de 2 años
-        - Aquí tienes el enlace para firmar el contrato de la Tarjeta Black: ENLACE
+        <ul>
+            <li>Ingreso mínimo de $100,000</li>
+            <li>Identificación oficial vigente</li>
+            <li>Comprobante de domicilio</li>
+            <li>Excelente historial crediticio</li>
+            <li>Antigüedad laboral de 2 años</li>
+            <li>Aquí tienes el enlace para firmar el contrato de la Tarjeta Black: <a href="/pdf">Contrato Tarjeta Black</a></li>
+        </ul>
     `,
     vida: `
         Requisitos del Seguro de Vida:
-        - Identificación oficial vigente
-        - Cuestionario médico
-        - Comprobante de domicilio
-        - Aquí tienes el enlace para contratar el Seguro de Vida: ENLACE
+        <ul>
+            <li>Identificación oficial vigente</li>
+            <li>Cuestionario médico</li>
+            <li>Comprobante de domicilio</li>
+            <li>Aquí tienes el enlace para contratar el Seguro de Vida: <a href="/pdf">Contrato Seguro de Vida</a></li>
+        </ul>
     `,
     salud: `
         Requisitos del Seguro de Salud:
-        - Identificación oficial vigente
-        - Cuestionario médico
-        - Comprobante de domicilio
-        - Aquí tienes el enlace para contratar el Seguro de Salud: ENLACE
+        <ul>
+            <li>Identificación oficial vigente</li>
+            <li>Cuestionario médico</li>
+            <li>Comprobante de domicilio</li>
+            <li>Aquí tienes el enlace para contratar el Seguro de Salud: <a href="/pdf">Contrato Seguro de Salud</a></li>
+        </ul>
     `,
     auto: `
         Requisitos del Seguro de Auto:
-        - Identificación oficial vigente
-        - Documentos del vehículo
-        - Comprobante de domicilio
-        - Aquí tienes el enlace para contratar el Seguro de Auto: ENLACE
+        <ul>
+            <li>Identificación oficial vigente</li>
+            <li>Documentos del vehículo</li>
+            <li>Comprobante de domicilio</li>
+            <li>Aquí tienes el enlace para contratar el Seguro de Auto: <a href="/pdf">Contrato Seguro de Auto</a></li>
+        </ul>
     `
 };
 

@@ -8,6 +8,9 @@
     font-family: 'Poppins', sans-serif;
 }
 
+a {
+
+}
 /* Contenedor del chat */
 #chat-container {
     position: fixed;
@@ -83,8 +86,9 @@
     text-align: center;
 }
 
+
 /* Mensajes del bot */
-.bot-message {
+.bot-message  {
     background: #ffc451;
     color: black;
     padding: 12px;
@@ -93,6 +97,11 @@
     font-size: 14px;
 }
 
+.bot-message  a {
+    color: rgb(16, 0, 245);
+    max-width: 90%;
+    font-size: 14px;
+}
 /* Botón de inicio de sesión */
 .login-button-container {
     margin-top: 10px;

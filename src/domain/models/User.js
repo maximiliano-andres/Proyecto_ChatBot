@@ -57,6 +57,23 @@ export const validateUser = (data) => {
         telefono: Joi.string().pattern(/^\+569\d{8}$/).required()
             .messages({ "string.pattern.base": "El teléfono debe tener el formato +569XXXXXXXX." }),
         fecha_nacimiento: Joi.date().iso().required()
+            .custom((value, helpers) => {
+                const today = new Date();
+                const birthDate = new Date(value);
+                const age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+                
+                // Ajuste si el cumpleaños no ha ocurrido este año
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+
+                if (age < 18) {
+                    return helpers.message("Debes ser mayor de 18 años para registrarte.");
+                }
+
+                return value;
+            })
             .messages({ "date.base": "Debe ser una fecha válida en formato ISO (YYYY-MM-DD)." }),
         email: Joi.string().email().required()
             .messages({ "string.email": "El formato del email es inválido." }),

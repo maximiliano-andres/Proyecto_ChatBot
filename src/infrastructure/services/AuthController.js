@@ -47,7 +47,7 @@ export default class AuthController {
                 fecha_nacimiento: req.body.fecha_nacimiento,
                 email: req.body.email.trim(),
                 password: req.body.password.trim(),
-                role: req.body.role || 'user',  // Asignación de rol por defecto si no se especifica
+                role: req.body.role || 'cliente',  // Asignación de rol por defecto si no se especifica
             });
             
 
