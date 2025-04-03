@@ -6,14 +6,14 @@ class AuthControllers {
         try {
             return res.status(200).render("login",
                 {
-                    title: "Login ChatBot"
+                    title: "Login ChatBot", error:""
                 }
             )
             
         } catch (error) {
             console.error("Error en login_page:", error);
             return res.status(500).render("error500", {
-                title: "Error 500"
+                title: "Error 500", 
             });
         }
     };
@@ -22,7 +22,7 @@ class AuthControllers {
         try {
             return res.status(200).render("registro",
                 {
-                    title: "Registro de Usuario"
+                    title: "Registro de Usuario",error: ""
                 })
         } catch (error) {
             console.error("Error en registro_page:", error);

@@ -12,6 +12,14 @@
 
 <body>
     <div class="register-container">
+
+        <% if (error) { %>
+            <div class="alert alert-danger">
+                <p><%= error %></p>
+            </div>
+        <% } %>
+
+
         <form action="/registro_usuario" method="POST">
             <h2>Crear Cuenta</h2>
             <div class="mb-3">

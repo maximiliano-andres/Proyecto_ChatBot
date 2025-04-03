@@ -56,3 +56,47 @@ button:hover {
 .boton_volver:hover {
     text-decoration: underline;
 }
+
+/* Estilo de alerta adaptable y elegante */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.alert-danger {
+    background-color: rgba(0, 17, 255, 0.603);
+    color: #1f1cb7;
+    border-left: 5px solid #1c1fb7;
+}
+
+.alert-danger P{
+	color: #ffffff;
+}
+
+.alert-danger P:hover{
+	color: #000000;
+}
+
+.alert-danger:hover {
+    background-color: #f8021f9a;
+	
+}
+
+.alert-icon {
+    font-size: 20px;
+}
+
+@media (max-width: 600px) {
+    .alert {
+        font-size: 14px;
+        padding: 10px;
+    }
+}

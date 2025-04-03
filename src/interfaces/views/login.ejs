@@ -4,12 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión / Registro</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.css"
 </head>
 <body class="login-page">
     <div class="login-container">
+        <!-- Mostrar alerta si existe un error -->
+        <% if (error) { %>
+            <div class="alert alert-danger">
+                <p><%= error %></p>
+            </div>
+        <% } %>
+
         <!-- Formulario de inicio de sesión -->
-        <form class="login-form" action="/login" method="POST" >
+        <form class="login-form" action="/login" method="POST">
             <h2>Iniciar Sesión</h2>
             <div class="input-group">
                 <label for="exampleInputEmail1">Email</label>
@@ -24,7 +31,5 @@
         </form>
         <a href="/" class="join_bt">← Volver al Inicio</a>
     </div>
-    
 </body>
 </html>
-
