@@ -69,7 +69,7 @@ export const createServer = () => {
     // Seguridad: Limitar peticiones (Rate Limiting)
     const limiter = rateLimit({
         windowMs: 15 * 60 * 1000, // 15 minutos
-        max: 200, // Máximo 200 peticiones por IP
+        max: 500, // Máximo 200 peticiones por IP
         message: "Demasiadas peticiones, intenta más tarde.",
         standardHeaders: true, // Muestra límites en headers
         legacyHeaders: false, // No usa headers obsoletos

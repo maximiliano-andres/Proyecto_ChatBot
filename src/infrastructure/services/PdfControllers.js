@@ -48,7 +48,7 @@ export default class Contrato {
 
             DEBUG("============== DATOS FICTICIOS ==============");
             DEBUG(datos);
-            const logo_banco = "./public/img/Logo_Cuadro.png"
+            const logo_banco = "./public/images/Logo_Cuadro.png";
 
             //Firma_Validadora();
             //generarFirmaBanco();
@@ -120,7 +120,7 @@ export default class Contrato {
                 numero_documento: user_data.numero_documento
             };
 
-            const logo_banco = "./public/img/Logo_Cuadro.png"
+            const logo_banco = "./public/images/Logo_Cuadro.png"
 
 
             generarFirmaCliente(datos);
