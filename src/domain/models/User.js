@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import Joi from "joi";
 import bcrypt from "bcryptjs";
+import debug from "debug";
+
+const DEBUG = debug("app: VELIDADOR MODELO USER: ")
 
 // Esquema de usuario
 const userSchema = new mongoose.Schema({
@@ -72,6 +75,7 @@ export const validateUser = (data) => {
                     return helpers.message("Debes ser mayor de 18 años para registrarte.");
                 }
 
+                DEBUG(value);
                 return value;
             })
             .messages({ "date.base": "Debe ser una fecha válida en formato ISO (YYYY-MM-DD)." }),

@@ -36,7 +36,7 @@ export default class AuthController {
             if (existingTelefono) return res.status(400).render("registro",{ error: "El telefono ya está registrado" });
             
             // Crear nuevo usuario con la contraseña hasheada
-            const user = new User({
+            let user = new User({
                 nombre1: req.body.nombre1.trim(),
                 nombre2: req.body.nombre2.trim(),
                 apellido1: req.body.apellido1.trim(),
