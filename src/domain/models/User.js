@@ -63,7 +63,7 @@ export const validateUser = (data) => {
             .custom((value, helpers) => {
                 const today = new Date();
                 const birthDate = new Date(value);
-                const age = today.getFullYear() - birthDate.getFullYear();
+                let age = today.getFullYear() - birthDate.getFullYear();
                 const monthDiff = today.getMonth() - birthDate.getMonth();
                 
                 // Ajuste si el cumpleaños no ha ocurrido este año
