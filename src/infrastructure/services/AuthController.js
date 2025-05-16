@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 import env from "env-var";
 import validator from 'validator';
 
+
 const DEBUG = debug("app:AuthControoller ");
 
 dotenv.config();
@@ -53,6 +54,8 @@ export default class AuthController {
 
             await user.save();
             DEBUG("Usuario registrado exitosamente");
+            DEBUG( user);
+            
 
             // Generar el token JWT
             const token = jwt.sign(
