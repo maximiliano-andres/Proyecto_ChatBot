@@ -30,7 +30,8 @@ export const createServer = () => {
             contentSecurityPolicy: {
                 directives: {
                     defaultSrc: ["'self'"],
-                    scriptSrc: ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com"],
+                    scriptSrc: ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com", "cdn.jsdelivr.net"],
+
                     styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com", "cdn.jsdelivr.net"],
                     fontSrc: ["'self'", "fonts.gstatic.com"],
                     imgSrc: ["'self'", "data:"],
