@@ -9,7 +9,7 @@ Este proyecto es una plataforma web bancaria con un asistente virtual (chatbot) 
 - **Gestión de usuarios:** Registro de nuevos usuarios, validación de datos y roles.
 - **Contratos digitales:** Generación y visualización de contratos en PDF, con firma digital simulada.
 - **Productos financieros:** Solicitud y gestión de préstamos personales, tarjetas de crédito y seguros.
-- **Panel de administración:** (Ruta reservada para administradores).
+- **Panel de administración:** (Ruta reservada para administradores, ver más abajo).
 - **Frontend responsivo:** Interfaz moderna y adaptable para dispositivos móviles y escritorio.
 - **Seguridad:** Protección contra ataques comunes (rate limiting, sanitización, validación de datos).
 
@@ -82,7 +82,20 @@ Este proyecto es una plataforma web bancaria con un asistente virtual (chatbot) 
 - **Registro e inicio de sesión:** Los usuarios pueden registrarse y luego iniciar sesión para acceder a las funcionalidades del chatbot y la gestión de contratos.
 - **Chatbot:** El asistente virtual responde preguntas sobre productos, requisitos y permite iniciar procesos de contratación.
 - **Contratos PDF:** Los usuarios pueden visualizar y firmar contratos digitales generados automáticamente.
-- **Panel de administración:** Acceso reservado para administradores (ruta especial).
+- **Panel de administración:** Acceso reservado para administradores (ver rutas ocultas).
+
+## Rutas principales
+
+- `/` — Página principal (landing page)
+- `/login` — Página de inicio de sesión
+- `/logout` — Cerrar sesión
+- `/registro_usuario` — Registro de usuario
+- `/chatbot` — Interacción con el chatbot
+- `/pdf` — Visualización y firma de contratos PDF
+- `/Finanzas_Raiz` — Página principal autenticada
+- `/tablas` — Panel de administración (requiere permisos)
+- **URL oculta solo para administradores:**  
+  `/registro_usuario/ADMINISTRADOR2025` — Registro de usuario administrador
 
 ## Docker
 
