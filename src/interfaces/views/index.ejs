@@ -94,8 +94,13 @@
                                         <!-- Actualizar enlaces para anclar a las secciones -->
                                         <li><a class="nav-link" href="#servicios">Servicios</a></li>
                                         <li><a class="nav-link" href="#proximamente">Próximamente</a></li>
+
+                                        <% if (!token) { %>                                       
                                         <li><a class="nav-link" href="#contacto">Contacto</a></li>
-                                        </ul>
+                                        <% } else { %>
+                                        <li><a class="nav-link" href="/tablas">Admin UNO</a></li>
+                                        <% } %>
+                                    </ul>
 
                                 </div>
                             </div>
@@ -114,52 +119,52 @@
     </header>
 
 
-<!-- Chatbot Mejorado -->
-<div id="chat-container">
-    <button id="chat-button">💬</button>
+    <!-- Chatbot Mejorado -->
+    <div id="chat-container">
+        <button id="chat-button">💬</button>
 
-    <div id="chat-box">
-        <div id="chat-header">
-            <span>🤖 Asistente Virtual</span>
-            <button id="close-chat">✖</button>
-        </div>
+        <div id="chat-box">
+            <div id="chat-header">
+                <span>🤖 Asistente Virtual</span>
+                <button id="close-chat">✖</button>
+            </div>
 
-        <% if (!token) { %>
-            <div id="chat-messages">
-                <p class="bot-message">🤖 ¡Hola! Bienvenido a nuestro servicio. Para ofrecerte la mejor experiencia,
-                    por favor <strong>inicia sesión</strong> con tu cuenta.</p>
+            <% if (!token) { %>
+                <div id="chat-messages">
+                    <p class="bot-message">🤖 ¡Hola! Bienvenido a nuestro servicio. Para ofrecerte la mejor experiencia,
+                        por favor <strong>inicia sesión</strong> con tu cuenta.</p>
 
-                <div class="login-button-container">
-                    <a href="/login" class="login-button">🔐 Iniciar Sesión</a>
+                    <div class="login-button-container">
+                        <a href="/login" class="login-button">🔐 Iniciar Sesión</a>
+                    </div>
                 </div>
-            </div>
 
-            <div id="chat-footer">
-                <input type="text" id="chat-input" placeholder="Escribe un mensaje..." disabled>
-                <button id="send-button" disabled>➤</button>
-            </div>
-        <% } else { %>
-            <div id="chat-messages">
-                <p class="bot-message">🤖 ¡Hola de nuevo! Estamos aquí para ayudarte a tomar decisiones
-                    financieras informadas. Ofrecemos:</p>
-                <ul>
-                    <p class="bot-message">💰 <strong>Préstamos personales</strong>, flexibles y adaptados a tus
-                        necesidades.</p>
-                    <p class="bot-message">💳 <strong>Tarjetas de crédito</strong>, con beneficios exclusivos
-                        para ti.</p>
-                    <p class="bot-message">🛡️ <strong>Seguros</strong> que brindan protección y tranquilidad
-                        para ti y tu familia.</p>
-                </ul>
-                <p class="bot-message">Dime, ¿en qué puedo ayudarte hoy? ¡Estoy listo para asesorarte!</p>
-            </div>
+                <div id="chat-footer">
+                    <input type="text" id="chat-input" placeholder="Escribe un mensaje..." disabled>
+                    <button id="send-button" disabled>➤</button>
+                </div>
+                <% } else { %>
+                    <div id="chat-messages">
+                        <p class="bot-message">🤖 ¡Hola de nuevo! Estamos aquí para ayudarte a tomar decisiones
+                            financieras informadas. Ofrecemos:</p>
+                        <ul>
+                            <p class="bot-message">💰 <strong>Préstamos personales</strong>, flexibles y adaptados a tus
+                                necesidades.</p>
+                            <p class="bot-message">💳 <strong>Tarjetas de crédito</strong>, con beneficios exclusivos
+                                para ti.</p>
+                            <p class="bot-message">🛡️ <strong>Seguros</strong> que brindan protección y tranquilidad
+                                para ti y tu familia.</p>
+                        </ul>
+                        <p class="bot-message">Dime, ¿en qué puedo ayudarte hoy? ¡Estoy listo para asesorarte!</p>
+                    </div>
 
-            <div id="chat-footer">
-                <input type="text" id="chat-input" placeholder="Escribe tu mensaje...">
-                <button id="send-button">➤</button>
-            </div>
-        <% } %>
+                    <div id="chat-footer">
+                        <input type="text" id="chat-input" placeholder="Escribe tu mensaje...">
+                        <button id="send-button">➤</button>
+                    </div>
+                    <% } %>
+        </div>
     </div>
-</div>
 
     <!-- End header -->
 

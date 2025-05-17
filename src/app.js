@@ -43,6 +43,8 @@ app.use(ErrorHandler.error404);
 app.use(ErrorHandler.error500);
 
 
+
+
 // Iniciar servidor
 app.listen(config.port, "0.0.0.0", () => {
     DEBUG("Servidor corriendo en http://localhost:" + config.port);
