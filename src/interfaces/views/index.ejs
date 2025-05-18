@@ -92,6 +92,9 @@
                                         <!-- Actualizar enlaces para anclar a las secciones -->
                                         <li><a class="nav-link" href="#servicios">Servicios</a></li>
 
+                                        <% if (token) { %>
+                                            <li><a class="nav-link" href="/perfil">Perfil</a></li>
+                                            <% } %>
 
                                         <% if (role === "admin") { %>                                                                               
                                         <li><a class="nav-link" href="/tablas">Control Administrativo</a></li>

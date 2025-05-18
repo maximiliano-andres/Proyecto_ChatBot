@@ -15,8 +15,8 @@
       <h1 class="h3">Raíz Financiera - <span class="badge bg-primary">Panel de Administración</span></h1>
 
 
-      <h3><a href="/Finanzas_Raiz"><span class="badge bg-warning">Home</span></a> <a href="/logout"><span
-            class="badge bg-danger">Salir</span></a></h3>
+      <h3><a href="/Finanzas_Raiz"><span class="badge bg-success">Home</span></a> 
+        <a href="/logout"><span class="badge bg-danger">Salir</span></a></h3>
     </div>
   </header>
 
@@ -151,7 +151,8 @@
                     <% } %>
                   </td>
                   <td>
-                    <%= contrato.fecha_emision %>
+                    
+                    <%= new Date(contrato.fecha_emision).toLocaleDateString('es-CL') %>
                   </td>
                 </tr>
                 <% }) %>
@@ -204,13 +205,16 @@
                     <% } %>
                   </td>
                   <td>
-                    <%= prestamo.fecha_solicitud %>
+                    
+                    <%= new Date(prestamo.fecha_solicitud).toLocaleDateString('es-CL') %>
                   </td>
                   <td>
-                    <%= prestamo.fecha_aprobacion %>
+                    
+                    <%= new Date(prestamo.fecha_aprobacion).toLocaleDateString('es-CL') %>
                   </td>
                   <td>
-                    <%= prestamo.fecha_vencimiento %>
+                    
+                    <%= new Date(prestamo.fecha_vencimiento).toLocaleDateString('es-CL') %>
                   </td>
                   
                 </tr>
@@ -265,10 +269,12 @@
                     <% } %>
                   </td>
                   <td>
-                    <%= seguro.fecha_inicio %>
+                    
+                    <%= new Date(seguro.fecha_inicio).toLocaleDateString('es-CL') %>
                   </td>
                   <td>
-                    <%= seguro.fecha_vencimiento %>
+                    
+                    <%= new Date(seguro.fecha_vencimiento).toLocaleDateString('es-CL') %>
                   </td>
                   
                 </tr>
@@ -309,7 +315,8 @@
                     <%= tarjeta.numero_tarjeta %>
                   </td>
                   <td>
-                    <%= tarjeta.fecha_expiracion %>
+                    
+                    <%= new Date(tarjeta.fecha_expiracion).toLocaleDateString('es-CL') %>
                   </td>
                   <td>
                     <%= tarjeta.cvv %>
@@ -327,7 +334,8 @@
                     <% } %>
                   </td>
                   <td>
-                    <%= tarjeta.fecha_emision %>
+                    
+                    <%= new Date(tarjeta.fecha_emision).toLocaleDateString('es-CL') %>
                   </td>
                   
                 </tr>
