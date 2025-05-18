@@ -9,15 +9,11 @@ import ViewsTable from "../../infrastructure/services/TablasController.js";
 
 import { verifyToken } from "../../shared/middleware/Verificar_Token.js";
 import PdfController from "../../infrastructure/services/PdfControllers.js"
-
+import jwt from "jsonwebtoken";
 const router = Router();
 
 
-router.get("/",   (req, res) => { 
-    const token = req.cookies.token || "";
-    const title = "Raiz Finaciera";
-
-    return res.render("index", { token, title })});
+router.get("/",HomeController.index_neutro);
 
 // Definir la ruta HOME
 router.get("/Finanzas_Raiz", verifyToken, HomeController.index);
