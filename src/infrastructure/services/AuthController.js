@@ -87,7 +87,10 @@ export default class AuthController {
             //DEBUG("TOKEN: " + token);
             DEBUG("TODO SALIO BIEN SIIIIIIIIIIIIIIIIIIIIUUUUUUUUUUUUUUUUUU!!!!!!!");
 
+            const role = user.role;
+
             return res.render("index", { token: token ,
+                role,
                 title: 'Raíz Finanziera',
                 titulo_1: "Bienvenido a Raíz Finanziera",
                 subtitulo:"Seguridad, crecimiento y confianza en cada inversión.",

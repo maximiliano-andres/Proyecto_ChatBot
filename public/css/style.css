@@ -1932,7 +1932,7 @@ p {
 .white_fonts .post_info i,
 .white_fonts div,
 .white_fonts a.read_more {
-	color: #fff !important;
+	color: #fa0000 !important;
 }
 
 .red_bg .about-main-info a {
@@ -2449,7 +2449,7 @@ button:hover {
 body.login-page {
 	margin: 0;
 	font-family: 'Arial', sans-serif;
-	background: url('../images/BANCO.png')no-repeat center center fixed;
+	background: url('../images/registro.jpg')no-repeat center center fixed;
 	background-size: cover;
 	height: 100vh;
 }
@@ -2459,7 +2459,7 @@ body.login-page {
 	justify-content: center;
 	align-items: center;
 	height: 100vh;
-	background: rgba(0, 0, 0, 0.5);
+	background: rgba(0, 0, 0, 0.068);
 	/* Fondo semitransparente */
 }
 
@@ -2641,7 +2641,7 @@ body {
 }
 
 body.login-page {
-	background: url('../images/BANCO.png') no-repeat center center fixed;
+	background: url('../images/registro.jpg') no-repeat center center fixed;
 	background-size: cover;
 }
 

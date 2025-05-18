@@ -10,6 +10,7 @@ import ViewsTable from "../../infrastructure/services/TablasController.js";
 import { verifyToken } from "../../shared/middleware/Verificar_Token.js";
 import PdfController from "../../infrastructure/services/PdfControllers.js"
 import jwt from "jsonwebtoken";
+import Perfil from "../../infrastructure/services/PerfilController.js";
 const router = Router();
 
 
@@ -39,5 +40,6 @@ router.post("/pdf",PdfController.Firma_contrato);
 
 router.get("/tablas", ViewsTable.verTablas);
 
+router.get("/perfil", verifyToken, Perfil.perfil);
 
 export default router;
