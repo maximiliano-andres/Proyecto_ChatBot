@@ -30,15 +30,22 @@ app.use("/Finanzas_Raiz",router);
 app.use("/login", router);
 app.use("/logout", router);
 app.use("/registro_usuario", router);
+
+
 app.use("/chatbot", router);
 
 app.use("/pdf", router);
 
+//URL OCULTA SOLO PARA ADMINISTRADOR
+app.use("/registro_usuario/ADMINISTRADOR2025", router);
+app.use("/tablas", router);
 
 //./public/img/Logo_Cuadro.png
 
 app.use(ErrorHandler.error404);
 app.use(ErrorHandler.error500);
+
+
 
 
 // Iniciar servidor

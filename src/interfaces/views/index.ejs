@@ -52,11 +52,11 @@
             <div class="container">
                 <div class="row">
                     <div class="logo_section">
-                        <a class="navbar-brand" href="/"><img src="images/logo.png" alt="image"></a>
+                        <a class="navbar-brand" href="/"><img class= "img-fluid" src="images/logo.png" alt="image"></a>
                     </div>
                     <div class="site_information">
                         <ul>
-                            <li><a href="mailto:exchang@gmail.com"><img src="images/mail_icon.png"
+                            <li><a href="mailto:exchang@gmail.com"><img class="img-responsive" style="max-width: auto; max-height: auto;" src="images/mail_icon.png"
                                         alt="#" />RaizFinanciera@gmail.com</a></li>
                             <li><a href="tel:exchang@gmail.com"><img src="images/phone_icon.png"
                                         alt="#" />+56978449038</a></li>
@@ -93,9 +93,12 @@
                                         <li><a class="nav-link" href="#intercambio">Intercambio</a></li>
                                         <!-- Actualizar enlaces para anclar a las secciones -->
                                         <li><a class="nav-link" href="#servicios">Servicios</a></li>
-                                        <li><a class="nav-link" href="#proximamente">Próximamente</a></li>
-                                        <li><a class="nav-link" href="#contacto">Contacto</a></li>
-                                        </ul>
+
+
+                                        <% if (role === "admin") { %>                                                                               
+                                        <li><a class="nav-link" href="/tablas">Control Administrativo</a></li>
+                                        <% } %>
+                                    </ul>
 
                                 </div>
                             </div>
@@ -114,52 +117,52 @@
     </header>
 
 
-<!-- Chatbot Mejorado -->
-<div id="chat-container">
-    <button id="chat-button">💬</button>
+    <!-- Chatbot Mejorado -->
+    <div id="chat-container">
+        <button id="chat-button">💬</button>
 
-    <div id="chat-box">
-        <div id="chat-header">
-            <span>🤖 Asistente Virtual</span>
-            <button id="close-chat">✖</button>
-        </div>
+        <div id="chat-box">
+            <div id="chat-header">
+                <span>🤖 Asistente Virtual</span>
+                <button id="close-chat">✖</button>
+            </div>
 
-        <% if (!token) { %>
-            <div id="chat-messages">
-                <p class="bot-message">🤖 ¡Hola! Bienvenido a nuestro servicio. Para ofrecerte la mejor experiencia,
-                    por favor <strong>inicia sesión</strong> con tu cuenta.</p>
+            <% if (!token) { %>
+                <div id="chat-messages">
+                    <p class="bot-message">🤖 ¡Hola! Bienvenido a nuestro servicio. Para ofrecerte la mejor experiencia,
+                        por favor <strong>inicia sesión</strong> con tu cuenta.</p>
 
-                <div class="login-button-container">
-                    <a href="/login" class="login-button">🔐 Iniciar Sesión</a>
+                    <div class="login-button-container">
+                        <a href="/login" class="login-button">🔐 Iniciar Sesión</a>
+                    </div>
                 </div>
-            </div>
 
-            <div id="chat-footer">
-                <input type="text" id="chat-input" placeholder="Escribe un mensaje..." disabled>
-                <button id="send-button" disabled>➤</button>
-            </div>
-        <% } else { %>
-            <div id="chat-messages">
-                <p class="bot-message">🤖 ¡Hola de nuevo! Estamos aquí para ayudarte a tomar decisiones
-                    financieras informadas. Ofrecemos:</p>
-                <ul>
-                    <p class="bot-message">💰 <strong>Préstamos personales</strong>, flexibles y adaptados a tus
-                        necesidades.</p>
-                    <p class="bot-message">💳 <strong>Tarjetas de crédito</strong>, con beneficios exclusivos
-                        para ti.</p>
-                    <p class="bot-message">🛡️ <strong>Seguros</strong> que brindan protección y tranquilidad
-                        para ti y tu familia.</p>
-                </ul>
-                <p class="bot-message">Dime, ¿en qué puedo ayudarte hoy? ¡Estoy listo para asesorarte!</p>
-            </div>
+                <div id="chat-footer">
+                    <input type="text" id="chat-input" placeholder="Escribe un mensaje..." disabled>
+                    <button id="send-button" disabled>➤</button>
+                </div>
+                <% } else { %>
+                    <div id="chat-messages">
+                        <p class="bot-message">🤖 ¡Hola de nuevo! Estamos aquí para ayudarte a tomar decisiones
+                            financieras informadas. Ofrecemos:</p>
+                        <ul>
+                            <p class="bot-message">💰 <strong>Préstamos personales</strong>, flexibles y adaptados a tus
+                                necesidades.</p>
+                            <p class="bot-message">💳 <strong>Tarjetas de crédito</strong>, con beneficios exclusivos
+                                para ti.</p>
+                            <p class="bot-message">🛡️ <strong>Seguros</strong> que brindan protección y tranquilidad
+                                para ti y tu familia.</p>
+                        </ul>
+                        <p class="bot-message">Dime, ¿en qué puedo ayudarte hoy? ¡Estoy listo para asesorarte!</p>
+                    </div>
 
-            <div id="chat-footer">
-                <input type="text" id="chat-input" placeholder="Escribe tu mensaje...">
-                <button id="send-button">➤</button>
-            </div>
-        <% } %>
+                    <div id="chat-footer">
+                        <input type="text" id="chat-input" placeholder="Escribe tu mensaje...">
+                        <button id="send-button">➤</button>
+                    </div>
+                    <% } %>
+        </div>
     </div>
-</div>
 
     <!-- End header -->
 
@@ -168,12 +171,12 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="pogoSlider" id="js-main-slider">
-                    <div class="pogoSlider-slide" style="background-image:url(images/slide_img.png);">
+                    <div class="pogoSlider-slide" style="background-image:url(images/back/back_2.jpg);">
                         <div class="container">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="slide_text white_fonts">
-                                        <h3>Tu Futuro, tu Crédito<br><strong>Tu éxito</strong></h3>
+                                    <div class="slide_text white_fonts ">
+                                        <h3 >Tu Futuro, tu Crédito<br><strong>Tu éxito</strong></h3>
                                         <br>
                                         <a class="start_exchange_bt" href="exchange.html">Inicia tu Crédito ></a>
                                     </div>
@@ -181,7 +184,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="pogoSlider-slide" style="background-image:url(images/slide_img.png);">
+                    <div class="pogoSlider-slide" style="background-image:url(images/back/back_1.jpg);">
                         <div class="container">
                             <div class="row">
                                 <div class="col-md-12">
@@ -262,7 +265,7 @@
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <div class="full text_align_right_img">
-                        <img src="images/monedas1.png" alt="Monedas" class="img-fluid">
+                        <img src="images/back/back_5.jpg" alt="Monedas" class="img-fluid">
                     </div>
                 </div>
                 <div class="col-md-6 layout_padding">
@@ -348,7 +351,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6 text_align_right_img">
-                    <img src="images/manos.png" alt="Solicitar Intercambio" class="img-fluid">
+                    <img src="images/back/back_6.jpg" alt="Solicitar Intercambio" class="img-fluid">
                 </div>
                 <div class="col-md-6 layout_padding">
                     <div class="full paddding_left_15">
@@ -389,7 +392,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="full text_align_right_img">
-                        <img src="images/tarjeta.png" alt="#" />
+                        <img src="images/back/back_3.jpg" alt="#" class="img-fluid"/>
                     </div>
                 </div>
             </div>
@@ -400,7 +403,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6 text_align_right_img">
-                    <img src="images/casa.png" alt="Crédito Hipotecario" class="img-fluid">
+                    <img src="images/back/back_4.jpg" alt="Crédito Hipotecario" class="img-fluid">
                 </div>
                 <div class="col-md-6 layout_padding">
                     <div class="full paddding_left_15">
@@ -474,46 +477,7 @@
         </div>
     </div>
     <!-- end section -->
-    <!-- section -->
-    <div id="contacto" class="section contact_form">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="full">
-                        <div class="heading_main text_align_center">
-                            <h2><span class="theme_color"></span>Contacto</h2>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6 col-sm-12 offset-lg-3">
-                    <div class="full">
-                        <form class="contact_form_inner" action="#">
-                            <fieldset>
-                                <div class="field">
-                                    <input type="text" name="name" placeholder="Nombre" />
-                                </div>
-                                <div class="field">
-                                    <input type="email" name="email" placeholder="Email" />
-                                </div>
-                                <div class="field">
-                                    <input type="text" name="phone_no" placeholder="Teléfono" />
-                                </div>
-                                <div class="field">
-                                    <textarea placeholder="Mensaje"></textarea>
-                                </div>
-                                <div class="field center">
-                                    <button>ENVIAR</button>
-                                </div>
-                            </fieldset>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- end section -->
+    
 
 
     <!-- end contact_form -->

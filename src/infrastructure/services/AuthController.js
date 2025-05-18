@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 import env from "env-var";
 import validator from 'validator';
 
+
 const DEBUG = debug("app:AuthControoller ");
 
 dotenv.config();
@@ -53,6 +54,8 @@ export default class AuthController {
 
             await user.save();
             DEBUG("Usuario registrado exitosamente");
+            DEBUG( user);
+            
 
             // Generar el token JWT
             const token = jwt.sign(
@@ -169,9 +172,11 @@ export default class AuthController {
 
             DEBUG("Inicio de sesión exitoso");
 
-            const usuario = user.name; 
+            const role = user.role; 
+            DEBUG("Rol del usuario:", role);
             
             return res.render("index", { token: token ,
+                role,
                 title: 'Raíz Finanziera',
                 titulo_1: "Bienvenido a Raíz Finanziera",
                 subtitulo:"Seguridad, crecimiento y confianza en cada inversión.",
@@ -205,6 +210,7 @@ export default class AuthController {
             DEBUG("TOKEN ELIMINADO CON EXITO")
             
             return res.status(200).render('index', { 
+                role: "",
                 token: "",
                 title: 'Raíz Finanziera',
                 titulo_1: "Bienvenido a Raíz Finanziera",

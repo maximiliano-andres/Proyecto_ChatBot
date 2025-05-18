@@ -1,0 +1,120 @@
+# Raíz Financiera - ChatBot Bancario
+
+Este proyecto es una plataforma web bancaria con un asistente virtual (chatbot) que permite a los usuarios interactuar para solicitar productos financieros como préstamos, tarjetas de crédito y seguros, así como gestionar contratos y visualizar documentos PDF. El sistema está construido con Node.js, Express, MongoDB y EJS, y utiliza tecnologías modernas de frontend como Bootstrap y CSS personalizado.
+
+## Características principales
+
+- **Chatbot inteligente:** Asistente virtual que responde consultas sobre productos financieros, requisitos y procesos.
+- **Registro e inicio de sesión:** Sistema de autenticación seguro con JWT y cookies.
+- **Gestión de usuarios:** Registro de nuevos usuarios, validación de datos y roles.
+- **Contratos digitales:** Generación y visualización de contratos en PDF, con firma digital simulada.
+- **Productos financieros:** Solicitud y gestión de préstamos personales, tarjetas de crédito y seguros.
+- **Panel de administración:** (Ruta reservada para administradores, ver más abajo).
+- **Frontend responsivo:** Interfaz moderna y adaptable para dispositivos móviles y escritorio.
+- **Seguridad:** Protección contra ataques comunes (rate limiting, sanitización, validación de datos).
+
+## Estructura del proyecto
+
+```
+├── src/
+│   ├── app.js                  # Punto de entrada principal
+│   ├── config/                 # Configuración de servidor, base de datos y variables de entorno
+│   ├── domain/                 # Modelos de datos (Usuarios, Contratos, Préstamos, etc.)
+│   ├── infrastructure/
+│   │   ├── controllers/        # Lógica de negocio y generación de documentos
+│   │   └── services/           # Controladores de rutas y vistas
+│   ├── interfaces/
+│   │   ├── routes/             # Definición de rutas Express
+│   │   └── views/              # Vistas EJS (login, registro, index, PDF, errores)
+│   └── shared/
+│       ├── errors/             # Manejo de errores personalizados
+│       ├── middleware/         # Middlewares de autenticación y seguridad
+│       └── utils/              # Utilidades y mensajes del chatbot
+├── public/
+│   ├── css/                    # Hojas de estilo (Bootstrap, chat, registro, etc.)
+│   ├── js/                     # Scripts de frontend (chatbot, validaciones)
+│   ├── images/                 # Imágenes y logos
+│   └── PDF/                    # Contratos generados en PDF
+├── package.json
+├── Dockerfile
+├── .env
+└── README.md
+```
+
+## Instalación
+
+1. **Clona el repositorio:**
+   ```sh
+   git clone <URL-del-repo>
+   cd Proyecto_ChatBot
+   ```
+
+2. **Instala las dependencias:**
+   ```sh
+   npm install
+   ```
+
+3. **Configura las variables de entorno:**
+   - Crea un archivo `.env` en la raíz con las siguientes variables:
+     ```
+     PUERTO=1010
+     JWT_SECRET=tu_clave_secreta
+     WIT_TOKEN=tu_token_de_wit_ai
+     MONGO_URI=mongodb://localhost:27017/raizfinanciera
+     ```
+
+4. **Inicia la base de datos MongoDB** (si no está corriendo).
+
+5. **Ejecuta el servidor en desarrollo:**
+   ```sh
+   npm run dev
+   ```
+   O en producción:
+   ```sh
+   npm start
+   ```
+
+6. **Accede a la aplicación:**
+   - Abre tu navegador en [http://localhost:1010](http://localhost:1010)
+
+## Uso
+
+- **Registro e inicio de sesión:** Los usuarios pueden registrarse y luego iniciar sesión para acceder a las funcionalidades del chatbot y la gestión de contratos.
+- **Chatbot:** El asistente virtual responde preguntas sobre productos, requisitos y permite iniciar procesos de contratación.
+- **Contratos PDF:** Los usuarios pueden visualizar y firmar contratos digitales generados automáticamente.
+- **Panel de administración:** Acceso reservado para administradores (ver rutas ocultas).
+
+## Rutas principales
+
+- `/` — Página principal (landing page)
+- `/login` — Página de inicio de sesión
+- `/logout` — Cerrar sesión
+- `/registro_usuario` — Registro de usuario
+- `/chatbot` — Interacción con el chatbot
+- `/pdf` — Visualización y firma de contratos PDF
+- `/Finanzas_Raiz` — Página principal autenticada
+- `/tablas` — Panel de administración (requiere permisos)
+- **URL oculta solo para administradores:**  
+  `/registro_usuario/ADMINISTRADOR2025` — Registro de usuario administrador
+
+## Docker
+
+Para ejecutar el proyecto en Docker:
+
+1. **Construye la imagen:**
+   ```sh
+   docker build -t chatbot-image .
+   ```
+
+2. **Ejecuta el contenedor:**
+   ```sh
+   docker run -p 1010:1010 --name chatbot-container chatbot-image
+   ```
+
+## Créditos
+
+Desarrollado por Grupo 2 - Universidad Mayor.
+
+---
+
+**Nota:** Este proyecto es solo para fines educativos y de demostración. No utilizar en producción sin una revisión exhaustiva de seguridad.
