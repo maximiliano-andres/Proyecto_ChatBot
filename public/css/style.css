@@ -24,7 +24,7 @@
 -------------------------------------------------------------------*/
 
 body {
-	color: #666666;
+	color: #66666600;
 	font-size: 15px;
 	font-family: 'Roboto', sans-serif;
 	line-height: 1.80857;
@@ -385,7 +385,7 @@ a.join_bt {
 
 a.join_bt:hover,
 a.join_bt:focus {
-	background: #222;
+	background: #bd0000;
 	color: #fff !important;
 }
 
@@ -1932,7 +1932,7 @@ p {
 .white_fonts .post_info i,
 .white_fonts div,
 .white_fonts a.read_more {
-	color: #fa0000 !important;
+	color: #000000 !important;
 }
 
 .red_bg .about-main-info a {
@@ -2449,7 +2449,7 @@ button:hover {
 body.login-page {
 	margin: 0;
 	font-family: 'Arial', sans-serif;
-	background: url('../images/registro.jpg')no-repeat center center fixed;
+	background: url('/images/registro.jpg')no-repeat center center fixed;
 	background-size: cover;
 	height: 100vh;
 }

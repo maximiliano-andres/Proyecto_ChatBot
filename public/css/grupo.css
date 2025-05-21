@@ -1,0 +1,114 @@
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: url('../images/back/universidad-mayor.jpg') no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+}
+
+.overlay {
+    background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.6));
+    min-height: 100vh;
+    padding: 80px 20px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.section-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #f8f9fa;
+    margin-bottom: 3.5rem;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.card-integrante {
+    background-color: rgba(0, 0, 0, 0.651);
+    border: none;
+    border-radius: 1.5rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+    padding-top: 90px;
+    position: relative;
+    min-height: 360px;
+}
+
+.card-integrante:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.avatar {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid #fff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: -70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff;
+}
+
+.card-body {
+    padding-top: 1.5rem;
+}
+
+.nombre {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+}
+
+.carrera {
+    font-size: 1.1rem;
+    color: #d6c100;
+}
+
+.volver-inicio {
+    text-align: center;
+    margin-top: 60px;
+}
+
+.btn-inicio {
+    padding: 12px 36px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #0d6efd, #4e9af1);
+    color: white;
+    border: none;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+    text-decoration: none;
+}
+
+.btn-inicio:hover {
+    background: linear-gradient(135deg, #0b5ed7, #3a84d7);
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .avatar {
+        width: 110px;
+        height: 110px;
+        top: -55px;
+    }
+
+    .nombre {
+        font-size: 1.25rem;
+    }
+
+    .btn-inicio {
+        font-size: 1rem;
+        padding: 10px 24px;
+    }
+}
