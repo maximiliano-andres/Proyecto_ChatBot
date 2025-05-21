@@ -51,7 +51,7 @@ export default class Perfil {
 
             return res.status(200).render("perfil",
                 {
-                    title, error: "", usuario, role
+                    title, error: "", usuario, role, token,
                 })
 
 
