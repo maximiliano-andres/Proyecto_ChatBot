@@ -39,6 +39,7 @@ app.use("/pdf", router);
 //URL OCULTA SOLO PARA ADMINISTRADOR
 app.use("/registro_usuario/ADMINISTRADOR2025", router);
 app.use("/tablas", router);
+app.use("/grupo", router);
 
 //./public/img/Logo_Cuadro.png
 

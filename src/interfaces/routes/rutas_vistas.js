@@ -28,6 +28,7 @@ router.get("/registro_usuario", LoginViewsControllers.registropage);
 
 router.get("/registro_usuario/ADMINISTRADOR2025", LoginViewsControllers.registropageADMIN);
 
+router.get("/grupo",HomeController.index_grupo)
 
 
 // Rutas de autenticación

@@ -1,17 +1,21 @@
 # Raíz Financiera - ChatBot Bancario
 
-Este proyecto es una plataforma web bancaria con un asistente virtual (chatbot) que permite a los usuarios interactuar para solicitar productos financieros como préstamos, tarjetas de crédito y seguros, así como gestionar contratos y visualizar documentos PDF. El sistema está construido con Node.js, Express, MongoDB y EJS, y utiliza tecnologías modernas de frontend como Bootstrap y CSS personalizado.
+Raíz Financiera es una plataforma web bancaria con un asistente virtual (chatbot) que permite a los usuarios interactuar para solicitar productos financieros como préstamos, tarjetas de crédito y seguros, así como gestionar contratos y visualizar documentos PDF. El sistema está desarrollado con Node.js, Express, MongoDB y EJS, y utiliza tecnologías modernas de frontend como Bootstrap para garantizar una experiencia responsiva y segura.
+
+---
 
 ## Características principales
 
 - **Chatbot inteligente:** Asistente virtual que responde consultas sobre productos financieros, requisitos y procesos.
 - **Registro e inicio de sesión:** Sistema de autenticación seguro con JWT y cookies.
-- **Gestión de usuarios:** Registro de nuevos usuarios, validación de datos y roles.
+- **Gestión de usuarios:** Registro, inicio de sesión, cierre de sesión y gestión de perfiles.
 - **Contratos digitales:** Generación y visualización de contratos en PDF, con firma digital simulada.
 - **Productos financieros:** Solicitud y gestión de préstamos personales, tarjetas de crédito y seguros.
-- **Panel de administración:** (Ruta reservada para administradores, ver más abajo).
+- **Panel de administración:** Acceso exclusivo para administradores mediante una URL oculta.
 - **Frontend responsivo:** Interfaz moderna y adaptable para dispositivos móviles y escritorio.
 - **Seguridad:** Protección contra ataques comunes (rate limiting, sanitización, validación de datos).
+
+---
 
 ## Estructura del proyecto
 
@@ -22,7 +26,7 @@ Este proyecto es una plataforma web bancaria con un asistente virtual (chatbot) 
 │   ├── domain/                 # Modelos de datos (Usuarios, Contratos, Préstamos, etc.)
 │   ├── infrastructure/
 │   │   ├── controllers/        # Lógica de negocio y generación de documentos
-│   │   └── services/           # Controladores de rutas y vistas
+│   │   └── services/           # Controladores de vistas y autenticación
 │   ├── interfaces/
 │   │   ├── routes/             # Definición de rutas Express
 │   │   └── views/              # Vistas EJS (login, registro, index, PDF, errores)
@@ -40,6 +44,8 @@ Este proyecto es una plataforma web bancaria con un asistente virtual (chatbot) 
 ├── .env
 └── README.md
 ```
+
+---
 
 ## Instalación
 
@@ -77,6 +83,8 @@ Este proyecto es una plataforma web bancaria con un asistente virtual (chatbot) 
 6. **Accede a la aplicación:**
    - Abre tu navegador en [http://localhost:1010](http://localhost:1010)
 
+---
+
 ## Uso
 
 - **Registro e inicio de sesión:** Los usuarios pueden registrarse y luego iniciar sesión para acceder a las funcionalidades del chatbot y la gestión de contratos.
@@ -84,18 +92,34 @@ Este proyecto es una plataforma web bancaria con un asistente virtual (chatbot) 
 - **Contratos PDF:** Los usuarios pueden visualizar y firmar contratos digitales generados automáticamente.
 - **Panel de administración:** Acceso reservado para administradores (ver rutas ocultas).
 
+---
+
 ## Rutas principales
 
 - `/` — Página principal (landing page)
 - `/login` — Página de inicio de sesión
 - `/logout` — Cerrar sesión
 - `/registro_usuario` — Registro de usuario
+- `/perfil` — Perfil de usuario
 - `/chatbot` — Interacción con el chatbot
 - `/pdf` — Visualización y firma de contratos PDF
 - `/Finanzas_Raiz` — Página principal autenticada
 - `/tablas` — Panel de administración (requiere permisos)
 - **URL oculta solo para administradores:**  
   `/registro_usuario/ADMINISTRADOR2025` — Registro de usuario administrador
+
+---
+
+## Pruebas de la API con Postman
+
+Puedes importar la siguiente colección de Postman para probar los endpoints principales:
+
+1. Descarga el archivo [`RaizFinanciera.postman_collection.json`](RaizFinanciera.postman_collection.json) (ver ejemplo en la documentación del proyecto).
+2. Importa el archivo en Postman.
+3. Modifica los datos de ejemplo según tus pruebas.
+4. Si algún endpoint requiere token, primero haz login y usa el token en las variables de entorno de Postman.
+
+---
 
 ## Docker
 
@@ -110,6 +134,16 @@ Para ejecutar el proyecto en Docker:
    ```sh
    docker run -p 1010:1010 --name chatbot-container chatbot-image
    ```
+
+---
+
+## Seguridad
+
+- El acceso a rutas administrativas está protegido y solo es accesible mediante una URL oculta.
+- El sistema implementa validaciones, sanitización de datos y manejo de errores personalizados.
+- JWT y cookies seguras para autenticación y autorización.
+
+---
 
 ## Créditos
 
