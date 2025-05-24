@@ -2,9 +2,9 @@ name: Dependency Audit & PDF Report
 
 on:
   push:
-    branches: [main]
+    branches: [prueba_1]
   pull_request:
-    branches: [main]
+    branches: [prueba_1]
 
 jobs:
   audit:
