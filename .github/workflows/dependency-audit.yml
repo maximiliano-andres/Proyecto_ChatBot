@@ -26,7 +26,7 @@ jobs:
         run: npm audit --json > audit-report.json
 
       - name: Instalar dependencias para reporte PDF
-        run: npm install -g json2md puppeteer
+        run: npm install json2md puppeteer
 
       - name: Generar reporte Markdown desde JSON
         run: |
