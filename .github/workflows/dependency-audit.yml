@@ -17,19 +17,17 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Instalar dependencias
+      - name: Instalar dependencias del proyecto
         run: npm install
 
+      - name: Instalar dependencias necesarias para el reporte
+        run: npm install --save-dev json2csv pdfkit
+
       - name: Auditar dependencias y generar JSON
-        run: |
-          npm audit --json > audit-report.json
+        run: npm audit --json > audit-report.json
 
       - name: Obtener lista ordenada de dependencias
-        run: |
-          npm ls --json --all > deps.json
-
-      - name: Instalar dependencias para generar PDF
-        run: npm install -g json2csv pdfkit
+        run: npm ls --json --all > deps.json
 
       - name: Generar reporte en CSV
         run: |
