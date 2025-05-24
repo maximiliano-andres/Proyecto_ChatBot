@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout del código
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Instalar Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
           node-version: "20"
 
@@ -102,13 +102,13 @@ jobs:
           EOF
 
       - name: Subir reporte de dependencias (TXT)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: reporte-dependencias-txt
           path: reporte.txt
 
       - name: Subir reporte de dependencias (PDF)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: reporte-dependencias-pdf
           path: reporte_dependencias.pdf
