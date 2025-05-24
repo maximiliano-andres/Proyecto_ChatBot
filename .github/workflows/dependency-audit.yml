@@ -55,26 +55,60 @@ jobs:
               if (levels[level]) levels[level].push(vuln.name);
             });
           }
-          // Escribir reporte a archivo
+          // Escribir reporte a archivo de texto
           let output = '';
           output += 'Dependencias con Vulnerabilidad Crítica/Alta\n';
           const high = Array.from(new Set([...levels.critical, ...levels.high]));
-          if (high.length) high.forEach(dep => output += dep + '\n');
+          if (high.length) high.forEach(dep => output += '- ' + dep + '\n');
           else output += 'Sin resultados.\n';
           output += '\nDependencias con Vulnerabilidad Media\n';
-          if (levels.moderate.length) levels.moderate.forEach(dep => output += dep + '\n');
+          if (levels.moderate.length) levels.moderate.forEach(dep => output += '- ' + dep + '\n');
           else output += 'Sin resultados.\n';
           output += '\nDependencias con Vulnerabilidad Baja o Sin Vulnerabilidad\n';
           const lowOrNone = dependencies.filter(dep =>
             !high.includes(dep) && !levels.moderate.includes(dep)
           );
-          if (lowOrNone.length) lowOrNone.forEach(dep => output += dep + '\n');
+          if (lowOrNone.length) lowOrNone.forEach(dep => output += '- ' + dep + '\n');
           else output += 'Sin resultados.\n';
           fs.writeFileSync('reporte.txt', output);
           EOF
 
-      - name: Subir reporte de dependencias
+      - name: Instalar pdfkit para reporte PDF
+        run: npm install pdfkit
+
+      - name: Generar reporte PDF de dependencias
+        run: |
+          node <<'EOF'
+          const fs = require('fs');
+          const PDFDocument = require('pdfkit');
+          const txt = fs.readFileSync('reporte.txt', 'utf8');
+          const doc = new PDFDocument();
+          doc.pipe(fs.createWriteStream('reporte_dependencias.pdf'));
+          doc.fontSize(18).text('Reporte de Dependencias y Vulnerabilidades', { align: 'center' });
+          doc.moveDown();
+          txt.split('\n').forEach(line => {
+            if (line.startsWith('Dependencias con')) {
+              doc.moveDown();
+              doc.fontSize(14).text(line, { underline: true });
+            } else if (line.startsWith('- ')) {
+              doc.fontSize(12).text(line);
+            } else if (line.trim() === 'Sin resultados.') {
+              doc.fontSize(12).fillColor('gray').text(line).fillColor('black');
+            } else {
+              doc.fontSize(12).text(line);
+            }
+          });
+          doc.end();
+          EOF
+
+      - name: Subir reporte de dependencias (TXT)
         uses: actions/upload-artifact@v3
         with:
-          name: reporte-dependencias
+          name: reporte-dependencias-txt
           path: reporte.txt
+
+      - name: Subir reporte de dependencias (PDF)
+        uses: actions/upload-artifact@v3
+        with:
+          name: reporte-dependencias-pdf
+          path: reporte_dependencias.pdf
