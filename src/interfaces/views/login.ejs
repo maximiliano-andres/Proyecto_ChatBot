@@ -10,11 +10,12 @@
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="../../../css/main.css" rel="stylesheet">
 
   <style>
     body {
       font-family: 'Montserrat', sans-serif;
-      background: linear-gradient(to right, #0c2235, #18394d);
+      background-image: url('../../../images/back/login.jpg');
       color: #fff;
       min-height: 100vh;
       display: flex;
@@ -85,6 +86,32 @@
   </style>
 </head>
 <body>
+
+  <header id="header" class="header d-flex align-items-center fixed-top">
+        <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+            <a href="/" class="logo d-flex align-items-center me-auto me-lg-0">
+                <!-- Uncomment the line below if you also wish to use an image logo -->
+                <img src="../../../images/back/logo_raiz_financiera.webp" alt="" style="max-height: 64px;">
+
+
+            </a>
+
+            <nav id="navmenu" class="navmenu">
+                <ul>
+                    <li><a href="#hero" class="active">Home<br></a></li>
+                    <li><a href="#about">Acerca de Nosotros</a></li>
+                    <li><a href="#services">Servicios</a></li>
+                    <li><a href="#portfolio">Otros</a></li>
+                    <li><a href="#team">Grupo de trabajo</a></li>
+                    
+
+                </ul>
+                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+              </nav>
+
+        </div>
+    </header>
   <div class="login-card">
 
     <% if (error) { %>
