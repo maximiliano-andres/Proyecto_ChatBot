@@ -1,4 +1,4 @@
-name: Revisar dependencias
+name: Revisión de dependencias y vulnerabilidades
 
 on:
   workflow_dispatch:
@@ -27,16 +27,52 @@ jobs:
       - name: Listar todas las dependencias instaladas
         run: npm list --all
 
-      # Si tienes un escáner de vulnerabilidades, deja el siguiente paso
-      - name: Escanear vulnerabilidades con npm audit
-        run: npm audit --audit-level=low --json || true
+      - name: Correr npm audit y crear reporte por nivel de vulnerabilidad
+        run: |
+          npm audit --json > audit.json
+          node <<'EOF'
+          const fs = require('fs');
+          const audit = JSON.parse(fs.readFileSync('audit.json', 'utf8'));
+          const levels = { critical: [], high: [], moderate: [], low: [], none: [] };
+          const dependencies = [];
+          // Listar TODAS las dependencias
+          try {
+            const list = JSON.parse(require('child_process').execSync('npm ls --json').toString());
+            function collectDeps(obj) {
+              if (obj.dependencies) {
+                Object.entries(obj.dependencies).forEach(([name, dep]) => {
+                  dependencies.push(name);
+                  collectDeps(dep);
+                });
+              }
+            }
+            collectDeps(list);
+          } catch (e) {}
+          // Procesar vulnerabilidades
+          if (audit.vulnerabilities) {
+            Object.values(audit.vulnerabilities).forEach(vuln => {
+              const level = vuln.severity || 'none';
+              if (levels[level]) levels[level].push(vuln.name);
+            });
+          }
+          // Mostrar por nivel
+          console.log('Dependencias con Vulnerabilidad Crítica/Alta');
+          const high = Array.from(new Set([...levels.critical, ...levels.high]));
+          if (high.length) high.forEach(dep => console.log(dep));
+          else console.log('Sin resultados.');
+          console.log('\nDependencias con Vulnerabilidad Media');
+          if (levels.moderate.length) levels.moderate.forEach(dep => console.log(dep));
+          else console.log('Sin resultados.');
+          console.log('\nDependencias con Vulnerabilidad Baja o Sin Vulnerabilidad');
+          const lowOrNone = dependencies.filter(dep =>
+            !high.includes(dep) && !levels.moderate.includes(dep)
+          );
+          if (lowOrNone.length) lowOrNone.forEach(dep => console.log(dep));
+          else console.log('Sin resultados.');
+          EOF
 
-      # (Opcional) Subir el listado a los artefactos del workflow
-      - name: Guardar reporte de dependencias
-        run: npm list --all > reporte_dependencias.txt
-
-      - name: Subir reporte como artefacto
+      - name: Subir reporte de auditoría
         uses: actions/upload-artifact@v3
         with:
-          name: reporte-dependencias
-          path: reporte_dependencias.txt
+          name: reporte-auditoria
+          path: audit.json
