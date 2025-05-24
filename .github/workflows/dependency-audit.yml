@@ -1,0 +1,69 @@
+name: Dependency Audit & PDF Report
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Ejecutar auditoría de dependencias
+        run: npm audit --json > audit-report.json
+
+      - name: Instalar dependencias para reporte PDF
+        run: npm install -g json2md puppeteer
+
+      - name: Generar reporte Markdown desde JSON
+        run: |
+          node -e "
+          const fs = require('fs');
+          const json2md = require('json2md');
+          const data = JSON.parse(fs.readFileSync('audit-report.json'));
+          const advisories = data.vulnerabilities || {};
+          let rows = [];
+          for (const [dep, vuln] of Object.entries(advisories)) {
+            rows.push({ Dependency: dep, Severity: vuln.severity, Title: vuln.title, URL: vuln.url });
+          }
+          const md = json2md([
+            { h1: 'Reporte de Vulnerabilidades de Dependencias' },
+            { p: 'Generado automáticamente por GitHub Actions.' },
+            { table: { headers: ['Dependency', 'Severity', 'Title', 'URL'], rows } }
+          ]);
+          fs.writeFileSync('audit-report.md', md);
+          "
+
+      - name: Convertir Markdown a PDF
+        run: |
+          node -e "
+          const fs = require('fs');
+          const puppeteer = require('puppeteer');
+          (async () => {
+            const browser = await puppeteer.launch();
+            const page = await browser.newPage();
+            const md = fs.readFileSync('audit-report.md', 'utf8');
+            await page.setContent('<pre>' + md.replace(/</g, '&lt;') + '</pre>');
+            await page.pdf({ path: 'audit-report.pdf', format: 'A4' });
+            await browser.close();
+          })();
+          "
+
+      - name: Subir artefacto PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-report
+          path: audit-report.pdf
