@@ -1,4 +1,4 @@
-name: Generar reporte de vulnerabilidades
+name: Auditoría de Dependencias y Generación de PDF
 
 on:
   workflow_dispatch:
@@ -6,66 +6,78 @@ on:
     branches: [prueba_1]
 
 jobs:
-  audit:
+  audit-dependencies:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout del código
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Instalar dependencias
         run: npm install
 
-      - name: Ejecutar auditoría de seguridad
-        run: npm audit --json > audit.json
-
-      - name: Instalar dependencias Python para PDF
+      - name: Auditar dependencias y generar JSON
         run: |
-          sudo apt-get update
-          sudo apt-get install python3-pip -y
-          pip3 install reportlab
+          npm audit --json > audit-report.json
 
-      - name: Generar reporte PDF de vulnerabilidades
+      - name: Obtener lista ordenada de dependencias
         run: |
-          python3 <<EOF
-          import json
-          from reportlab.lib.pagesizes import letter
-          from reportlab.pdfgen import canvas
+          npm ls --json --all > deps.json
 
-          with open('audit.json', 'r') as f:
-              data = json.load(f)
+      - name: Instalar dependencias para generar PDF
+        run: npm install -g json2csv pdfkit
 
-          c = canvas.Canvas("reporte_vulnerabilidades.pdf", pagesize=letter)
-          c.setFont("Helvetica-Bold", 16)
-          c.drawString(72, 750, "Reporte de Vulnerabilidades de Dependencias")
-          c.setFont("Helvetica", 12)
-          y = 720
+      - name: Generar reporte en CSV
+        run: |
+          node << 'EOF'
+          const fs = require('fs');
+          const { Parser } = require('json2csv');
+          const audit = JSON.parse(fs.readFileSync('audit-report.json'));
+          const deps = JSON.parse(fs.readFileSync('deps.json')).dependencies || {};
+          const results = [];
+          function collectDeps(obj, parent = '') {
+            Object.entries(obj).forEach(([name, info]) => {
+              results.push({
+                name,
+                version: info.version,
+                path: parent ? `${parent} > ${name}` : name
+              });
+              if (info.dependencies) collectDeps(info.dependencies, name);
+            });
+          }
+          collectDeps(deps);
+          results.sort((a, b) => a.name.localeCompare(b.name));
+          // Extrae vulnerabilidades altas y críticas
+          const vulns = (audit.advisories || {});
+          const vulnMap = {};
+          Object.values(vulns).forEach(v => {
+            if (['high', 'critical'].includes(v.severity)) {
+              (v.findings || []).forEach(f => vulnMap[f.version] = v.severity);
+            }
+          });
+          results.forEach(r => r.severity = vulnMap[r.version] || 'none');
+          const parser = new Parser();
+          fs.writeFileSync('reporte.csv', parser.parse(results));
+          EOF
 
-          c.drawString(72, y, f"Total de vulnerabilidades: {data.get('metadata', {}).get('vulnerabilities', {})}")
-          y -= 24
-
-          advisories = data.get("advisories", {})
-          if advisories:
-              for advisory in advisories.values():
-                  if y < 100:
-                      c.showPage()
-                      y = 750
-                  c.setFont("Helvetica-Bold", 12)
-                  c.drawString(72, y, f"{advisory['module_name']} - {advisory['severity'].capitalize()}")
-                  y -= 16
-                  c.setFont("Helvetica", 10)
-                  c.drawString(100, y, f"ID: {advisory['id']}, {advisory['title']}")
-                  y -= 14
-                  c.drawString(100, y, f"URL: {advisory['url']}")
-                  y -= 14
-                  c.drawString(100, y, f"Recomendación: {advisory['recommendation']}")
-                  y -= 20
-          else:
-              c.drawString(72, y, "No se encontraron vulnerabilidades.")
-          c.save()
+      - name: Generar PDF con reporte
+        run: |
+          node << 'EOF'
+          const fs = require('fs');
+          const PDFDocument = require('pdfkit');
+          const csv = fs.readFileSync('reporte.csv').toString().split('\n');
+          const doc = new PDFDocument();
+          doc.pipe(fs.createWriteStream('reporte_dependencias.pdf'));
+          doc.fontSize(20).text('Reporte de Dependencias', { align: 'center' });
+          doc.moveDown();
+          doc.fontSize(12).text('Parámetros evaluados: nombre, versión, path, severidad (alto/crítico/ninguno)');
+          doc.moveDown();
+          csv.forEach(line => doc.text(line));
+          doc.end();
           EOF
 
       - name: Subir reporte como artefacto
         uses: actions/upload-artifact@v4
         with:
-          name: reporte_vulnerabilidades
-          path: reporte_vulnerabilidades.pdf
+          name: reporte_dependencias
+          path: reporte_dependencias.pdf
