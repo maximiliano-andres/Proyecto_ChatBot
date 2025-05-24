@@ -1,0 +1,17 @@
+.body {
+    background-color: #0080ff;
+}
+
+.card {
+    border-radius: 1rem;
+    background-color: #ffffff;
+}
+
+.card h3 {
+    color: #003366;
+}
+
+.badge {
+    font-weight: 500;
+    font-size: 0.95rem;
+}

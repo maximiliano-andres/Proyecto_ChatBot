@@ -94,10 +94,10 @@ class HomeController {
 
             const titulo = "Integrantes del Grupo";
             const integrantes = [
-                { nombre: "Jocelyn Rivera", rol: "Estudiante Tec. Programación Computacional", foto: "./images/perfil/perfil_default.webp" },
-                { nombre: "Lisette Godoy", rol: "Estudiante Tec. Programación Computacional", foto: "" },
-                { nombre: "Maximiliano Caniullan", rol: "Estudiante Tec. Programación Computacional", foto: "" },
-                { nombre: "Ramiro Fonseca", rol: "Estudiante Tec. Programación Computacional", foto: "" }
+                { nombre: "Jocelyn Rivera", carrera: "Estudiante Tec. Programación Computacional", foto: "./images/grupo/jocelyn_rivera.jpg" , descripcion:"Desarrolladora Frontend"},
+                { nombre: "Lisette Godoy", carrera: "Estudiante Tec. Programación Computacional", foto: "./images/grupo/lisette_godoy.jpg", descripcion:"Desarrolladora Frontend" },
+                { nombre: "Maximiliano Caniullan", carrera: "Estudiante Tec. Programación Computacional", foto: "./images/grupo/maximiliano_caniullan.jpg", descripcion:"Desarrolladora Frontend" },
+                { nombre: "Ramiro Fonseca", carrera: "Estudiante Tec. Programación Computacional", foto: "./images/grupo/ramiro_fonseca.jpg",descripcion:"Desarrolladora Frontend" }
             ];
 
             return res.render("grupo",{

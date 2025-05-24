@@ -11,20 +11,18 @@
   <link rel="shortcut icon" href="#" type="image/x-icon" />
     <link rel="apple-touch-icon" href="#" />
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css" />
-    <!-- Pogo Slider CSS -->
-    <link rel="stylesheet" href="css/pogo-slider.min.css" />
-    <!-- Site CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    <!-- Responsive CSS -->
-    <link rel="stylesheet" href="css/responsive.css" />
-    <!-- Custom CSS -->
 
-    <link rel="stylesheet" href="css/chat.css" />
+    <link href="../../../css/main.css" rel="stylesheet">
+    <link href="../../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="../../../vendor/aos/aos.css" rel="stylesheet">
+    <link href="../../../vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <link href="../../../vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
 </head>
 
 <body>
+
+
   <header class="bg-dark text-white p-3">
     <div class="container-fluid d-flex justify-content-between align-items-center">
       <h1 class="h3">Raíz Financiera - <span class="badge bg-primary">Panel de Administración</span></h1>
@@ -364,64 +362,71 @@
       </div>
     </div>
   </main>
-   <!-- Start Footer -->
-    <footer class="footer-box">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 white_fonts">
-                    <div class="row">
-                        <div class="col-sm-6 col-md-6 col-lg-3">
-                            <div class="full">
-                                <img class="img-responsive" src="images/back/Logo_Cuadro.webp" alt="#" />
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-6 col-lg-3">
-                            <div class="full">
-                                <h3>Enlaces Rápidos</h3>
-                            </div>
-                            <div class="full">
-                                <ul class="menu_footer">
-                                    <li><a href="home.html">> Nosotros</a></li>
-                                    <li><a href="about.html">> Acerda de</a></li>
-                                    <li><a href="exchange.html">> Intercambio</a></li>
-                                    <li><a href="services.html">> Servicios</a></li>
-                                    <li><a href="new.html">> Proximamente</a></li>
-                                    <li><a href="contact.html">> Contacto</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-6 col-lg-3">
-                            <div class="full">
-                                <div class="footer_blog full white_fonts">
-                                    <h3>Noticias</h3>
-                                    <p>No te pierdas ninguna novedad! Inscríbete con tu correo y recibe las últimas
-                                        noticias, productos y oportunidades de nuestro banco financiero.</p>
-                                    <div class="newsletter_form">
-                                        <form action="index.html">
-                                            <input type="email" placeholder="Ingresa Tu Correo" name="#" required="">
-                                            <button>Subir</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-6 col-lg-3">
-                            <div class="full">
-                                <div class="footer_blog full white_fonts">
-                                    <h3>Contactanos</h3>
-                                    <ul class="full">
-                                        <li><img src="images/i5.png"><span> Avenida Central 1234<br>Santiago,
-                                                Chile</span></li>
-                                        <li><img src="images/i6.png"><span>RaizFinanciera@gmail.com</span></li>
-                                        <li><img src="images/i7.png"><span>+56978449038</span></li>
-                                    </ul>
-                                </div>
-                            </div>
+   
+  <footer id="footer" class="footer dark-background">
+
+        <div class="footer-top">
+            <div class="container">
+                <div class="row gy-4">
+                    <div class="col-lg-4 col-md-6 footer-about">
+                        <a href="/" class="logo d-flex align-items-center">
+                            <img src="../../../images/back/logo_raiz_financiera.webp" alt="" style="max-height: 120px;">
+                        </a>
+
+                        <div class="social-links d-flex mt-4">
+                            <a href=""><i class="bi bi-twitter-x"></i></a>
+                            <a href=""><i class="bi bi-facebook"></i></a>
+                            <a href=""><i class="bi bi-instagram"></i></a>
+                            <a href=""><i class="bi bi-linkedin"></i></a>
                         </div>
                     </div>
+
+                    <div class="col-lg-2 col-md-3 footer-links">
+                        <h4>Acceso Rapido</h4>
+                        <ul>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Home</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Acerca de Nosotros</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Servicios</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Otros</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Grupo de Trabajo</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-2 col-md-3 footer-links">
+                        <h4>Nuestros Servicios</h4>
+                        <ul>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Web Design</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Web Development</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Product Management</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Marketing</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Graphic Design</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-4 col-md-12 footer-newsletter">
+                        <h4>Our Newsletter</h4>
+                        <p>Subscribe to our newsletter and receive the latest news about our products and services!</p>
+                        <form action="forms/newsletter.php" method="post" class="php-email-form">
+                            <div class="newsletter-form"><input type="email" name="email"><input type="submit"
+                                    value="Subscribe"></div>
+                            <div class="loading">Loading</div>
+                            <div class="error-message"></div>
+                            <div class="sent-message">Your subscription request has been sent. Thank you!</div>
+                        </form>
+                    </div>
+
                 </div>
             </div>
         </div>
+
+        <div class="copyright">
+            <div class="container text-center">
+                <p>© <span>Copyright</span> <strong class="px-1 sitename">Raíz Financiera</strong> <span>All Rights
+                        Reserved</span></p>
+
+            </div>
+        </div>
+
     </footer>
     
 
@@ -434,5 +439,7 @@
 
 
 </body>
+
+
 
 </html>

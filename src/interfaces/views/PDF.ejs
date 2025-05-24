@@ -1,39 +1,48 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualización del Contrato</title>
-    <link rel="stylesheet" href="/css/PDF.css">
 
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visualización del Contrato</title>
+    <link rel="stylesheet" href="/css/PDF.css" />
+
+    <link href="../../../css/PDF.css" rel="stylesheet">
 </head>
+
 <body>
     <div class="container">
         <div class="pdf-viewer">
             <h1>📄 Visualización del Contrato Antes de la Firma</h1>
+
             <% if (vista_pdf) { %>
                 <iframe src="../../PDF/<%= vista_pdf %>" allowfullscreen type="application/pdf"></iframe>
-            <% } else { %>
-                <p class="error">El archivo PDF no está disponible.</p>
-            <% } %>
-            <div>
-                <a href="/" class="btn btn-secondary">🏠 Volver al Home</a>
-                <form action="/pdf" method="post" style="display:inline;">
-                    <button type="submit" class="btn btn-primary">🖋️ Firmar Contrato</button>
-                </form>
-                
-            </div>
+                <% } else { %>
+                    <p class="error">El archivo PDF no está disponible.</p>
+                    <% } %>
+
+                        <div>
+                            <a href="/" class="btn btn-secondary">Volver al Home</a>
+                            <form action="/pdf" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-primary">Firmar Contrato</button>
+                            </form>
+                        </div>
         </div>
+
         <div class="legal-info">
             <h2>📜 Instrucciones Legales para la Firma</h2>
-            <br><p class="fw-bold"> Importante: La Firma mostrada es solo un ejemplo de visualizacion, esta no corresponde a la firma original que séra guardada en nuestra base de datos</p>
-            <br><p>1. Revise el contenido del contrato antes de proceder con la firma.</p>
-            <br><p>2. Asegúrese de que todos los datos personales sean correctos.</p>
-            <br><p>3. La firma del contrato implica la aceptación de los términos y condiciones estipulados.</p>
-            <br><p>4. En caso de dudas o discrepancias, comuníquese con nuestro servicio de atención al cliente antes de firmar.</p>
-            <br><p>5. Una vez firmado, el contrato será vinculante y se almacenará de manera segura.</p>
-            <br><p>6. Si usted NO quiere continuar con el proceso solo debe hacer "CLICK" en "Volver al HOME" y se cancelará el proceso de contrato.</p>
+            <p class="fw-bold">Importante: La firma mostrada es solo un ejemplo de visualización, esta no corresponde a
+                la firma original que será guardada en nuestra base de datos.</p>
+            <p>1. Revise el contenido del contrato antes de proceder con la firma.</p>
+            <p>2. Asegúrese de que todos los datos personales sean correctos.</p>
+            <p>3. La firma del contrato implica la aceptación de los términos y condiciones estipulados.</p>
+            <p>4. En caso de dudas o discrepancias, comuníquese con nuestro servicio de atención al cliente antes de
+                firmar.</p>
+            <p>5. Una vez firmado, el contrato será vinculante y se almacenará de manera segura.</p>
+            <p>6. Si usted NO desea continuar con el proceso, haga clic en "Volver al HOME" y se cancelará el proceso de
+                contrato.</p>
         </div>
     </div>
 </body>
+
 </html>
