@@ -3,7 +3,7 @@ name: Revisión de dependencias y vulnerabilidades
 on:
   workflow_dispatch:
   push:
-    branches: 
+    branches:
       - '**'
   pull_request:
     branches:
@@ -19,7 +19,7 @@ jobs:
       - name: Instalar Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Instalar dependencias
         run: npm install
