@@ -74,8 +74,9 @@ jobs:
       - name: Debug audit.json existence
         run: ls -l audit.json
 
-      - name: Subir reporte de auditoría
+      - name: Subir reporte de dependencias
+        if: ${{ always() && hashFiles('ruta/al/archivo.txt') != '' }}
         uses: actions/upload-artifact@v3
         with:
-          name: reporte-auditoria
-          path: audit.json
+          name: reporte-dependencias
+          path: ruta/al/archivo.txt
