@@ -55,28 +55,26 @@ jobs:
               if (levels[level]) levels[level].push(vuln.name);
             });
           }
-          // Mostrar por nivel
-          console.log('Dependencias con Vulnerabilidad Crítica/Alta');
+          // Escribir reporte a archivo
+          let output = '';
+          output += 'Dependencias con Vulnerabilidad Crítica/Alta\n';
           const high = Array.from(new Set([...levels.critical, ...levels.high]));
-          if (high.length) high.forEach(dep => console.log(dep));
-          else console.log('Sin resultados.');
-          console.log('\nDependencias con Vulnerabilidad Media');
-          if (levels.moderate.length) levels.moderate.forEach(dep => console.log(dep));
-          else console.log('Sin resultados.');
-          console.log('\nDependencias con Vulnerabilidad Baja o Sin Vulnerabilidad');
+          if (high.length) high.forEach(dep => output += dep + '\n');
+          else output += 'Sin resultados.\n';
+          output += '\nDependencias con Vulnerabilidad Media\n';
+          if (levels.moderate.length) levels.moderate.forEach(dep => output += dep + '\n');
+          else output += 'Sin resultados.\n';
+          output += '\nDependencias con Vulnerabilidad Baja o Sin Vulnerabilidad\n';
           const lowOrNone = dependencies.filter(dep =>
             !high.includes(dep) && !levels.moderate.includes(dep)
           );
-          if (lowOrNone.length) lowOrNone.forEach(dep => console.log(dep));
-          else console.log('Sin resultados.');
+          if (lowOrNone.length) lowOrNone.forEach(dep => output += dep + '\n');
+          else output += 'Sin resultados.\n';
+          fs.writeFileSync('reporte.txt', output);
           EOF
 
-      - name: Debug audit.json existence
-        run: ls -l audit.json
-
       - name: Subir reporte de dependencias
-        if: ${{ always() && hashFiles('ruta/al/archivo.txt') != '' }}
         uses: actions/upload-artifact@v3
         with:
           name: reporte-dependencias
-          path: ruta/al/archivo.txt
+          path: reporte.txt
