@@ -19,14 +19,14 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Instalar dependencias
+      - name: Instalar dependencias del proyecto
         run: npm install
+
+      - name: Instalar dependencias extra para el reporte PDF
+        run: npm install json2md puppeteer
 
       - name: Ejecutar auditoría de dependencias
         run: npm audit --json > audit-report.json
-
-      - name: Instalar dependencias para reporte PDF
-        run: npm install json2md puppeteer
 
       - name: Generar reporte Markdown desde JSON
         run: |
@@ -34,10 +34,12 @@ jobs:
           const fs = require('fs');
           const json2md = require('json2md');
           const data = JSON.parse(fs.readFileSync('audit-report.json'));
-          const advisories = data.vulnerabilities || {};
+          const advisories = data.vulnerabilities ? data.vulnerabilities : {};
           let rows = [];
           for (const [dep, vuln] of Object.entries(advisories)) {
-            rows.push({ Dependency: dep, Severity: vuln.severity, Title: vuln.title, URL: vuln.url });
+            if (vuln.severity && vuln.title && vuln.url) {
+              rows.push({ Dependency: dep, Severity: vuln.severity, Title: vuln.title, URL: vuln.url });
+            }
           }
           const md = json2md([
             { h1: 'Reporte de Vulnerabilidades de Dependencias' },
@@ -53,7 +55,7 @@ jobs:
           const fs = require('fs');
           const puppeteer = require('puppeteer');
           (async () => {
-            const browser = await puppeteer.launch();
+            const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
             const page = await browser.newPage();
             const md = fs.readFileSync('audit-report.md', 'utf8');
             await page.setContent('<pre>' + md.replace(/</g, '&lt;') + '</pre>');
