@@ -3,7 +3,11 @@ name: Auditoría de Dependencias y Generación de PDF
 on:
   workflow_dispatch:
   push:
-    branches: [prueba_1]
+    branches: 
+      - '**'
+  pull_request:
+    branches:
+      - '**'
 
 jobs:
   audit-dependencies:
@@ -66,13 +70,49 @@ jobs:
           const fs = require('fs');
           const PDFDocument = require('pdfkit');
           const csv = fs.readFileSync('reporte.csv').toString().split('\n');
-          const doc = new PDFDocument();
+          const headers = csv[0].split(',');
+          const rows = csv.slice(1).filter(Boolean).map(line => {
+            const cols = line.split(',');
+            return {
+              name: cols[0],
+              version: cols[1],
+              path: cols[2],
+              severity: cols[3]
+            };
+          });
+
+          // Clasifica por severidad
+          const criticas = rows.filter(r => r.severity === 'critical' || r.severity === 'high');
+          const medias = rows.filter(r => r.severity === 'moderate' || r.severity === 'medium');
+          const bajas = rows.filter(r => r.severity === 'low' || r.severity === 'none' || !r.severity);
+
+          const doc = new PDFDocument({ margin: 30 });
           doc.pipe(fs.createWriteStream('reporte_dependencias.pdf'));
           doc.fontSize(20).text('Reporte de Dependencias', { align: 'center' });
           doc.moveDown();
-          doc.fontSize(12).text('Parámetros evaluados: nombre, versión, path, severidad (alto/crítico/ninguno)');
-          doc.moveDown();
-          csv.forEach(line => doc.text(line));
+
+          function printTable(title, data) {
+            doc.fontSize(16).text(title, { underline: true });
+            doc.moveDown(0.5);
+            if (data.length === 0) {
+              doc.fontSize(12).text('Sin resultados.', { italic: true });
+              doc.moveDown();
+              return;
+            }
+            // Imprime encabezados
+            doc.fontSize(12).text(headers.join(' | '), { bold: true });
+            doc.moveDown(0.2);
+            // Imprime filas
+            data.forEach(row => {
+              doc.text([row.name, row.version, row.path, row.severity].join(' | '));
+            });
+            doc.moveDown();
+          }
+
+          printTable('Dependencias con Vulnerabilidad Crítica/Alta', criticas);
+          printTable('Dependencias con Vulnerabilidad Media', medias);
+          printTable('Dependencias con Vulnerabilidad Baja o Sin Vulnerabilidad', bajas);
+
           doc.end();
           EOF
 
