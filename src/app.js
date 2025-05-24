@@ -43,6 +43,7 @@ app.use("/grupo", router);
 
 //./public/img/Logo_Cuadro.png
 
+app.use(ErrorHandler.error403)
 app.use(ErrorHandler.error404);
 app.use(ErrorHandler.error500);
 

@@ -6,6 +6,14 @@ class ErrorHandler {
         });
     }
 
+    // Middleware para manejar errores de autorización (Error 403)
+    static error403(err, req, res, next) {
+        console.error('Error 403:', err.message);
+        return res.status(403).render("error43", {
+            title: "Error 403"
+        });
+    }
+
     // Middleware para errores generales de la aplicación
     static error400(err, req, res, next) {
         console.error('Error 400:', err.message);

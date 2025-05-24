@@ -7,243 +7,191 @@
     <title>Perfil de Usuario</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="shortcut icon" href="#" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="#" />
+    <link href="../../../css/main.css" rel="stylesheet">
+    <link href="../../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="../../../vendor/aos/aos.css" rel="stylesheet">
+    <link href="../../../vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <link href="../../../vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css" />
-    <!-- Pogo Slider CSS -->
-    <link rel="stylesheet" href="css/pogo-slider.min.css" />
-    <!-- Site CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    <!-- Responsive CSS -->
-    <link rel="stylesheet" href="css/responsive.css" />
-    <!-- Custom CSS -->
-
-    <link rel="stylesheet" href="css/chat.css" />
+    <link href="../../../css/perfil.css" rel="stylesheet">
 </head>
 
 <body class="bg-light">
 
     <!-- Start header -->
-    <header class="top-header">
-        <div class="header_top">
-            <div class="container">
-                <div class="row">
-                    <div class="logo_section">
-                        <a class="navbar-brand" href="/"><img  src="images/back/logo_raiz_financiera.webp" alt="image" style="max-width: 180px; height: auto;" ></a>
-                    </div>
-                    <div class="site_information">
-                        <ul>
-                            <li><a href="mailto:exchang@gmail.com"><img class="img-responsive" style="max-width: auto; max-height: auto;" src="images/mail_icon.png"
-                                        alt="#" /><br>RaizFinanciera@gmail.com</a></li>
-                            <li><a href="tel:exchang@gmail.com"><img src="images/phone_icon.png"
-                                        alt="#" /><br>+56978449038</a></li>
-                            <li>
-                                <% if (!token) { %>
-                                    <a class="join_bt" href="/login">Login</a>
-                                    <% } else { %>
-                                        <a class="join_bt" href="/logout">Cerrar Sesion</a>
-                                        <% } %>
-                            </li>
+    <header id="header" class="header d-flex align-items-center fixed-top">
+        <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
+            <a href="/" class="logo d-flex align-items-center me-auto me-lg-0">
+                <!-- Uncomment the line below if you also wish to use an image logo -->
+                <img src="../../../images/back/logo_raiz_financiera.webp" alt="" style="max-height: 64px;">
+
+
+            </a>
+
+            <nav id="navmenu" class="navmenu">
+                <ul>
+                    <li><a href="#hero" class="active">Home<br></a></li>
+                    <li><a href="#about">Acerca de Nosotros</a></li>
+                    <li><a href="#services">Servicios</a></li>
+                    <li><a href="#portfolio">Otros</a></li>
+                    <li><a href="#team">Grupo de trabajo</a></li>
+                    <% if (token) { %>
+                        <li><a href="/perfil">Perfil</a></li>
+                        <% } %>
+
+                            <% if (role==="admin" ) { %>
+                                <li><a href="/tablas">Control Administracion</a></li>
+                                <% } %>
+
+                </ul>
+                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+            </nav>
+
+            <% if (!token) { %>
+                <a class="btn-getstarted" href="/login">Login</a>
+                <% } else { %>
+                    <a class="btn-getstarted" href="/logout">Cerrar Sesion</a>
+                    <% } %>
+
+        </div>
+    </header>
+    
+<section class="d-flex align-items-center justify-content-center min-vh-100">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card shadow-lg border-0 rounded-4">
+          <div class="card-body p-5">
+            <% usuario.forEach(datos => { %>
+              <div class="text-center mb-4">
+                <img src="/images/perfil/perfil_default.webp" alt="Avatar" class="rounded-circle shadow-sm" width="120" height="120">
+                <h3 class="mt-3 fw-semibold">
+                  <%= datos.nombre1 %> <%= datos.nombre2 %> <%= datos.apellido1 %> <%= datos.apellido2 %>
+                </h3>
+                <span class="badge bg-primary fs-6 px-3 py-2 mt-2"><%= datos.email %></span>
+              </div>
+
+              <div class="row text-center mb-4">
+                <div class="col-md-6 mb-3">
+                  <h6 class="text-muted">Teléfono</h6>
+                  <p class="fw-medium"><%= datos.telefono || 'No disponible' %></p>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <h6 class="text-muted">Dirección</h6>
+                  <p class="fw-medium"><%= datos.direccion || 'No registrada' %></p>
+                </div>
+              </div>
+
+              <div class="row text-center mb-4">
+                <div class="col-md-6 mb-3">
+                  <h6 class="text-muted">Fecha de registro</h6>
+                  <p class="fw-medium"><%= new Date(datos.createdAt).toLocaleDateString('es-CL') %></p>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <h6 class="text-muted">Rol</h6>
+                  <% if (datos.role === "admin") { %>
+                    <span class="badge bg-success px-3 py-2">Administrador</span>
+                  <% } else if (datos.role === "cliente") { %>
+                    <span class="badge bg-secondary px-3 py-2">Cliente</span>
+                  <% } else { %>
+                    <span class="badge bg-dark px-3 py-2"><%= datos.role %></span>
+                  <% } %>
+                </div>
+              </div>
+
+              <div class="text-center mb-4">
+                <h6 class="text-muted">Estado</h6>
+                <% if (datos.estado === "activa") { %>
+                  <span class="badge bg-success fs-6 px-3 py-2">Activa</span>
+                <% } else if (datos.estado === "bloqueada") { %>
+                  <span class="badge bg-danger fs-6 px-3 py-2">Bloqueada</span>
+                <% } else if (datos.estado === "vencida") { %>
+                  <span class="badge bg-warning text-dark fs-6 px-3 py-2">Vencida</span>
+                <% } else { %>
+                  <span class="badge bg-secondary fs-6 px-3 py-2"><%= datos.estado %></span>
+                <% } %>
+              </div>
+            <% }) %>
+
+            <div class="d-flex justify-content-between mt-4">
+              <a href="/usuarios/editar/<%= usuario.id %>" class="btn btn-outline-primary">Editar Perfil</a>
+              <a href="/" class="btn btn-outline-success">Volver al Home</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+    <footer id="footer" class="footer dark-background">
+
+        <div class="footer-top">
+            <div class="container">
+                <div class="row gy-4">
+                    <div class="col-lg-4 col-md-6 footer-about">
+                        <a href="/" class="logo d-flex align-items-center">
+                            <img src="../../../images/back/logo_raiz_financiera.webp" alt="" style="max-height: 120px;">
+                        </a>
+
+                        <div class="social-links d-flex mt-4">
+                            <a href=""><i class="bi bi-twitter-x"></i></a>
+                            <a href=""><i class="bi bi-facebook"></i></a>
+                            <a href=""><i class="bi bi-instagram"></i></a>
+                            <a href=""><i class="bi bi-linkedin"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-3 footer-links">
+                        <h4>Acceso Rapido</h4>
+                        <ul>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Home</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Acerca de Nosotros</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Servicios</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Otros</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Grupo de Trabajo</a></li>
                         </ul>
                     </div>
-                </div>
-            </div>
 
-        </div>
-        <div class="header_bottom">
-            <div class="container">
-                <div class="col-sm-12">
-                    <div class="menu_orange_section" style="background: #e6bc03;">
-                        <nav class="navbar header-nav navbar-expand-lg">
-                            <div class="menu_section">
-                                <button class="navbar-toggler" type="button" data-toggle="collapse"
-                                    data-target="#navbar-wd" aria-controls="navbar-wd" aria-expanded="false"
-                                    aria-label="Toggle navigation">
-                                    
-                                </button>
-                                <div class="collapse navbar-collapse justify-content-end" id="navbar-wd">
-                                    <<ul class="navbar-nav">
-                                        <li><a class="nav-link active" href="#nosotros">Nosotros</a></li>
-                                        <li><a class="nav-link" href="#intercambio">Intercambio</a></li>
-                                        <!-- Actualizar enlaces para anclar a las secciones -->
-                                        <li><a class="nav-link" href="#servicios">Servicios</a></li>
-
-                                        <% if (token) { %>
-                                            <li><a class="nav-link" href="/perfil">Perfil</a></li>
-                                            <% } %>
-
-                                        <% if (role === "admin") { %>                                                                               
-                                        <li><a class="nav-link" href="/tablas">Control Administrativo</a></li>
-                                        <% } %>
-                                    </ul>
-
-                                </div>
-                            </div>
-                        </nav>
-                        <div class="search-box">
-                            <input type="text" class="search-txt" placeholder="Buscar">
-                            <a class="search-btn">
-                                <img src="images/search_icon.png" alt="#" />
-                            </a>
-                        </div>
+                    <div class="col-lg-2 col-md-3 footer-links">
+                        <h4>Nuestros Servicios</h4>
+                        <ul>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Web Design</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Web Development</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Product Management</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Marketing</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Graphic Design</a></li>
+                        </ul>
                     </div>
-                </div>
-            </div>
-        </div>
 
-    </header>
-
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow rounded-4">
-                    <div class="card-body p-4">
-<% usuario.forEach(datos=> { %>
-                        <div class="d-flex align-items-center mb-4">
-                            <img src="images/perfil/perfil_default.webp" alt="Avatar"
-                                class="rounded-circle me-3" width="100" height="100">
-                            <div>
-                                <h4 class="mb-1">
-                                    <%= datos.nombre1 %>
-                                    <%= datos.nombre2 %>
-                                    <%= datos.apellido1 %>
-                                    <%= datos.apellido2 %>
-                                </h4>
-                                <p class="mb-0 text-muted">
-                                    <h2 class="badge bg-primary fs-6 px-3 py-2"><%= datos.email %></h2>
-                                </p>
-                            </div>
-                            <!-- ROL DESTACADO -->
-                            <div class="ms-auto">
-                                <% if (datos.role==="admin" ) { %>
-                                    <span class="badge bg-primary fs-6 px-3 py-2">Administrador</span>
-                                    <% } else if (datos.role==="cliente" ) { %>
-                                    <span class="badge bg-secondary fs-6 px-3 py-2">Cliente</span>
-                                    <% } else { %>
-                                    <span class="badge bg-dark fs-6 px-3 py-2">
-                                    <%= datos.role %>
-                                    </span>
-                                    <% } %>
-                            </div>
-                        </div>
-
-                        <hr>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="text-muted">Teléfono</h6>
-                                <p>
-                                    <%= datos.telefono || 'No disponible' %>
-                                </p>
-                            </div>
-                            <div class="col-md-6">
-                                <h6 class="text-muted">Dirección</h6>
-                                <p>
-                                    <%= datos.direccion || 'No registrada' %>
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="text-muted">Fecha de registro</h6>
-                                <p>
-                                    <%= new Date(datos.createdAt).toLocaleDateString('es-CL') %>
-                                </p>
-                            </div>
-                            <div class="col-md-6">
-                                <h6 class="text-muted">Estado</h6>
-                                <% if (datos.estado==="activa" ) { %>
-                                <span class="badge bg-success">Activa</span>
-                                <% } else if (datos.estado==="bloqueada" ) { %>
-                                <span class="badge bg-danger">Bloqueada</span>
-                                <% } else if (datos.estado==="vencida" ) { %>
-                                <span class="badge bg-warning text-dark">Vencida</span>
-                                <% } else { %>
-                                <span class="badge bg-secondary">
-                                <%= datos.estado %>
-                                </span>
-                                <% } %>
-                            </div>
-                        </div>
-<% }) %>
-                        <div class="text-end mt-4">
-                            <a href="/usuarios/editar/<%= usuario.id %>" class="btn btn-outline-primary">Editar
-                                Perfil</a>
-                        </div>
-                        <div class="text-end mt-4">
-                            <a href="/" class="btn btn-outline-success"> Volver a Home</a>
-                        </div>
-
+                    <div class="col-lg-4 col-md-12 footer-newsletter">
+                        <h4>Our Newsletter</h4>
+                        <p>Subscribe to our newsletter and receive the latest news about our products and services!</p>
+                        <form action="forms/newsletter.php" method="post" class="php-email-form">
+                            <div class="newsletter-form"><input type="email" name="email"><input type="submit"
+                                    value="Subscribe"></div>
+                            <div class="loading">Loading</div>
+                            <div class="error-message"></div>
+                            <div class="sent-message">Your subscription request has been sent. Thank you!</div>
+                        </form>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Start Footer -->
-    <footer class="footer-box">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 white_fonts">
-                    <div class="row">
-                        <div class="col-sm-6 col-md-6 col-lg-3">
-                            <div class="full">
-                                <img class="img-responsive" src="images/back/Logo_Cuadro.webp" alt="#" />
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-6 col-lg-3">
-                            <div class="full">
-                                <h3>Enlaces Rápidos</h3>
-                            </div>
-                            <div class="full">
-                                <ul class="menu_footer">
-                                    <li><a href="home.html">> Nosotros</a></li>
-                                    <li><a href="about.html">> Acerda de</a></li>
-                                    <li><a href="exchange.html">> Intercambio</a></li>
-                                    <li><a href="services.html">> Servicios</a></li>
-                                    <li><a href="new.html">> Proximamente</a></li>
-                                    <li><a href="contact.html">> Contacto</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-6 col-lg-3">
-                            <div class="full">
-                                <div class="footer_blog full white_fonts">
-                                    <h3>Noticias</h3>
-                                    <p>No te pierdas ninguna novedad! Inscríbete con tu correo y recibe las últimas
-                                        noticias, productos y oportunidades de nuestro banco financiero.</p>
-                                    <div class="newsletter_form">
-                                        <form action="index.html">
-                                            <input type="email" placeholder="Ingresa Tu Correo" name="#" required="">
-                                            <button>Subir</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-6 col-lg-3">
-                            <div class="full">
-                                <div class="footer_blog full white_fonts">
-                                    <h3>Contactanos</h3>
-                                    <ul class="full">
-                                        <li><img src="images/i5.png"><span> Avenida Central 1234<br>Santiago,
-                                                Chile</span></li>
-                                        <li><img src="images/i6.png"><span>RaizFinanciera@gmail.com</span></li>
-                                        <li><img src="images/i7.png"><span>+56978449038</span></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
+
+        <div class="copyright">
+            <div class="container text-center">
+                <p>© <span>Copyright</span> <strong class="px-1 sitename">Raíz Financiera</strong> <span>All Rights
+                        Reserved</span></p>
+
+            </div>
+        </div>
+
     </footer>
-    <!-- End Footer -->
 
 </body>
 
