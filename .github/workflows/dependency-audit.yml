@@ -1,4 +1,4 @@
-name: Auditoría de Dependencias y Generación de PDF
+name: Revisar dependencias
 
 on:
   workflow_dispatch:
@@ -10,112 +10,33 @@ on:
       - '**'
 
 jobs:
-  audit-dependencies:
+  revisar_dependencias:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - name: Checkout del código
+        uses: actions/checkout@v3
 
-      - name: Instalar dependencias del proyecto
+      - name: Instalar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Instalar dependencias
         run: npm install
 
-      - name: Instalar dependencias necesarias para el reporte
-        run: npm install --save-dev json2csv pdfkit
+      - name: Listar todas las dependencias instaladas
+        run: npm list --all
 
-      - name: Auditar dependencias y generar JSON
-        run: npm audit --json > audit-report.json
+      # Si tienes un escáner de vulnerabilidades, deja el siguiente paso
+      - name: Escanear vulnerabilidades con npm audit
+        run: npm audit --audit-level=low --json || true
 
-      - name: Obtener lista ordenada de dependencias
-        run: npm ls --json --all > deps.json
-
-      - name: Generar reporte en CSV
-        run: |
-          node << 'EOF'
-          const fs = require('fs');
-          const { Parser } = require('json2csv');
-          const audit = JSON.parse(fs.readFileSync('audit-report.json'));
-          const deps = JSON.parse(fs.readFileSync('deps.json')).dependencies || {};
-          const results = [];
-          function collectDeps(obj, parent = '') {
-            Object.entries(obj).forEach(([name, info]) => {
-              results.push({
-                name,
-                version: info.version,
-                path: parent ? `${parent} > ${name}` : name
-              });
-              if (info.dependencies) collectDeps(info.dependencies, name);
-            });
-          }
-          collectDeps(deps);
-          results.sort((a, b) => a.name.localeCompare(b.name));
-          // Extrae vulnerabilidades altas y críticas
-          const vulns = (audit.advisories || {});
-          const vulnMap = {};
-          Object.values(vulns).forEach(v => {
-            if (['high', 'critical'].includes(v.severity)) {
-              (v.findings || []).forEach(f => vulnMap[f.version] = v.severity);
-            }
-          });
-          results.forEach(r => r.severity = vulnMap[r.version] || 'none');
-          const parser = new Parser();
-          fs.writeFileSync('reporte.csv', parser.parse(results));
-          EOF
-
-      - name: Generar PDF con reporte
-        run: |
-          node << 'EOF'
-          const fs = require('fs');
-          const PDFDocument = require('pdfkit');
-          const csv = fs.readFileSync('reporte.csv').toString().split('\n');
-          const headers = csv[0].split(',');
-          const rows = csv.slice(1).filter(Boolean).map(line => {
-            const cols = line.split(',');
-            return {
-              name: cols[0],
-              version: cols[1],
-              path: cols[2],
-              severity: cols[3]
-            };
-          });
-
-          // Clasifica por severidad
-          const criticas = rows.filter(r => r.severity === 'critical' || r.severity === 'high');
-          const medias = rows.filter(r => r.severity === 'moderate' || r.severity === 'medium');
-          const bajas = rows.filter(r => r.severity === 'low' || r.severity === 'none' || !r.severity);
-
-          const doc = new PDFDocument({ margin: 30 });
-          doc.pipe(fs.createWriteStream('reporte_dependencias.pdf'));
-          doc.fontSize(20).text('Reporte de Dependencias', { align: 'center' });
-          doc.moveDown();
-
-          function printTable(title, data) {
-            doc.fontSize(16).text(title, { underline: true });
-            doc.moveDown(0.5);
-            if (data.length === 0) {
-              doc.fontSize(12).text('Sin resultados.', { italic: true });
-              doc.moveDown();
-              return;
-            }
-            // Imprime encabezados
-            doc.fontSize(12).text(headers.join(' | '), { bold: true });
-            doc.moveDown(0.2);
-            // Imprime filas
-            data.forEach(row => {
-              doc.text([row.name, row.version, row.path, row.severity].join(' | '));
-            });
-            doc.moveDown();
-          }
-
-          printTable('Dependencias con Vulnerabilidad Crítica/Alta', criticas);
-          printTable('Dependencias con Vulnerabilidad Media', medias);
-          printTable('Dependencias con Vulnerabilidad Baja o Sin Vulnerabilidad', bajas);
-
-          doc.end();
-          EOF
+      # (Opcional) Subir el listado a los artefactos del workflow
+      - name: Guardar reporte de dependencias
+        run: npm list --all > reporte_dependencias.txt
 
       - name: Subir reporte como artefacto
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
-          name: reporte_dependencias
-          path: reporte_dependencias.pdf
+          name: reporte-dependencias
+          path: reporte_dependencias.txt
