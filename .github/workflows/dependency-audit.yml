@@ -71,6 +71,9 @@ jobs:
           else console.log('Sin resultados.');
           EOF
 
+      - name: Debug audit.json existence
+        run: ls -l audit.json
+
       - name: Subir reporte de auditoría
         uses: actions/upload-artifact@v3
         with:
