@@ -1,71 +1,71 @@
-name: Dependency Audit & PDF Report
+name: Generar reporte de vulnerabilidades
 
 on:
+  workflow_dispatch:
   push:
-    branches: [prueba_1]
-  pull_request:
     branches: [prueba_1]
 
 jobs:
   audit:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout código
+      - name: Checkout del código
         uses: actions/checkout@v4
 
-      - name: Instalar Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Instalar dependencias del proyecto
+      - name: Instalar dependencias
         run: npm install
 
-      - name: Instalar dependencias extra para el reporte PDF
-        run: npm install json2md puppeteer
+      - name: Ejecutar auditoría de seguridad
+        run: npm audit --json > audit.json
 
-      - name: Ejecutar auditoría de dependencias
-        run: npm audit --json > audit-report.json
-
-      - name: Generar reporte Markdown desde JSON
+      - name: Instalar dependencias Python para PDF
         run: |
-          node -e "
-          const fs = require('fs');
-          const json2md = require('json2md');
-          const data = JSON.parse(fs.readFileSync('audit-report.json'));
-          const advisories = data.vulnerabilities ? data.vulnerabilities : {};
-          let rows = [];
-          for (const [dep, vuln] of Object.entries(advisories)) {
-            if (vuln.severity && vuln.title && vuln.url) {
-              rows.push({ Dependency: dep, Severity: vuln.severity, Title: vuln.title, URL: vuln.url });
-            }
-          }
-          const md = json2md([
-            { h1: 'Reporte de Vulnerabilidades de Dependencias' },
-            { p: 'Generado automáticamente por GitHub Actions.' },
-            { table: { headers: ['Dependency', 'Severity', 'Title', 'URL'], rows } }
-          ]);
-          fs.writeFileSync('audit-report.md', md);
-          "
+          sudo apt-get update
+          sudo apt-get install python3-pip -y
+          pip3 install reportlab
 
-      - name: Convertir Markdown a PDF
+      - name: Generar reporte PDF de vulnerabilidades
         run: |
-          node -e "
-          const fs = require('fs');
-          const puppeteer = require('puppeteer');
-          (async () => {
-            const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-            const page = await browser.newPage();
-            const md = fs.readFileSync('audit-report.md', 'utf8');
-            await page.setContent('<pre>' + md.replace(/</g, '&lt;') + '</pre>');
-            await page.pdf({ path: 'audit-report.pdf', format: 'A4' });
-            await browser.close();
-          })();
-          "
+          python3 <<EOF
+          import json
+          from reportlab.lib.pagesizes import letter
+          from reportlab.pdfgen import canvas
 
-      - name: Subir artefacto PDF
+          with open('audit.json', 'r') as f:
+              data = json.load(f)
+
+          c = canvas.Canvas("reporte_vulnerabilidades.pdf", pagesize=letter)
+          c.setFont("Helvetica-Bold", 16)
+          c.drawString(72, 750, "Reporte de Vulnerabilidades de Dependencias")
+          c.setFont("Helvetica", 12)
+          y = 720
+
+          c.drawString(72, y, f"Total de vulnerabilidades: {data.get('metadata', {}).get('vulnerabilities', {})}")
+          y -= 24
+
+          advisories = data.get("advisories", {})
+          if advisories:
+              for advisory in advisories.values():
+                  if y < 100:
+                      c.showPage()
+                      y = 750
+                  c.setFont("Helvetica-Bold", 12)
+                  c.drawString(72, y, f"{advisory['module_name']} - {advisory['severity'].capitalize()}")
+                  y -= 16
+                  c.setFont("Helvetica", 10)
+                  c.drawString(100, y, f"ID: {advisory['id']}, {advisory['title']}")
+                  y -= 14
+                  c.drawString(100, y, f"URL: {advisory['url']}")
+                  y -= 14
+                  c.drawString(100, y, f"Recomendación: {advisory['recommendation']}")
+                  y -= 20
+          else:
+              c.drawString(72, y, "No se encontraron vulnerabilidades.")
+          c.save()
+          EOF
+
+      - name: Subir reporte como artefacto
         uses: actions/upload-artifact@v4
         with:
-          name: audit-report
-          path: audit-report.pdf
+          name: reporte_vulnerabilidades
+          path: reporte_vulnerabilidades.pdf
