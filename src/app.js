@@ -3,10 +3,15 @@ import router from "./interfaces/routes/rutas_vistas.js";
 import ErrorHandler from "./shared/errors/errores.js";
 import { config } from "./config/env.js";
 import debug from "debug";
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './config/swagger.js';
 
 const DEBUG = debug("app:APP_CHATBOT");
 
 const app = createServer();
+
+//swager-ui-express
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/", router);
 app.use("/Finanzas_Raiz", router);
