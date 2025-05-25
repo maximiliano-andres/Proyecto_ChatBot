@@ -25,115 +25,285 @@ jobs:
       - name: Instalar dependencias
         run: npm install
 
-      - name: Generar reporte PDF con tablas coloreadas
+      - name: Listar todas las dependencias instaladas
+        run: npm list --all
+
+      - name: Correr npm audit y crear reporte extendido con consulta NPM y JSON
         run: |
           npm audit --json > audit.json
           node <<'EOF'
           const fs = require('fs');
-          const { execSync } = require('child_process');
+          const https = require('https');
+
+          // Leer reporte de audit
+          const audit = JSON.parse(fs.readFileSync('audit.json', 'utf8'));
+
+          // Leer lista completa de dependencias con versión
+          let depTree;
+          try {
+            depTree = JSON.parse(require('child_process').execSync('npm ls --json').toString());
+          } catch (e) {
+            console.error('Error leyendo árbol de dependencias:', e);
+            process.exit(1);
+          }
+
+          // Extraer todas las dependencias con nombre y versión (recursivo)
+          const allDeps = {};
+          function collectDeps(obj) {
+            if (!obj.dependencies) return;
+            Object.entries(obj.dependencies).forEach(([name, dep]) => {
+              allDeps[name] = dep.version || 'unknown';
+              collectDeps(dep);
+            });
+          }
+          collectDeps(depTree);
+
+          // Mapeo de vulnerabilidades por paquete
+          const vulnMap = {};
+          if (audit.vulnerabilities) {
+            for (const [pkgName, vuln] of Object.entries(audit.vulnerabilities)) {
+              vulnMap[pkgName] = vuln;
+            }
+          }
+
+          // Función para consulta API pública NPM para metadatos (última versión, fecha mantenimiento)
+          async function fetchNpmInfo(pkg) {
+            return new Promise((resolve) => {
+              https.get(`https://registry.npmjs.org/${pkg}`, (res) => {
+                let data = '';
+                res.on('data', chunk => data += chunk);
+                res.on('end', () => {
+                  try {
+                    const json = JSON.parse(data);
+                    const latestVersion = json['dist-tags']?.latest || null;
+                    const time = json.time || {};
+                    const lastModified = time[latestVersion] || Object.values(time).sort().pop() || null;
+                    // Contar total de vulnerabilidades registradas (no perfecto, pero con info que tenemos)
+                    resolve({
+                      latestVersion,
+                      lastModified,
+                    });
+                  } catch {
+                    resolve({ latestVersion: null, lastModified: null });
+                  }
+                });
+              }).on('error', () => {
+                resolve({ latestVersion: null, lastModified: null });
+              });
+            });
+          }
+
+          // Función principal async para construir reporte completo
+          async function buildReport() {
+            // Objeto con los datos finales para cada paquete
+            const reportData = [];
+
+            for (const [name, version] of Object.entries(allDeps)) {
+              // Obtener info NPM
+              const npmInfo = await fetchNpmInfo(name);
+
+              // Vulnerabilidad (si existe)
+              const vuln = vulnMap[name];
+
+              // Determinar severidad
+              const severity = vuln ? vuln.severity : 'none';
+
+              // Recomendación básica
+              let recommendation = 'Sin acción necesaria';
+              if (severity === 'critical' || severity === 'high') {
+                recommendation = 'Actualizar urgente';
+              } else if (severity === 'moderate') {
+                recommendation = 'Actualizar pronto';
+              }
+
+              // Total vulnerabilidades para este paquete según audit (podemos contar por advisory)
+              const totalVulns = vuln ? vuln.via.length : 0;
+
+              reportData.push({
+                name,
+                currentVersion: version,
+                latestVersion: npmInfo.latestVersion || 'N/A',
+                lastModified: npmInfo.lastModified ? new Date(npmInfo.lastModified).toISOString().split('T')[0] : 'N/A',
+                severity,
+                vulnerabilitiesCount: totalVulns,
+                recommendation,
+              });
+            }
+
+            // Estadísticas resumidas
+            const totalDeps = reportData.length;
+            const countsBySeverity = {
+              critical: 0,
+              high: 0,
+              moderate: 0,
+              low: 0,
+              none: 0,
+            };
+
+            reportData.forEach(d => {
+              if (countsBySeverity[d.severity] !== undefined) {
+                countsBySeverity[d.severity]++;
+              } else {
+                countsBySeverity.none++;
+              }
+            });
+
+            // Guardar reporte JSON completo (para uso externo)
+            fs.writeFileSync('reporte_dependencias_completo.json', JSON.stringify({
+              date: new Date().toISOString(),
+              totalDependencies: totalDeps,
+              countsBySeverity,
+              dependencies: reportData,
+            }, null, 2));
+
+            // Generar reporte TXT resumido para compatibilidad (opcional)
+            let txtReport = `Reporte de dependencias y vulnerabilidades (Resumen)\nFecha: ${new Date().toISOString()}\n\n`;
+            txtReport += `Total dependencias analizadas: ${totalDeps}\n`;
+            txtReport += `Vulnerabilidades críticas/altas: ${countsBySeverity.critical + countsBySeverity.high}\n`;
+            txtReport += `Vulnerabilidades medias: ${countsBySeverity.moderate}\n`;
+            txtReport += `Vulnerabilidades bajas o sin vulnerabilidad: ${countsBySeverity.low + countsBySeverity.none}\n\n`;
+
+            // Top 5 paquetes con más vulnerabilidades (orden descendente)
+            const topVulnerable = reportData
+              .filter(d => d.vulnerabilitiesCount > 0)
+              .sort((a,b) => b.vulnerabilitiesCount - a.vulnerabilitiesCount)
+              .slice(0, 5);
+
+            txtReport += 'Top 5 paquetes más vulnerables:\n';
+            if (topVulnerable.length === 0) txtReport += 'Ninguno\n';
+            else {
+              topVulnerable.forEach(p => {
+                txtReport += `- ${p.name}@${p.currentVersion} - Vulnerabilidades: ${p.vulnerabilitiesCount}\n`;
+              });
+            }
+
+            fs.writeFileSync('reporte.txt', txtReport);
+
+            // Retornar datos para generación PDF
+            return { reportData, countsBySeverity, totalDeps, topVulnerable };
+          }
+
+          // Ejecutar y pasar a generación PDF
+          (async () => {
+            const { reportData, countsBySeverity, totalDeps, topVulnerable } = await buildReport();
+
+            // Guardar data para paso siguiente
+            fs.writeFileSync('reporte_data.json', JSON.stringify({ reportData, countsBySeverity, totalDeps, topVulnerable }));
+          })();
+          EOF
+
+      - name: Instalar pdfkit para reporte PDF
+        run: npm install pdfkit
+
+      - name: Generar reporte PDF profesional y colorido con tablas
+        run: |
+          node <<'EOF'
+          const fs = require('fs');
           const PDFDocument = require('pdfkit');
 
-          const depsTree = JSON.parse(execSync('npm ls --all --json').toString());
-          const allDeps = {};
+          // Leer reporte
+          const dataRaw = fs.readFileSync('reporte_data.json', 'utf8');
+          const { reportData, countsBySeverity, totalDeps, topVulnerable } = JSON.parse(dataRaw);
 
-          function collectDeps(obj) {
-            if (obj.dependencies) {
-              for (const [name, info] of Object.entries(obj.dependencies)) {
-                allDeps[name] = info.version || 'desconocida';
-                collectDeps(info);
-              }
-            }
-          }
-
-          collectDeps(depsTree);
-
-          const audit = JSON.parse(fs.readFileSync('audit.json', 'utf8'));
-          const levels = { critical: [], high: [], moderate: [], low: [], none: [] };
-
-          for (const [name, version] of Object.entries(allDeps)) {
-            const vuln = audit.vulnerabilities?.[name];
-            if (vuln) {
-              levels[vuln.severity || 'none'].push({ name, version, via: vuln.via });
-            } else {
-              levels.none.push({ name, version });
-            }
-          }
-
-          // Colores y estilos para cada nivel
-          const tableColors = {
-            critical: { border: '#FF0000', background: '#FFCCCC' },  // rojo fuerte y rojo claro
-            high: { border: '#FF4500', background: '#FFD1B8' },      // naranja fuerte y claro
-            moderate: { border: '#FFA500', background: '#FFE5B4' },  // amarillo naranja y claro
-            low: { border: '#FFFF00', background: '#FFFFCC' },       // amarillo y amarillo claro
-            none: { border: '#00BFFF', background: '#CCE7FF' }       // azul y azul claro
+          // Colores por severidad
+          const colors = {
+            critical: { border: '#b22222', fill: '#f9d6d5' }, // rojo oscuro y fondo rojo claro
+            high: { border: '#dc143c', fill: '#fbd3d2' },     // rojo medio
+            moderate: { border: '#ffae42', fill: '#fff0d4' }, // amarillo oscuro y claro
+            low: { border: '#32cd32', fill: '#d4f4d4' },      // verde
+            none: { border: '#808080', fill: '#f0f0f0' },     // gris claro
           };
 
+          // Crear PDF
           const doc = new PDFDocument({ margin: 30, size: 'A4' });
           doc.pipe(fs.createWriteStream('reporte_dependencias.pdf'));
 
-          // Título
-          doc.fontSize(20).fillColor('black').text('Reporte de Dependencias y Vulnerabilidades', { align: 'center' });
-          doc.moveDown(2);
+          // Título y metadata
+          doc.fontSize(20).text('Reporte de Dependencias y Vulnerabilidades', { align: 'center' });
+          doc.moveDown(0.5);
+          doc.fontSize(10).fillColor('gray').text(`Fecha de análisis: ${new Date().toLocaleString()}`, { align: 'center' });
+          doc.moveDown(1);
 
-          // Función para dibujar tabla para cada nivel
-          function drawTable(title, data, colors, startY) {
-            const { border, background } = colors;
+          // Resumen general
+          doc.fontSize(12).fillColor('black').text(`Total dependencias analizadas: ${totalDeps}`, { continued: true });
+          doc.text(`  |  Vulnerabilidades críticas: ${countsBySeverity.critical}`, { continued: true });
+          doc.text(`  |  Altas: ${countsBySeverity.high}`, { continued: true });
+          doc.text(`  |  Moderadas: ${countsBySeverity.moderate}`, { continued: true });
+          doc.text(`  |  Bajas: ${countsBySeverity.low}`, { continued: true });
+          doc.text(`  |  Sin vulnerabilidades: ${countsBySeverity.none}`);
 
-            // Título tabla
-            doc.fillColor(border).fontSize(16).text(title, 50, startY);
+          doc.moveDown(1);
 
-            const tableTop = startY + 25;
-            const leftMargin = 50;
-            const rowHeight = 22;
-            const colWidths = [200, 80, 240]; // Nombre, Versión, Detalles
-
-            // Dibujar encabezado con fondo
-            doc.rect(leftMargin, tableTop, colWidths.reduce((a,b) => a+b), rowHeight).fillAndStroke(background, border);
-            doc.fillColor('black').fontSize(12).text('Nombre de la dependencia', leftMargin + 5, tableTop + 6, { width: colWidths[0], align: 'left' });
-            doc.text('Versión', leftMargin + colWidths[0] + 5, tableTop + 6, { width: colWidths[1], align: 'center' });
-            doc.text('Detalles', leftMargin + colWidths[0] + colWidths[1] + 5, tableTop + 6, { width: colWidths[2], align: 'left' });
-
-            let y = tableTop + rowHeight;
-
-            if (data.length === 0) {
-              // Mostrar mensaje sin datos
-              doc.rect(leftMargin, y, colWidths.reduce((a,b) => a+b), rowHeight).fillAndStroke('#f0f0f0', border);
-              doc.fillColor('gray').text('No se encontraron dependencias en esta categoría.', leftMargin + 5, y + 6, { width: colWidths.reduce((a,b) => a+b), align: 'center' });
-              y += rowHeight + 10;
-              return y;
-            }
-
-            // Dibujar filas con fondo alternado
-            data.forEach((dep, index) => {
-              const isEven = index % 2 === 0;
-              const fillColor = isEven ? '#FFFFFF' : '#F7F7F7';
-              doc.rect(leftMargin, y, colWidths.reduce((a,b) => a+b), rowHeight).fillAndStroke(fillColor, border);
-              doc.fillColor('black').text(dep.name, leftMargin + 5, y + 6, { width: colWidths[0], align: 'left' });
-              doc.text(dep.version, leftMargin + colWidths[0] + 5, y + 6, { width: colWidths[1], align: 'center' });
-              const details = dep.via ? dep.via.map(v => typeof v === 'string' ? v : v.title).join('; ') : 'Sin vulnerabilidades';
-              doc.text(details, leftMargin + colWidths[0] + colWidths[1] + 5, y + 6, { width: colWidths[2], align: 'left' });
-              y += rowHeight;
+          // Top 5 vulnerables
+          doc.fontSize(14).text('Top 5 Paquetes más vulnerables', { underline: true });
+          if (topVulnerable.length === 0) {
+            doc.fontSize(10).fillColor('gray').text('Ningún paquete con vulnerabilidades detectadas.');
+          } else {
+            topVulnerable.forEach((p, i) => {
+              doc.fontSize(11).fillColor('black').text(`${i + 1}. ${p.name} @ ${p.currentVersion} - Vulnerabilidades: ${p.vulnerabilitiesCount}`);
             });
-
-            return y + 20;
           }
+          doc.moveDown(1);
 
-          // Dibujar tablas para todos los niveles
-          let currentY = 80;
-          for (const level of ['critical', 'high', 'moderate', 'low', 'none']) {
-            currentY = drawTable(`Vulnerabilidades ${level.toUpperCase()}`, levels[level], tableColors[level], currentY);
-            if (currentY > 700) {  // evitar pasar el límite de página
-              doc.addPage();
-              currentY = 50;
-            }
-          }
+          // Tabla con encabezados
+          const tableTop = doc.y;
+          const colX = [30, 160, 260, 340, 430, 510];
+          const rowHeight = 20;
+
+          // Encabezados
+          doc.fontSize(10).fillColor('black').text('Paquete', colX[0], tableTop, { bold: true });
+          doc.text('Versión Actual', colX[1], tableTop);
+          doc.text('Última Versión', colX[2], tableTop);
+          doc.text('Última Modificación', colX[3], tableTop);
+          doc.text('Vulnerabilidades', colX[4], tableTop);
+          doc.text('Recomendación', colX[5], tableTop);
+
+          // Línea separadora
+          doc.moveTo(30, tableTop + 15).lineTo(570, tableTop + 15).stroke();
+
+          let y = tableTop + 20;
+          reportData.forEach(row => {
+            const color = colors[row.severity] || colors.none;
+            doc.rect(30, y - 4, 540, rowHeight).fillOpacity(0.1).fill(color.fill).fillOpacity(1);
+            doc.strokeColor(color.border).lineWidth(1).rect(30, y - 4, 540, rowHeight).stroke();
+            doc.fillColor('black').fontSize(9);
+
+            // Columna paquete
+            doc.text(row.name, colX[0], y);
+            // Versión actual
+            doc.text(row.currentVersion, colX[1], y);
+            // Última versión
+            doc.text(row.latestVersion, colX[2], y);
+            // Última modificación
+            doc.text(row.lastModified, colX[3], y);
+            // Vulnerabilidades: número + icono
+            doc.text(`${row.vulnerabilitiesCount} ${row.vulnerabilitiesCount > 0 ? '⚠️' : '✔️'}`, colX[4], y);
+            // Recomendación
+            doc.text(row.recommendation, colX[5], y);
+
+            y += rowHeight;
+            if (y > 720) { doc.addPage(); y = 50; } // salto de página
+          });
+
+          // Sección recomendaciones generales
+          doc.addPage();
+          doc.fontSize(14).fillColor('black').text('Recomendaciones generales', { underline: true });
+          doc.moveDown(0.5);
+          doc.fontSize(11).list([
+            'Actualizar urgentemente paquetes con vulnerabilidades críticas o altas.',
+            'Planificar actualización para paquetes con vulnerabilidades moderadas.',
+            'Mantener actualizadas las dependencias sin vulnerabilidades para evitar futuros riesgos.',
+            'Verificar periódicamente el mantenimiento activo de paquetes clave (última modificación reciente).',
+          ]);
 
           doc.end();
           EOF
 
-
-      - name: Subir reporte de dependencias (PDF)
-        uses: actions/upload-artifact@v4
+      - name: Subir artefactos generados
+        uses: actions/upload-artifact@v3
         with:
-          name: reporte-dependencias-pdf
-          path: reporte_dependencias.pdf
+          name: Reportes de Dependencias
+          path: |
+            reporte_dependencias.pdf
+            reporte.txt
+            reporte_dependencias_completo.json
