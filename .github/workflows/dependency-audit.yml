@@ -79,25 +79,65 @@ jobs:
           node <<'EOF'
           const fs = require('fs');
           const PDFDocument = require('pdfkit');
-          const txt = fs.readFileSync('reporte.txt', 'utf8');
-          const doc = new PDFDocument();
+          const audit = JSON.parse(fs.readFileSync('audit.json', 'utf8'));
+
+          const doc = new PDFDocument({ margin: 30 });
           doc.pipe(fs.createWriteStream('reporte_dependencias.pdf'));
-          doc.fontSize(18).text('Reporte de Dependencias y Vulnerabilidades', { align: 'center' });
+
+          // Título principal
+          doc.fontSize(20).text('Reporte de Dependencias y Vulnerabilidades', { align: 'center' });
           doc.moveDown();
-          txt.split('\n').forEach(line => {
-            if (line.startsWith('Dependencias con')) {
-              doc.moveDown();
-              doc.fontSize(14).text(line, { underline: true });
-            } else if (line.startsWith('- ')) {
-              doc.fontSize(12).text(line);
-            } else if (line.trim() === 'Sin resultados.') {
-              doc.fontSize(12).fillColor('gray').text(line).fillColor('black');
-            } else {
-              doc.fontSize(12).text(line);
+
+          const colorMap = {
+            critical: 'red',
+            high: 'red',
+            moderate: 'orange',
+            low: 'green',
+            none: 'blue',
+          };
+
+          const levels = { critical: [], high: [], moderate: [], low: [], none: [] };
+
+          // Recolectar datos
+          if (audit.vulnerabilities) {
+            Object.values(audit.vulnerabilities).forEach(vuln => {
+              const level = vuln.severity || 'none';
+              if (levels[level]) levels[level].push({
+                name: vuln.name,
+                version: vuln.installed || 'desconocida',
+                via: vuln.via.map(v => typeof v === 'string' ? v : v.source).join(', '),
+                path: vuln.nodes ? vuln.nodes.join(' > ') : 'N/A',
+                severity: level
+              });
+            });
+          }
+
+          // Generar tablas por nivel
+          Object.entries(levels).forEach(([nivel, lista]) => {
+            const color = colorMap[nivel] || 'black';
+            doc.addPage();
+            doc.fillColor(color).fontSize(16).text(`Vulnerabilidades: ${nivel.toUpperCase()}`, { underline: true });
+            doc.moveDown().fillColor('black').fontSize(12);
+
+            if (!lista.length) {
+              doc.fillColor('gray').text('Sin resultados').fillColor('black');
+              return;
             }
+
+            lista.forEach(dep => {
+              doc
+                .fillColor(color)
+                .text(`• ${dep.name} (${dep.version})`)
+                .fillColor('black')
+                .text(`   ↳ Vía: ${dep.via}`)
+                .text(`   ↳ Path: ${dep.path}`)
+                .moveDown();
+            });
           });
+
           doc.end();
           EOF
+
 
       - name: Subir reporte de dependencias (TXT)
         uses: actions/upload-artifact@v4
