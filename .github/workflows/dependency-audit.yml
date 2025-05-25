@@ -300,7 +300,7 @@ jobs:
           EOF
 
       - name: Subir artefactos generados
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Reportes de Dependencias
           path: |
