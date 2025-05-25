@@ -32,7 +32,7 @@ const roleAdmin = decodedAdmin.rol;
 //console.log("Rol del admin decodificado:", roleAdmin);
 
 //console.log("Secreto JWT:", process.env.JWT_SECRET || "VACIO");
-// ✅ Declarar rutas ANTES del describe()
+
 const rutas = [
   { path: "/", esperado: [200, 302, 404] },
   { path: "/login", esperado: [200, 302, 404] },
@@ -52,7 +52,7 @@ describe("Test profesional de rutas principales de appExpress", () => {
     it(`GET ${ruta.path} debe devolver ${ruta.esperado.join(" o ")}`, async () => {
       let req = request(app).get(ruta.path);
 
-      // ✅ Agregar token solo si la ruta lo necesita
+      
       if (ruta.rol === "CLIENTE") {
         req = req.set("Authorization", `Bearer ${tokenCliente}`);
       } else if (ruta.rol === "ADMIN") {
