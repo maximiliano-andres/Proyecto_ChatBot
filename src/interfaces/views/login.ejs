@@ -13,9 +13,25 @@
   <link href="../../../css/main.css" rel="stylesheet">
 
   <style>
+
+    @media (prefers-color-scheme: dark) {
+  body {
+    background-image: url('/images/back/login.jpg');
+    background-color: #000; /* O el color que prefieras para fondo */
+    filter: none !important; /* Previene que el navegador oscurezca la imagen */
+  }
+
+  .login-card {
+    background-color: #fff;
+    color: #2c3e50;
+  }
+}
+
     body {
       font-family: 'Montserrat', sans-serif;
-      background-image: url('../../../images/back/login.jpg');
+      background-image: url('/images/back/login.jpg');
+      background-size: cover;
+      background-position: center;
       color: #fff;
       min-height: 100vh;
       display: flex;
@@ -92,15 +108,15 @@
 
             <a href="/" class="logo d-flex align-items-center me-auto me-lg-0">
                 <!-- Uncomment the line below if you also wish to use an image logo -->
-                <img src="../../../images/back/logo_raiz_financiera.webp" alt="" style="max-height: 64px;">
+                <img src="/images/back/logo_raiz_financiera.webp" alt="" style="max-height: 64px;">
 
 
             </a>
 
             <nav id="navmenu" class="navmenu">
                 <ul>
-                    <li><a href="#hero" class="active">Home<br></a></li>
-                    <li><a href="#about">Acerca de Nosotros</a></li>
+                    <li><a href="/" class="active">Home<br></a></li>
+                    <li><a href="/">Acerca de Nosotros</a></li>
                     <li><a href="#services">Servicios</a></li>
                     <li><a href="#portfolio">Otros</a></li>
                     <li><a href="#team">Grupo de trabajo</a></li>
