@@ -25,196 +25,80 @@ jobs:
       - name: Instalar dependencias
         run: npm install
 
-      - name: Listar todas las dependencias instaladas
-        run: npm list --all
-
-      - name: Correr npm audit y crear reporte por nivel de vulnerabilidad
+      - name: Generar reporte de vulnerabilidades en PDF
         run: |
           npm audit --json > audit.json
-          node <<'EOF'
-          const fs = require('fs');
-          const audit = JSON.parse(fs.readFileSync('audit.json', 'utf8'));
-          const levels = { critical: [], high: [], moderate: [], low: [], none: [] };
-          const dependencies = [];
-          try {
-            const list = JSON.parse(require('child_process').execSync('npm ls --json').toString());
-            function collectDeps(obj) {
-              if (obj.dependencies) {
-                Object.entries(obj.dependencies).forEach(([name, dep]) => {
-                  dependencies.push(name);
-                  collectDeps(dep);
-                });
-              }
-            }
-            collectDeps(list);
-          } catch (e) {}
-          if (audit.vulnerabilities) {
-            Object.values(audit.vulnerabilities).forEach(vuln => {
-              const level = vuln.severity || 'none';
-              if (levels[level]) levels[level].push(vuln.name);
-            });
-          }
-          let output = '';
-          output += 'Dependencias con Vulnerabilidad Crítica/Alta\n';
-          const high = Array.from(new Set([...levels.critical, ...levels.high]));
-          if (high.length) high.forEach(dep => output += '- ' + dep + '\n');
-          else output += 'Sin resultados.\n';
-          output += '\nDependencias con Vulnerabilidad Media\n';
-          if (levels.moderate.length) levels.moderate.forEach(dep => output += '- ' + dep + '\n');
-          else output += 'Sin resultados.\n';
-          output += '\nDependencias con Vulnerabilidad Baja o Sin Vulnerabilidad\n';
-          const lowOrNone = dependencies.filter(dep =>
-            !high.includes(dep) && !levels.moderate.includes(dep)
-          );
-          if (lowOrNone.length) lowOrNone.forEach(dep => output += '- ' + dep + '\n');
-          else output += 'Sin resultados.\n';
-          fs.writeFileSync('reporte.txt', output);
-          EOF
-
-      - name: Instalar pdfkit para reporte PDF
-        run: npm install pdfkit
-
-      - name: Generar reporte PDF de dependencias
-        run: |
           node <<'EOF'
           const fs = require('fs');
           const { execSync } = require('child_process');
           const PDFDocument = require('pdfkit');
 
-          const audit = JSON.parse(fs.readFileSync('audit.json', 'utf8'));
-          const depsRaw = execSync('npm ls --json --long').toString();
-          const deps = JSON.parse(depsRaw);
+          // Obtener lista de dependencias
+          const depsTree = JSON.parse(execSync('npm ls --all --json').toString());
+          const allDeps = {};
 
-          const doc = new PDFDocument({ margin: 40 });
+          function collectDeps(obj) {
+            if (obj.dependencies) {
+              for (const [name, info] of Object.entries(obj.dependencies)) {
+                allDeps[name] = info.version || 'desconocida';
+                collectDeps(info);
+              }
+            }
+          }
+
+          collectDeps(depsTree);
+
+          // Leer reporte de audit
+          const audit = JSON.parse(fs.readFileSync('audit.json', 'utf8'));
+          const levels = { critical: [], high: [], moderate: [], low: [], none: [] };
+
+          for (const [name, version] of Object.entries(allDeps)) {
+            const vuln = audit.vulnerabilities?.[name];
+            if (vuln) {
+              levels[vuln.severity || 'none'].push({ name, version, via: vuln.via });
+            } else {
+              levels.none.push({ name, version });
+            }
+          }
+
+          // Crear PDF
+          const doc = new PDFDocument({ margin: 30 });
           doc.pipe(fs.createWriteStream('reporte_dependencias.pdf'));
 
-          // Título
-          doc.fontSize(22).fillColor('black').text('Reporte de Dependencias y Vulnerabilidades', {
-            align: 'center',
-            underline: true,
-          }).moveDown(1.5);
+          doc.fontSize(18).text('Reporte de Dependencias y Vulnerabilidades', { align: 'center' });
+          doc.moveDown();
 
-          const colorMap = {
-            critical: '#ff4d4f',
-            high: '#ff7a45',
-            moderate: '#faad14',
-            low: '#52c41a',
-            none: '#1890ff',
+          const severityColors = {
+            critical: '#FF0000',
+            high: '#FF4500',
+            moderate: '#FFA500',
+            low: '#FFFF00',
+            none: '#00BFFF'
           };
 
-          const severities = ['critical', 'high', 'moderate', 'low', 'none'];
-          const vulnerabilityMap = { critical: [], high: [], moderate: [], low: [], none: [] };
+          for (const level of ['critical', 'high', 'moderate', 'low', 'none']) {
+            const entries = levels[level];
+            doc.moveDown().fontSize(14).fillColor(severityColors[level]).text(`Vulnerabilidades ${level.toUpperCase()}`);
+            doc.fillColor('black').fontSize(12);
 
-          // Recorrer vulnerabilidades
-          if (audit.vulnerabilities) {
-            for (const vuln of Object.values(audit.vulnerabilities)) {
-              const severity = vuln.severity || 'none';
-              if (vulnerabilityMap[severity]) {
-                vulnerabilityMap[severity].push({
-                  name: vuln.name,
-                  version: vuln.installed,
-                  path: vuln.nodes ? vuln.nodes.join(', ') : 'N/A',
-                  source: Array.isArray(vuln.via)
-                    ? vuln.via.map(v => typeof v === 'string' ? v : v.source).join(', ')
-                    : vuln.via,
-                  severity
-                });
+            if (entries.length === 0) {
+              doc.text('No se encontraron dependencias en esta categoría.');
+            } else {
+              // Encabezado de tabla
+              doc.text('Nombre de la dependencia | Versión | Detalles');
+              doc.text('-------------------------|---------|---------');
+              for (const dep of entries) {
+                const details = dep.via ? dep.via.map(v => typeof v === 'string' ? v : v.title).join('; ') : 'Sin vulnerabilidades';
+                doc.text(`${dep.name} | ${dep.version} | ${details}`);
               }
             }
-          }
-
-          // Recolectar todas las dependencias
-          const allDependencies = [];
-
-          function traverseDependencies(obj, parent = '') {
-            if (obj && obj.dependencies) {
-              for (const [name, dep] of Object.entries(obj.dependencies)) {
-                allDependencies.push({
-                  name,
-                  version: dep.version || 'N/A',
-                  path: parent ? `${parent} > ${name}` : name,
-                });
-                traverseDependencies(dep, name);
-              }
-            }
-          }
-
-          traverseDependencies(deps);
-
-          // Mostrar todas las dependencias (resumen general)
-          doc.fontSize(16).fillColor('black').text('Listado Completo de Dependencias', { underline: true }).moveDown(0.5);
-          allDependencies.forEach(dep => {
-            doc
-              .fontSize(12)
-              .fillColor('black')
-              .text(`• ${dep.name} (${dep.version})`, { continued: true })
-              .fillColor('gray')
-              .text(`  ↳ Path: ${dep.path}`);
-          });
-
-          doc.moveDown(1.5);
-
-          // Generar tablas por severidad
-          for (const level of severities) {
-            const color = colorMap[level];
-            const entries = vulnerabilityMap[level];
-
-            doc
-              .addPage()
-              .fontSize(16)
-              .fillColor(color)
-              .text(`Dependencias con Vulnerabilidad: ${level.toUpperCase()}`, {
-                underline: true,
-              })
-              .moveDown(0.5);
-
-            if (!entries.length) {
-              doc.fontSize(12).fillColor('gray').text('Sin dependencias con esta severidad.').moveDown(1);
-              continue;
-            }
-
-            // Tabla de encabezados
-            doc
-              .fontSize(12)
-              .fillColor('black')
-              .text('Nombre', 60, doc.y, { continued: true })
-              .text('Versión', 180, doc.y, { continued: true })
-              .text('Path', 260, doc.y, { continued: true })
-              .text('Fuente', 420, doc.y)
-              .moveDown(0.5);
-
-            doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
-
-            // Filas
-            entries.forEach(dep => {
-              doc
-                .fontSize(11)
-                .fillColor(color)
-                .text(dep.name, 60, doc.y, { continued: true })
-                .fillColor('black')
-                .text(dep.version || 'N/A', 180, doc.y, { continued: true })
-                .text(dep.path, 260, doc.y, { continued: true })
-                .text(dep.source || 'N/A', 420, doc.y)
-                .moveDown(0.3);
-            });
-
-            doc.moveDown(1.5);
           }
 
           doc.end();
           EOF
-
-
-
-      - name: Subir reporte de dependencias (TXT)
-        uses: actions/upload-artifact@v4
-        with:
-          name: reporte-dependencias-txt
-          path: reporte.txt
 
       - name: Subir reporte de dependencias (PDF)
         uses: actions/upload-artifact@v4
         with:
           name: reporte-dependencias-pdf
           path: reporte_dependencias.pdf
-
