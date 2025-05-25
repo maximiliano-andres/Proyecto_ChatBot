@@ -17,7 +17,7 @@ const router = Router();
 router.get("/",HomeController.index_neutro);
 
 // Definir la ruta HOME
-router.get("/Finanzas_Raiz", verifyToken, HomeController.index);
+router.get("/Finanzas_Raiz", HomeController.index);
 
 // Rutas del chatbot
 router.post("/chatbot", verifyToken, ChatController.handleMessage);
