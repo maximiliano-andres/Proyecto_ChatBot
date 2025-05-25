@@ -190,7 +190,7 @@ jobs:
               high: { border: '#dc143c', fill: '#fbd3d2' },
               moderate: { border: '#ffae42', fill: '#fff0d4' },
               low: { border: '#32cd32', fill: '#d4f4d4' },
-              none: { border: '#808080', fill: '#f0f0f0' },
+              none: { border: '#3b5998', fill: '#dbe9f4' },
             };
 
             const doc = new PDFDocument({ margin: 30, size: 'A4' });
