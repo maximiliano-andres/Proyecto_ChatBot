@@ -14,6 +14,8 @@ Raíz Financiera es una plataforma web bancaria con un asistente virtual (chatbo
 - **Panel de administración:** Acceso exclusivo para administradores mediante una URL oculta.
 - **Frontend responsivo:** Interfaz moderna y adaptable para dispositivos móviles y escritorio.
 - **Seguridad:** Protección contra ataques comunes (rate limiting, sanitización, validación de datos).
+- **Pruebas automáticas:** Validación de rutas principales y roles mediante tests automatizados.
+- **Reporte PDF de tests:** Generación automática de un reporte PDF detallado de los resultados de los tests usando GitHub Actions.
 
 ---
 
@@ -39,6 +41,13 @@ Raíz Financiera es una plataforma web bancaria con un asistente virtual (chatbo
 │   ├── js/                     # Scripts de frontend (chatbot, validaciones)
 │   ├── images/                 # Imágenes y logos
 │   └── PDF/                    # Contratos generados en PDF
+├── test/
+│   └── app.test.mjs            # Pruebas automáticas de rutas principales
+├── .github/
+│   ├── workflows/
+│   │   └── generate-pdf-report.yml # Workflow para generar reporte PDF de tests
+│   └── scripts/
+│       └── generate-pdf.js     # Script para generar PDF desde resultados de tests
 ├── package.json
 ├── Dockerfile
 ├── .env
@@ -85,31 +94,39 @@ Raíz Financiera es una plataforma web bancaria con un asistente virtual (chatbo
 
 ---
 
-## Uso
+## Pruebas automáticas
 
-- **Registro e inicio de sesión:** Los usuarios pueden registrarse y luego iniciar sesión para acceder a las funcionalidades del chatbot y la gestión de contratos.
-- **Chatbot:** El asistente virtual responde preguntas sobre productos, requisitos y permite iniciar procesos de contratación.
-- **Contratos PDF:** Los usuarios pueden visualizar y firmar contratos digitales generados automáticamente.
-- **Panel de administración:** Acceso reservado para administradores (ver rutas ocultas).
+El proyecto incluye pruebas automáticas para las rutas principales usando Mocha y Supertest.
 
----
+- Las pruebas se encuentran en `test/app.test.mjs`.
+- Se validan los códigos de estado esperados para cada ruta, incluyendo rutas protegidas por roles (`CLIENTE`, `ADMIN`).
+- Ejemplo de ejecución de pruebas:
+  ```sh
+  npx mocha test/app.test.mjs
+  ```
 
-## Rutas principales
+### Detalle de los tests
 
-- `/` — Página principal (landing page)
-- `/login` — Página de inicio de sesión
-- `/logout` — Cerrar sesión
-- `/registro_usuario` — Registro de usuario
-- `/perfil` — Perfil de usuario
-- `/chatbot` — Interacción con el chatbot
-- `/pdf` — Visualización y firma de contratos PDF
-- `/Finanzas_Raiz` — Página principal autenticada
-- `/tablas` — Panel de administración (requiere permisos)
-- `/grupo` — Gestión de grupos de usuarios
-- **URL oculta solo para administradores:**  
-  `/registro_usuario/ADMINISTRADOR2025` — Registro de usuario administrador
+El archivo `test/app.test.mjs` realiza pruebas sobre las rutas principales de la aplicación, incluyendo:
+
+- Rutas públicas (`/`, `/login`, `/logout`, `/registro_usuario`, etc.)
+- Rutas protegidas por rol CLIENTE (`/perfil`, `/chatbot`, `/pdf`, `/grupo`)
+- Rutas protegidas por rol ADMIN (`/tablas`)
+- Rutas especiales y de error (`/registro_usuario/ADMINISTRADOR2025`, `/Finanzas_Raiz`, `/noexiste`)
+- Cada test verifica que la respuesta HTTP esté dentro de los códigos esperados para cada ruta.
 
 ---
+
+## Generación automática de reporte PDF de tests
+
+El repositorio incluye un workflow de GitHub Actions que ejecuta las pruebas y genera un reporte PDF detallado con los resultados.
+
+- El workflow se encuentra en `.github/workflows/generate-pdf-report.yml`.
+- Al hacer push a la rama `main` o ejecutar manualmente el workflow, se:
+  1. Ejecutan los tests y se guarda el resultado en formato JSON.
+  2. Se genera un PDF con el resumen y detalle de los tests usando Puppeteer.
+  3. El PDF se sube como artefacto descargable en GitHub Actions.
+
 
 ## Pruebas de la API con Postman
 
