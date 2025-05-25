@@ -25,7 +25,7 @@ jobs:
       - name: Instalar dependencias
         run: npm install
 
-      - name: Generar reporte de vulnerabilidades en PDF
+      - name: Generar reporte PDF con tablas coloreadas
         run: |
           npm audit --json > audit.json
           node <<'EOF'
@@ -33,7 +33,6 @@ jobs:
           const { execSync } = require('child_process');
           const PDFDocument = require('pdfkit');
 
-          // Obtener lista de dependencias
           const depsTree = JSON.parse(execSync('npm ls --all --json').toString());
           const allDeps = {};
 
@@ -48,7 +47,6 @@ jobs:
 
           collectDeps(depsTree);
 
-          // Leer reporte de audit
           const audit = JSON.parse(fs.readFileSync('audit.json', 'utf8'));
           const levels = { critical: [], high: [], moderate: [], low: [], none: [] };
 
@@ -61,41 +59,78 @@ jobs:
             }
           }
 
-          // Crear PDF
-          const doc = new PDFDocument({ margin: 30 });
-          doc.pipe(fs.createWriteStream('reporte_dependencias.pdf'));
-
-          doc.fontSize(18).text('Reporte de Dependencias y Vulnerabilidades', { align: 'center' });
-          doc.moveDown();
-
-          const severityColors = {
-            critical: '#FF0000',
-            high: '#FF4500',
-            moderate: '#FFA500',
-            low: '#FFFF00',
-            none: '#00BFFF'
+          // Colores y estilos para cada nivel
+          const tableColors = {
+            critical: { border: '#FF0000', background: '#FFCCCC' },  // rojo fuerte y rojo claro
+            high: { border: '#FF4500', background: '#FFD1B8' },      // naranja fuerte y claro
+            moderate: { border: '#FFA500', background: '#FFE5B4' },  // amarillo naranja y claro
+            low: { border: '#FFFF00', background: '#FFFFCC' },       // amarillo y amarillo claro
+            none: { border: '#00BFFF', background: '#CCE7FF' }       // azul y azul claro
           };
 
-          for (const level of ['critical', 'high', 'moderate', 'low', 'none']) {
-            const entries = levels[level];
-            doc.moveDown().fontSize(14).fillColor(severityColors[level]).text(`Vulnerabilidades ${level.toUpperCase()}`);
-            doc.fillColor('black').fontSize(12);
+          const doc = new PDFDocument({ margin: 30, size: 'A4' });
+          doc.pipe(fs.createWriteStream('reporte_dependencias.pdf'));
 
-            if (entries.length === 0) {
-              doc.text('No se encontraron dependencias en esta categoría.');
-            } else {
-              // Encabezado de tabla
-              doc.text('Nombre de la dependencia | Versión | Detalles');
-              doc.text('-------------------------|---------|---------');
-              for (const dep of entries) {
-                const details = dep.via ? dep.via.map(v => typeof v === 'string' ? v : v.title).join('; ') : 'Sin vulnerabilidades';
-                doc.text(`${dep.name} | ${dep.version} | ${details}`);
-              }
+          // Título
+          doc.fontSize(20).fillColor('black').text('Reporte de Dependencias y Vulnerabilidades', { align: 'center' });
+          doc.moveDown(2);
+
+          // Función para dibujar tabla para cada nivel
+          function drawTable(title, data, colors, startY) {
+            const { border, background } = colors;
+
+            // Título tabla
+            doc.fillColor(border).fontSize(16).text(title, 50, startY);
+
+            const tableTop = startY + 25;
+            const leftMargin = 50;
+            const rowHeight = 22;
+            const colWidths = [200, 80, 240]; // Nombre, Versión, Detalles
+
+            // Dibujar encabezado con fondo
+            doc.rect(leftMargin, tableTop, colWidths.reduce((a,b) => a+b), rowHeight).fillAndStroke(background, border);
+            doc.fillColor('black').fontSize(12).text('Nombre de la dependencia', leftMargin + 5, tableTop + 6, { width: colWidths[0], align: 'left' });
+            doc.text('Versión', leftMargin + colWidths[0] + 5, tableTop + 6, { width: colWidths[1], align: 'center' });
+            doc.text('Detalles', leftMargin + colWidths[0] + colWidths[1] + 5, tableTop + 6, { width: colWidths[2], align: 'left' });
+
+            let y = tableTop + rowHeight;
+
+            if (data.length === 0) {
+              // Mostrar mensaje sin datos
+              doc.rect(leftMargin, y, colWidths.reduce((a,b) => a+b), rowHeight).fillAndStroke('#f0f0f0', border);
+              doc.fillColor('gray').text('No se encontraron dependencias en esta categoría.', leftMargin + 5, y + 6, { width: colWidths.reduce((a,b) => a+b), align: 'center' });
+              y += rowHeight + 10;
+              return y;
+            }
+
+            // Dibujar filas con fondo alternado
+            data.forEach((dep, index) => {
+              const isEven = index % 2 === 0;
+              const fillColor = isEven ? '#FFFFFF' : '#F7F7F7';
+              doc.rect(leftMargin, y, colWidths.reduce((a,b) => a+b), rowHeight).fillAndStroke(fillColor, border);
+              doc.fillColor('black').text(dep.name, leftMargin + 5, y + 6, { width: colWidths[0], align: 'left' });
+              doc.text(dep.version, leftMargin + colWidths[0] + 5, y + 6, { width: colWidths[1], align: 'center' });
+              const details = dep.via ? dep.via.map(v => typeof v === 'string' ? v : v.title).join('; ') : 'Sin vulnerabilidades';
+              doc.text(details, leftMargin + colWidths[0] + colWidths[1] + 5, y + 6, { width: colWidths[2], align: 'left' });
+              y += rowHeight;
+            });
+
+            return y + 20;
+          }
+
+          // Dibujar tablas para todos los niveles
+          let currentY = 80;
+          for (const level of ['critical', 'high', 'moderate', 'low', 'none']) {
+            currentY = drawTable(`Vulnerabilidades ${level.toUpperCase()}`, levels[level], tableColors[level], currentY);
+            if (currentY > 700) {  // evitar pasar el límite de página
+              doc.addPage();
+              currentY = 50;
             }
           }
 
           doc.end();
           EOF
+
 
       - name: Subir reporte de dependencias (PDF)
         uses: actions/upload-artifact@v4
