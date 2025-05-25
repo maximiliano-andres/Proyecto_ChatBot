@@ -12,14 +12,15 @@ on:
 jobs:
   revisar_dependencias:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout del código
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Instalar Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
 
       - name: Instalar dependencias
         run: npm install
@@ -35,7 +36,6 @@ jobs:
           const audit = JSON.parse(fs.readFileSync('audit.json', 'utf8'));
           const levels = { critical: [], high: [], moderate: [], low: [], none: [] };
           const dependencies = [];
-          // Listar TODAS las dependencias
           try {
             const list = JSON.parse(require('child_process').execSync('npm ls --json').toString());
             function collectDeps(obj) {
@@ -48,14 +48,12 @@ jobs:
             }
             collectDeps(list);
           } catch (e) {}
-          // Procesar vulnerabilidades
           if (audit.vulnerabilities) {
             Object.values(audit.vulnerabilities).forEach(vuln => {
               const level = vuln.severity || 'none';
               if (levels[level]) levels[level].push(vuln.name);
             });
           }
-          // Escribir reporte a archivo de texto
           let output = '';
           output += 'Dependencias con Vulnerabilidad Crítica/Alta\n';
           const high = Array.from(new Set([...levels.critical, ...levels.high]));
@@ -102,13 +100,13 @@ jobs:
           EOF
 
       - name: Subir reporte de dependencias (TXT)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: reporte-dependencias-txt
           path: reporte.txt
 
       - name: Subir reporte de dependencias (PDF)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: reporte-dependencias-pdf
           path: reporte_dependencias.pdf
