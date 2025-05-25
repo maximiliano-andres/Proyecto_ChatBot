@@ -2,53 +2,120 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Registro de Usuario - Raíz Financiera</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../../../css/registro.css">
-  <link href="../../../css/main.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../../css/registro.css" />
+  <link href="../../../css/main.css" rel="stylesheet" />
   <style>
     body {
       background-image: url('../../../images/back/back_banco.webp');
       min-height: 100vh;
       display: flex;
-      align-items: center;
+      align-items: flex-start; /* Cambio aquí para que no quede centrado verticalmente */
       justify-content: center;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-size: cover;
+      background-position: center;
+      margin: 0;
+      padding-top: 100px; /* Espacio para el header fijo */
     }
 
     .register-container {
-      background-color: #ffffff;
-      padding: 2rem;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-      max-width: 600px;
+      background-color: #fff;
+      padding: 2.5rem 3rem;
+      border-radius: 1rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      max-width: 900px;
       width: 100%;
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
       color: #0d6efd;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    form .row {
+      margin-bottom: 1rem;
+      align-items: center;
     }
 
     label {
-      font-weight: 500;
+      font-weight: 600;
+      margin-bottom: 0;
+      text-align: right;
+      padding-right: 1rem;
+      color: #212529;
+      white-space: nowrap;
+    }
+
+    input.form-control {
+      border-radius: 0.375rem;
+      box-shadow: none;
+      transition: border-color 0.3s ease;
+    }
+
+    input.form-control:focus {
+      border-color: #0d6efd;
+      box-shadow: 0 0 8px rgba(13, 110, 253, 0.25);
+      outline: none;
+    }
+
+    .btn-primary {
+      font-weight: 600;
+      padding: 0.65rem;
+      border-radius: 0.5rem;
+      font-size: 1.1rem;
     }
 
     .boton_volver {
       display: inline-block;
       margin-top: 1rem;
-      text-decoration: none;
       color: #0d6efd;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
     }
 
     .boton_volver:hover {
+      color: #084298;
       text-decoration: underline;
     }
 
     .alert {
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    /* Layout horizontal de inputs + labels para md+ */
+    @media (min-width: 768px) {
+      form .form-group-horizontal {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      form .form-group-horizontal label {
+        flex: 0 0 180px;
+        max-width: 180px;
+        margin-bottom: 0;
+        padding-right: 1.5rem;
+        text-align: right;
+      }
+
+      form .form-group-horizontal input {
+        flex: 1 1 auto;
+        max-width: 400px;
+      }
+
+      /* Para los grupos dobles (dos inputs en línea) */
+      .row.form-group-horizontal > .col-md-6 {
+        padding-left: 0;
+        padding-right: 1rem;
+      }
     }
   </style>
 </head>
@@ -56,33 +123,24 @@
 <body>
 
   <header id="header" class="header d-flex align-items-center fixed-top">
-        <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-
-            <a href="/" class="logo d-flex align-items-center me-auto me-lg-0">
-                <!-- Uncomment the line below if you also wish to use an image logo -->
-                <img src="../../../images/back/logo_raiz_financiera.webp" alt="" style="max-height: 64px;">
-
-
-            </a>
-
-            <nav id="navmenu" class="navmenu">
-                <ul>
-                    <li><a href="#hero" class="active">Home<br></a></li>
-                    <li><a href="#about">Acerca de Nosotros</a></li>
-                    <li><a href="#services">Servicios</a></li>
-                    <li><a href="#portfolio">Otros</a></li>
-                    <li><a href="#team">Grupo de trabajo</a></li>
-                    
-
-                </ul>
-                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-              </nav>
-
-        </div>
-    </header>
+    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+      <a href="/" class="logo d-flex align-items-center me-auto me-lg-0">
+        <img src="../../../images/back/logo_raiz_financiera.webp" alt="Logo Raíz Financiera" style="max-height: 64px;" />
+      </a>
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="/" class="active">Home<br /></a></li>
+          <li><a href="/">Acerca de Nosotros</a></li>
+          <li><a href="/">Servicios</a></li>
+          <li><a href="/">Otros</a></li>
+          <li><a href="/">Grupo de trabajo</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+    </div>
+  </header>
 
   <div class="register-container">
-
     <% if (error) { %>
       <div class="alert alert-danger text-center">
         <p><%= error %></p>
@@ -93,56 +151,69 @@
       <h2>Crear Cuenta</h2>
 
       <div class="row">
-        <div class="col-md-6 mb-3">
+        <div class="col-md-6 form-group-horizontal">
           <label for="inputNombre1">Primer Nombre</label>
           <input type="text" class="form-control" id="inputNombre1" name="nombre1" required />
         </div>
-        <div class="col-md-6 mb-3">
+        <div class="col-md-6 form-group-horizontal">
           <label for="inputNombre2">Segundo Nombre</label>
           <input type="text" class="form-control" id="inputNombre2" name="nombre2" required />
         </div>
-        <div class="col-md-6 mb-3">
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 form-group-horizontal">
           <label for="inputApellido1">Primer Apellido</label>
           <input type="text" class="form-control" id="inputApellido1" name="apellido1" required />
         </div>
-        <div class="col-md-6 mb-3">
+        <div class="col-md-6 form-group-horizontal">
           <label for="inputApellido2">Segundo Apellido</label>
           <input type="text" class="form-control" id="inputApellido2" name="apellido2" required />
         </div>
       </div>
 
-      <div class="mb-3">
+      <div class="form-group-horizontal">
         <label for="inputRut">RUT</label>
         <input type="text" class="form-control" id="inputRut" name="rut" required pattern="^\d{7,8}-[0-9kK]{1}$" title="El RUT debe tener el formato 19174477-2" />
       </div>
-      <div class="mb-3">
+
+      <div class="form-group-horizontal">
         <label for="inputNumeroDocumento">Número de Documento</label>
         <input type="text" class="form-control" id="inputNumeroDocumento" name="numero_documento" required pattern="^\d{3}\.\d{3}\.\d{3}$" title="Formato 123.123.123" />
       </div>
-      <div class="mb-3">
+
+      <div class="form-group-horizontal">
         <label for="inputTelefono">Teléfono</label>
         <input type="tel" class="form-control" id="inputTelefono" name="telefono" required pattern="^\+569\d{8}$" title="Formato +569XXXXXXXX" />
       </div>
-      <div class="mb-3">
+
+      <div class="form-group-horizontal">
         <label for="inputFechaNacimiento">Fecha de Nacimiento</label>
         <input type="date" class="form-control" id="inputFechaNacimiento" name="fecha_nacimiento" required />
       </div>
-      <div class="mb-3">
+
+      <div class="form-group-horizontal">
         <label for="inputEmail">Correo Electrónico</label>
         <input type="email" class="form-control" id="inputEmail" name="email" required />
       </div>
-      <div class="mb-3">
+
+      <div class="form-group-horizontal">
         <label for="inputPassword">Contraseña</label>
-        <input type="password" class="form-control" id="inputPassword" name="password" required pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" title="Mínimo 8 caracteres, mayúsculas, minúsculas, números y especial" />
+        <input type="password" class="form-control" id="inputPassword" name="password" required
+          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+          title="Mínimo 8 caracteres, mayúsculas, minúsculas, números y especial" />
       </div>
-      <div class="mb-3">
+
+      <div class="form-group-horizontal">
         <label for="inputConfirmPassword">Confirmar Contraseña</label>
         <input type="password" class="form-control" id="inputConfirmPassword" required />
       </div>
 
-      <button type="submit" class="btn btn-primary w-100">Registrarse</button>
-      <p class="text-center mt-3">¿Ya tienes una cuenta? <a href="/login">Inicia sesión aquí</a></p>
-      <div class="text-center">
+      <button type="submit" class="btn btn-primary w-100 mt-4">Registrarse</button>
+
+      <p class="text-center mt-3 mb-0">¿Ya tienes una cuenta? <a href="/login">Inicia sesión aquí</a></p>
+
+      <div class="text-center mt-2">
         <a href="/" class="boton_volver">← Volver al Inicio</a>
       </div>
     </form>
