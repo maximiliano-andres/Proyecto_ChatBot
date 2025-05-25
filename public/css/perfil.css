@@ -1,17 +1,24 @@
-.body {
-    background-color: #0080ff;
-}
+body {
+        background: linear-gradient(to right, #007BFF, #00BFFF);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-.card {
-    border-radius: 1rem;
-    background-color: #ffffff;
-}
+    section {
+        padding-top: 120px; /* para compensar el header fijo */
+        padding-bottom: 60px;
+        background-color: rgba(255, 255, 255, 0.8);
+    }
 
-.card h3 {
-    color: #003366;
-}
+    .card {
+        border-radius: 1rem;
+        background-color: #ffffff;
+    }
 
-.badge {
-    font-weight: 500;
-    font-size: 0.95rem;
-}
+    .card h3 {
+        color: #003366;
+    }
+
+    .badge {
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
