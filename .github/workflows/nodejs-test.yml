@@ -1,18 +1,33 @@
----
+name: NodeTest.js CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
+
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+
       - name: Instalar dependencias
         run: npm install
+
       - name: Ejecutar tests (salida estándar)
         run: npm test
+
       - name: Generar reporte en JUnit XML
         run: |
           npm install --save-dev mocha-junit-reporter
@@ -29,9 +44,3 @@ jobs:
         with:
           name: test-report-pdf
           path: ./test-results/results.pdf
-name: Node.js CI
-'on':
-  pull_request:
-    branches: [main]
-  push:
-    branches: [main]
