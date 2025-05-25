@@ -78,65 +78,132 @@ jobs:
         run: |
           node <<'EOF'
           const fs = require('fs');
+          const { execSync } = require('child_process');
           const PDFDocument = require('pdfkit');
-          const audit = JSON.parse(fs.readFileSync('audit.json', 'utf8'));
 
-          const doc = new PDFDocument({ margin: 30 });
+          const audit = JSON.parse(fs.readFileSync('audit.json', 'utf8'));
+          const depsRaw = execSync('npm ls --json --long').toString();
+          const deps = JSON.parse(depsRaw);
+
+          const doc = new PDFDocument({ margin: 40 });
           doc.pipe(fs.createWriteStream('reporte_dependencias.pdf'));
 
-          // Título principal
-          doc.fontSize(20).text('Reporte de Dependencias y Vulnerabilidades', { align: 'center' });
-          doc.moveDown();
+          // Título
+          doc.fontSize(22).fillColor('black').text('Reporte de Dependencias y Vulnerabilidades', {
+            align: 'center',
+            underline: true,
+          }).moveDown(1.5);
 
           const colorMap = {
-            critical: 'red',
-            high: 'red',
-            moderate: 'orange',
-            low: 'green',
-            none: 'blue',
+            critical: '#ff4d4f',
+            high: '#ff7a45',
+            moderate: '#faad14',
+            low: '#52c41a',
+            none: '#1890ff',
           };
 
-          const levels = { critical: [], high: [], moderate: [], low: [], none: [] };
+          const severities = ['critical', 'high', 'moderate', 'low', 'none'];
+          const vulnerabilityMap = { critical: [], high: [], moderate: [], low: [], none: [] };
 
-          // Recolectar datos
+          // Recorrer vulnerabilidades
           if (audit.vulnerabilities) {
-            Object.values(audit.vulnerabilities).forEach(vuln => {
-              const level = vuln.severity || 'none';
-              if (levels[level]) levels[level].push({
-                name: vuln.name,
-                version: vuln.installed || 'desconocida',
-                via: vuln.via.map(v => typeof v === 'string' ? v : v.source).join(', '),
-                path: vuln.nodes ? vuln.nodes.join(' > ') : 'N/A',
-                severity: level
-              });
-            });
+            for (const vuln of Object.values(audit.vulnerabilities)) {
+              const severity = vuln.severity || 'none';
+              if (vulnerabilityMap[severity]) {
+                vulnerabilityMap[severity].push({
+                  name: vuln.name,
+                  version: vuln.installed,
+                  path: vuln.nodes ? vuln.nodes.join(', ') : 'N/A',
+                  source: Array.isArray(vuln.via)
+                    ? vuln.via.map(v => typeof v === 'string' ? v : v.source).join(', ')
+                    : vuln.via,
+                  severity
+                });
+              }
+            }
           }
 
-          // Generar tablas por nivel
-          Object.entries(levels).forEach(([nivel, lista]) => {
-            const color = colorMap[nivel] || 'black';
-            doc.addPage();
-            doc.fillColor(color).fontSize(16).text(`Vulnerabilidades: ${nivel.toUpperCase()}`, { underline: true });
-            doc.moveDown().fillColor('black').fontSize(12);
+          // Recolectar todas las dependencias
+          const allDependencies = [];
 
-            if (!lista.length) {
-              doc.fillColor('gray').text('Sin resultados').fillColor('black');
-              return;
+          function traverseDependencies(obj, parent = '') {
+            if (obj && obj.dependencies) {
+              for (const [name, dep] of Object.entries(obj.dependencies)) {
+                allDependencies.push({
+                  name,
+                  version: dep.version || 'N/A',
+                  path: parent ? `${parent} > ${name}` : name,
+                });
+                traverseDependencies(dep, name);
+              }
+            }
+          }
+
+          traverseDependencies(deps);
+
+          // Mostrar todas las dependencias (resumen general)
+          doc.fontSize(16).fillColor('black').text('Listado Completo de Dependencias', { underline: true }).moveDown(0.5);
+          allDependencies.forEach(dep => {
+            doc
+              .fontSize(12)
+              .fillColor('black')
+              .text(`• ${dep.name} (${dep.version})`, { continued: true })
+              .fillColor('gray')
+              .text(`  ↳ Path: ${dep.path}`);
+          });
+
+          doc.moveDown(1.5);
+
+          // Generar tablas por severidad
+          for (const level of severities) {
+            const color = colorMap[level];
+            const entries = vulnerabilityMap[level];
+
+            doc
+              .addPage()
+              .fontSize(16)
+              .fillColor(color)
+              .text(`Dependencias con Vulnerabilidad: ${level.toUpperCase()}`, {
+                underline: true,
+              })
+              .moveDown(0.5);
+
+            if (!entries.length) {
+              doc.fontSize(12).fillColor('gray').text('Sin dependencias con esta severidad.').moveDown(1);
+              continue;
             }
 
-            lista.forEach(dep => {
+            // Tabla de encabezados
+            doc
+              .fontSize(12)
+              .fillColor('black')
+              .text('Nombre', 60, doc.y, { continued: true })
+              .text('Versión', 180, doc.y, { continued: true })
+              .text('Path', 260, doc.y, { continued: true })
+              .text('Fuente', 420, doc.y)
+              .moveDown(0.5);
+
+            doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+
+            // Filas
+            entries.forEach(dep => {
               doc
+                .fontSize(11)
                 .fillColor(color)
-                .text(`• ${dep.name} (${dep.version})`)
+                .text(dep.name, 60, doc.y, { continued: true })
                 .fillColor('black')
-                .text(`   ↳ Vía: ${dep.via}`)
-                .text(`   ↳ Path: ${dep.path}`)
-                .moveDown();
+                .text(dep.version || 'N/A', 180, doc.y, { continued: true })
+                .text(dep.path, 260, doc.y, { continued: true })
+                .text(dep.source || 'N/A', 420, doc.y)
+                .moveDown(0.3);
             });
-          });
+
+            doc.moveDown(1.5);
+          }
 
           doc.end();
           EOF
+
 
 
       - name: Subir reporte de dependencias (TXT)
