@@ -1,6 +1,6 @@
 # Raíz Financiera - ChatBot Bancario
 
-Raíz Financiera es una plataforma web bancaria con un asistente virtual (chatbot) que permite a los usuarios interactuar para solicitar productos financieros como préstamos, tarjetas de crédito y seguros, así como gestionar contratos y visualizar documentos PDF. El sistema está desarrollado con Node.js, Express, MongoDB y EJS, y utiliza tecnologías modernas de frontend como Bootstrap para garantizar una experiencia responsiva y segura.
+Raíz Financiera es una plataforma web bancaria con un asistente virtual (chatbot) que permite a los usuarios interactuar para solicitar productos financieros como préstamos, tarjetas de crédito y seguros, así como gestionar contratos y visualizar documentos PDF. El sistema está desarrollado con Node.js, Express, MongoDB y EJS, y utiliza Bootstrap para una experiencia responsiva y segura.
 
 ---
 
@@ -105,6 +105,7 @@ Raíz Financiera es una plataforma web bancaria con un asistente virtual (chatbo
 - `/pdf` — Visualización y firma de contratos PDF
 - `/Finanzas_Raiz` — Página principal autenticada
 - `/tablas` — Panel de administración (requiere permisos)
+- `/grupo` — Gestión de grupos de usuarios
 - **URL oculta solo para administradores:**  
   `/registro_usuario/ADMINISTRADOR2025` — Registro de usuario administrador
 
@@ -114,7 +115,7 @@ Raíz Financiera es una plataforma web bancaria con un asistente virtual (chatbo
 
 Puedes importar la siguiente colección de Postman para probar los endpoints principales:
 
-1. Descarga el archivo [`RaizFinanciera.postman_collection.json`](RaizFinanciera.postman_collection.json) (ver ejemplo en la documentación del proyecto).
+1. Descarga el archivo [`RaizFinanciera.postman_collection.json`](RaizFinanciera.postman_collection.json).
 2. Importa el archivo en Postman.
 3. Modifica los datos de ejemplo según tus pruebas.
 4. Si algún endpoint requiere token, primero haz login y usa el token en las variables de entorno de Postman.
