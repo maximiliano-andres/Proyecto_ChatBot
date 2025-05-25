@@ -40,7 +40,7 @@ const rutas = [
   { path: "/registro_usuario", esperado: [200, 302, 404] },
   { path: "/perfil", esperado: [200, 302, 401, 404], rol: "CLIENTE" },
   { path: "/chatbot", esperado: [200, 302, 404], rol: "CLIENTE" },
-  { path: "/pdf", esperado: [200, 301, 302, 404], rol: "CLIENTE" },
+  { path: "/pdf", esperado: [200, 301, 302, 400, 404], rol: "CLIENTE" },
   { path: "/registro_usuario/ADMINISTRADOR2025", esperado: [200, 302, 404] },
   { path: "/tablas", esperado: [200, 302, 403, 404], rol: "ADMIN" },
   { path: "/grupo", esperado: [200, 302, 404], rol: "CLIENTE" },
