@@ -37,10 +37,8 @@ jobs:
           import { execSync } from 'child_process';
 
           try {
-            // Leer reporte de audit
             const audit = JSON.parse(fs.readFileSync('audit.json', 'utf8'));
 
-            // Leer árbol de dependencias
             let depTree;
             try {
               depTree = JSON.parse(execSync('npm ls --json').toString());
@@ -49,7 +47,6 @@ jobs:
               process.exit(1);
             }
 
-            // Extraer dependencias recursivamente
             const allDeps = {};
             function collectDeps(obj) {
               if (!obj.dependencies) return;
@@ -60,7 +57,6 @@ jobs:
             }
             collectDeps(depTree);
 
-            // Mapeo de vulnerabilidades
             const vulnMap = {};
             if (audit.vulnerabilities) {
               for (const [pkgName, vuln] of Object.entries(audit.vulnerabilities)) {
@@ -68,7 +64,6 @@ jobs:
               }
             }
 
-            // Función para obtener info de NPM Registry
             function fetchNpmInfo(pkg) {
               return new Promise((resolve) => {
                 https.get(`https://registry.npmjs.org/${pkg}`, (res) => {
@@ -91,7 +86,6 @@ jobs:
               });
             }
 
-            // Construir reporte completo
             async function buildReport() {
               const reportData = [];
 
@@ -127,7 +121,6 @@ jobs:
                 countsBySeverity[d.severity] = (countsBySeverity[d.severity] || 0) + 1;
               });
 
-              // Guardar reporte JSON completo
               fs.writeFileSync('reporte_dependencias_completo.json', JSON.stringify({
                 date: new Date().toISOString(),
                 totalDependencies: totalDeps,
@@ -135,7 +128,6 @@ jobs:
                 dependencies: reportData,
               }, null, 2));
 
-              // Generar reporte TXT resumido
               let txtReport = `Reporte de dependencias y vulnerabilidades (Resumen)\nFecha: ${new Date().toISOString()}\n\n`;
               txtReport += `Total dependencias analizadas: ${totalDeps}\n`;
               txtReport += `Vulnerabilidades críticas/altas: ${countsBySeverity.critical + countsBySeverity.high}\n`;
@@ -158,7 +150,6 @@ jobs:
 
               fs.writeFileSync('reporte.txt', txtReport);
 
-              // Guardar para siguiente paso
               fs.writeFileSync('reporte_data.json', JSON.stringify({ reportData, countsBySeverity, totalDeps, topVulnerable }));
             }
 
@@ -222,7 +213,9 @@ jobs:
 
             const tableTop = doc.y;
             const colX = [30, 160, 260, 340, 430, 510];
-            const rowHeight = 20;
+
+            // Incrementamos la altura de fila para dar más espacio vertical
+            const rowHeight = 28;
 
             // Header
             doc.fontSize(10).fillColor('black').text('Paquete', colX[0], tableTop);
@@ -236,8 +229,8 @@ jobs:
             for (const dep of reportData) {
               const color = colors[dep.severity] || colors.none;
 
-              // Fondo color según severidad
-              doc.rect(30, y - 5, 540, rowHeight).fill(color.fill);
+              // Fondo color con algo más de altura para espacio extra
+              doc.rect(30, y - 6, 540, rowHeight).fill(color.fill);
               doc.fillColor(color.border);
 
               doc.text(dep.name, colX[0], y);
@@ -248,7 +241,6 @@ jobs:
               doc.text(dep.recommendation, colX[5], y);
 
               y += rowHeight;
-              // Salto de página si necesario
               if (y > 750) {
                 doc.addPage();
                 y = 50;
@@ -269,5 +261,5 @@ jobs:
           name: reportes-dependencias
           path: |
             reporte.txt
-            reporte_dependencias_completo.json
             reporte_dependencias.pdf
+            reporte_dependencias_completo.json
