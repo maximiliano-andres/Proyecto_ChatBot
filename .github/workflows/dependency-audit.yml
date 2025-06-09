@@ -18,11 +18,11 @@ on:
         - pdf
         - json
   push:
-    branches: ['main', 'master', 'develop', 'prueba_1', '**']
-    paths: ['package.json', 'package-lock.json', 'yarn.lock']
+    branches:
+      - '**'
   pull_request:
-    branches: ['main', 'master', 'develop', 'prueba_1', '**']
-    paths: ['package.json', 'package-lock.json', 'yarn.lock']
+    branches:
+      - '**'
   schedule:
     - cron: '0 2 * * 1' # Lunes a las 2 AM
 
