@@ -1,0 +1,1073 @@
+name: 🔒 Auditoría Profesional de Dependencias y Vulnerabilidades
+
+on:
+  workflow_dispatch:
+    inputs:
+      include_dev_dependencies:
+        description: 'Incluir dependencias de desarrollo'
+        required: false
+        default: true
+        type: boolean
+      report_format:
+        description: 'Formato del reporte'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - pdf
+        - json
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+  schedule:
+    - cron: '0 2 * * 1' # Lunes a las 2 AM
+
+env:
+  NODE_VERSION: '20'
+  AUDIT_LEVEL: 'info'
+
+jobs:
+  security-audit:
+    name: 🛡️ Auditoría de Seguridad
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: read
+      security-events: write
+      pull-requests: write
+
+    outputs:
+      total-vulnerabilities: ${{ steps.audit-summary.outputs.total-vulnerabilities }}
+      critical-high-count: ${{ steps.audit-summary.outputs.critical-high-count }}
+      report-generated: ${{ steps.audit-summary.outputs.report-generated }}
+
+    steps:
+      - name: 📥 Checkout del código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🟢 Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Instalar dependencias
+        run: |
+          npm ci --prefer-offline --no-audit --no-fund
+          echo "✅ Dependencias instaladas correctamente"
+
+      - name: 📋 Inventario de dependencias
+        run: |
+          echo "📊 Generando inventario completo de dependencias..."
+          npm list --all --json > dependency-tree.json
+          npm list --depth=0 --json > direct-dependencies.json
+          
+          # Estadísticas básicas
+          TOTAL_DEPS=$(jq -r '.dependencies | keys | length' direct-dependencies.json 2>/dev/null || echo "0")
+          echo "📦 Total dependencias directas: $TOTAL_DEPS"
+          echo "TOTAL_DEPENDENCIES=$TOTAL_DEPS" >> $GITHUB_ENV
+
+      - name: 🔍 Ejecutar auditoría de seguridad
+        id: security-audit
+        run: |
+          echo "🔍 Iniciando auditoría de seguridad..."
+          
+          # Ejecutar audit y capturar resultado
+          set +e
+          npm audit --json > audit-raw.json
+          AUDIT_EXIT_CODE=$?
+          set -e
+          
+          echo "AUDIT_EXIT_CODE=$AUDIT_EXIT_CODE" >> $GITHUB_ENV
+          
+          if [ $AUDIT_EXIT_CODE -eq 0 ]; then
+            echo "✅ No se encontraron vulnerabilidades"
+          else
+            echo "⚠️ Se encontraron vulnerabilidades (código: $AUDIT_EXIT_CODE)"
+          fi
+
+      - name: 🧮 Procesar resultados de auditoría
+        id: audit-summary
+        run: |
+          node << 'EOF'
+          const fs = require('fs');
+          const https = require('https');
+          const { execSync } = require('child_process');
+
+          class DependencyAuditor {
+            constructor() {
+              this.auditData = {};
+              this.dependencyTree = {};
+              this.npmCache = new Map();
+              this.reportData = [];
+            }
+
+            async initialize() {
+              try {
+                console.log('📊 Inicializando auditor de dependencias...');
+                
+                // Cargar datos de auditoría
+                const auditRaw = fs.readFileSync('audit-raw.json', 'utf8');
+                this.auditData = JSON.parse(auditRaw);
+                
+                // Cargar árbol de dependencias
+                const treeRaw = fs.readFileSync('dependency-tree.json', 'utf8');
+                this.dependencyTree = JSON.parse(treeRaw);
+                
+                console.log('✅ Datos cargados correctamente');
+              } catch (error) {
+                console.error('❌ Error inicializando:', error.message);
+                throw error;
+              }
+            }
+
+            extractAllDependencies() {
+              const allDeps = new Map();
+              
+              const traverse = (deps, isDevDep = false) => {
+                if (!deps) return;
+                
+                for (const [name, info] of Object.entries(deps)) {
+                  if (!allDeps.has(name)) {
+                    allDeps.set(name, {
+                      version: info.version || 'unknown',
+                      isDev: isDevDep,
+                      path: info.path || name
+                    });
+                  }
+                  traverse(info.dependencies, isDevDep);
+                }
+              };
+
+              traverse(this.dependencyTree.dependencies, false);
+              traverse(this.dependencyTree.devDependencies, true);
+              
+              return allDeps;
+            }
+
+            async fetchNpmMetadata(packageName) {
+              if (this.npmCache.has(packageName)) {
+                return this.npmCache.get(packageName);
+              }
+
+              return new Promise((resolve) => {
+                const options = {
+                  hostname: 'registry.npmjs.org',
+                  path: `/${encodeURIComponent(packageName)}`,
+                  method: 'GET',
+                  timeout: 5000
+                };
+
+                const req = https.request(options, (res) => {
+                  let data = '';
+                  
+                  res.on('data', chunk => data += chunk);
+                  res.on('end', () => {
+                    try {
+                      const pkg = JSON.parse(data);
+                      const metadata = {
+                        latestVersion: pkg['dist-tags']?.latest || null,
+                        description: pkg.description || '',
+                        homepage: pkg.homepage || '',
+                        repository: pkg.repository?.url || '',
+                        license: pkg.license || 'Unknown',
+                        maintainers: pkg.maintainers?.length || 0,
+                        lastPublish: this.getLastPublishDate(pkg),
+                        weeklyDownloads: null // Se podría obtener de otra API
+                      };
+                      
+                      this.npmCache.set(packageName, metadata);
+                      resolve(metadata);
+                    } catch (error) {
+                      console.warn(`⚠️ Error parsing metadata for ${packageName}`);
+                      resolve(this.getDefaultMetadata());
+                    }
+                  });
+                });
+
+                req.on('error', () => {
+                  console.warn(`⚠️ Error fetching metadata for ${packageName}`);
+                  resolve(this.getDefaultMetadata());
+                });
+
+                req.on('timeout', () => {
+                  req.destroy();
+                  resolve(this.getDefaultMetadata());
+                });
+
+                req.end();
+              });
+            }
+
+            getLastPublishDate(pkg) {
+              if (!pkg.time) return null;
+              
+              const versions = Object.keys(pkg.versions || {});
+              if (versions.length === 0) return null;
+              
+              const latestVersion = pkg['dist-tags']?.latest;
+              return pkg.time[latestVersion] || Object.values(pkg.time).sort().pop();
+            }
+
+            getDefaultMetadata() {
+              return {
+                latestVersion: null,
+                description: '',
+                homepage: '',
+                repository: '',
+                license: 'Unknown',
+                maintainers: 0,
+                lastPublish: null,
+                weeklyDownloads: null
+              };
+            }
+
+            analyzeVulnerabilities() {
+              const vulnMap = new Map();
+              
+              if (this.auditData.vulnerabilities) {
+                for (const [pkgName, vuln] of Object.entries(this.auditData.vulnerabilities)) {
+                  const severity = vuln.severity || 'unknown';
+                  const count = Array.isArray(vuln.via) ? vuln.via.length : 1;
+                  
+                  vulnMap.set(pkgName, {
+                    severity,
+                    count,
+                    title: vuln.title || 'Vulnerabilidad sin título',
+                    range: vuln.range || '*',
+                    nodes: vuln.nodes || [],
+                    fixAvailable: vuln.fixAvailable || false
+                  });
+                }
+              }
+              
+              return vulnMap;
+            }
+
+            getRiskLevel(severity, lastPublish) {
+              if (severity === 'critical') return 'CRÍTICO';
+              if (severity === 'high') return 'ALTO';
+              if (severity === 'moderate') return 'MEDIO';
+              if (severity === 'low') return 'BAJO';
+              
+              // Evaluar riesgo por antiguedad
+              if (lastPublish) {
+                const daysSinceUpdate = (Date.now() - new Date(lastPublish)) / (1000 * 60 * 60 * 24);
+                if (daysSinceUpdate > 730) return 'OBSOLETO'; // 2 años
+                if (daysSinceUpdate > 365) return 'ANTIGUO'; // 1 año
+              }
+              
+              return 'SEGURO';
+            }
+
+            getRecommendation(vulnerability, metadata, currentVersion) {
+              if (!vulnerability) {
+                if (metadata.latestVersion && currentVersion !== metadata.latestVersion) {
+                  return `Actualizar a ${metadata.latestVersion}`;
+                }
+                return 'Mantener versión actual';
+              }
+
+              const { severity, fixAvailable } = vulnerability;
+              
+              if (severity === 'critical') {
+                return fixAvailable ? '🚨 ACTUALIZAR INMEDIATAMENTE' : '🚨 REEMPLAZAR PAQUETE';
+              }
+              
+              if (severity === 'high') {
+                return fixAvailable ? '⚡ Actualizar con prioridad alta' : '⚠️ Buscar alternativas';
+              }
+              
+              if (severity === 'moderate') {
+                return fixAvailable ? '📅 Actualizar próximamente' : '🔍 Revisar impacto';
+              }
+              
+              return fixAvailable ? '📝 Considerar actualización' : '👀 Monitorear';
+            }
+
+            async generateReport() {
+              console.log('📊 Generando reporte detallado...');
+              
+              const allDeps = this.extractAllDependencies();
+              const vulnerabilities = this.analyzeVulnerabilities();
+              
+              console.log(`📦 Analizando ${allDeps.size} dependencias...`);
+              
+              let processed = 0;
+              for (const [name, depInfo] of allDeps) {
+                const metadata = await this.fetchNpmMetadata(name);
+                const vulnerability = vulnerabilities.get(name);
+                
+                const riskLevel = this.getRiskLevel(
+                  vulnerability?.severity, 
+                  metadata.lastPublish
+                );
+                
+                this.reportData.push({
+                  name,
+                  currentVersion: depInfo.version,
+                  latestVersion: metadata.latestVersion || 'N/A',
+                  description: metadata.description.substring(0, 100),
+                  license: metadata.license,
+                  lastPublish: metadata.lastPublish ? 
+                    new Date(metadata.lastPublish).toISOString().split('T')[0] : 'N/A',
+                  daysSinceUpdate: metadata.lastPublish ? 
+                    Math.floor((Date.now() - new Date(metadata.lastPublish)) / (1000 * 60 * 60 * 24)) : null,
+                  severity: vulnerability?.severity || 'none',
+                  vulnerabilityCount: vulnerability?.count || 0,
+                  vulnerabilityTitle: vulnerability?.title || '',
+                  riskLevel,
+                  recommendation: this.getRecommendation(vulnerability, metadata, depInfo.version),
+                  isDev: depInfo.isDev,
+                  maintainers: metadata.maintainers,
+                  homepage: metadata.homepage,
+                  repository: metadata.repository
+                });
+                
+                processed++;
+                if (processed % 10 === 0) {
+                  console.log(`📊 Procesadas ${processed}/${allDeps.size} dependencias...`);
+                }
+              }
+              
+              console.log('✅ Reporte generado completamente');
+            }
+
+            generateSummary() {
+              const summary = {
+                date: new Date().toISOString(),
+                totalDependencies: this.reportData.length,
+                productionDependencies: this.reportData.filter(d => !d.isDev).length,
+                devDependencies: this.reportData.filter(d => d.isDev).length,
+                vulnerabilityCounts: {
+                  critical: this.reportData.filter(d => d.severity === 'critical').length,
+                  high: this.reportData.filter(d => d.severity === 'high').length,
+                  moderate: this.reportData.filter(d => d.severity === 'moderate').length,
+                  low: this.reportData.filter(d => d.severity === 'low').length,
+                  none: this.reportData.filter(d => d.severity === 'none').length
+                },
+                riskDistribution: {},
+                topVulnerable: this.reportData
+                  .filter(d => d.vulnerabilityCount > 0)
+                  .sort((a, b) => b.vulnerabilityCount - a.vulnerabilityCount)
+                  .slice(0, 10),
+                outdatedPackages: this.reportData
+                  .filter(d => d.daysSinceUpdate && d.daysSinceUpdate > 365)
+                  .sort((a, b) => b.daysSinceUpdate - a.daysSinceUpdate)
+                  .slice(0, 10),
+                updateCandidates: this.reportData
+                  .filter(d => d.latestVersion !== 'N/A' && d.currentVersion !== d.latestVersion)
+                  .slice(0, 20)
+              };
+
+              // Calcular distribución de riesgo
+              ['CRÍTICO', 'ALTO', 'MEDIO', 'BAJO', 'SEGURO', 'OBSOLETO', 'ANTIGUO'].forEach(risk => {
+                summary.riskDistribution[risk] = this.reportData.filter(d => d.riskLevel === risk).length;
+              });
+
+              return summary;
+            }
+
+            saveReports() {
+              const summary = this.generateSummary();
+              
+              // Guardar datos completos
+              fs.writeFileSync('audit-complete-report.json', JSON.stringify({
+                summary,
+                dependencies: this.reportData
+              }, null, 2));
+
+              // Guardar resumen para GitHub Actions
+              fs.writeFileSync('audit-summary.json', JSON.stringify(summary, null, 2));
+
+              // Resumen en texto
+              let textReport = `🔒 REPORTE DE AUDITORÍA DE SEGURIDAD\n`;
+              textReport += `📅 Fecha: ${new Date().toLocaleString()}\n\n`;
+              textReport += `📊 RESUMEN EJECUTIVO:\n`;
+              textReport += `├─ Total dependencias: ${summary.totalDependencies}\n`;
+              textReport += `├─ Producción: ${summary.productionDependencies}\n`;
+              textReport += `├─ Desarrollo: ${summary.devDependencies}\n`;
+              textReport += `└─ Vulnerabilidades críticas/altas: ${summary.vulnerabilityCounts.critical + summary.vulnerabilityCounts.high}\n\n`;
+
+              if (summary.topVulnerable.length > 0) {
+                textReport += `🚨 TOP VULNERABILIDADES:\n`;
+                summary.topVulnerable.slice(0, 5).forEach((pkg, i) => {
+                  textReport += `${i + 1}. ${pkg.name}@${pkg.currentVersion} - ${pkg.vulnerabilityCount} vulnerabilidades (${pkg.severity.toUpperCase()})\n`;
+                });
+              } else {
+                textReport += `✅ No se encontraron vulnerabilidades críticas\n`;
+              }
+
+              fs.writeFileSync('audit-summary.txt', textReport);
+
+              return summary;
+            }
+          }
+
+          // Ejecutar auditoría
+          (async () => {
+            try {
+              const auditor = new DependencyAuditor();
+              await auditor.initialize();
+              await auditor.generateReport();
+              const summary = auditor.saveReports();
+
+              // Configurar outputs para GitHub Actions
+              const totalVulns = summary.vulnerabilityCounts.critical + 
+                                summary.vulnerabilityCounts.high + 
+                                summary.vulnerabilityCounts.moderate + 
+                                summary.vulnerabilityCounts.low;
+
+              const criticalHighCount = summary.vulnerabilityCounts.critical + summary.vulnerabilityCounts.high;
+
+              console.log(`::set-output name=total-vulnerabilities::${totalVulns}`);
+              console.log(`::set-output name=critical-high-count::${criticalHighCount}`);
+              console.log(`::set-output name=report-generated::true`);
+
+              console.log('✅ Auditoría completada exitosamente');
+            } catch (error) {
+              console.error('❌ Error en auditoría:', error);
+              process.exit(1);
+            }
+          })();
+          EOF
+
+      - name: 📄 Generar reporte PDF profesional
+        if: ${{ inputs.report_format == 'all' || inputs.report_format == 'pdf' }}
+        run: |
+          npm install pdfkit canvas
+          
+          node << 'EOF'
+          const fs = require('fs');
+          const PDFDocument = require('pdfkit');
+
+          class ProfessionalPDFGenerator {
+            constructor(data) {
+              this.data = data;
+              this.doc = new PDFDocument({ 
+                margin: 40, 
+                size: 'A4',
+                info: {
+                  Title: 'Reporte de Auditoría de Dependencias',
+                  Author: 'Security Audit System',
+                  Subject: 'Análisis de vulnerabilidades y dependencias',
+                  Keywords: 'security, dependencies, vulnerabilities, audit'
+                }
+              });
+              
+              this.colors = {
+                primary: '#1e3a8a',      // Azul profundo
+                secondary: '#1f2937',     // Gris oscuro
+                accent: '#3b82f6',        // Azul brillante
+                success: '#059669',       // Verde
+                warning: '#d97706',       // Naranja
+                danger: '#dc2626',        // Rojo
+                critical: '#7c2d12',      // Rojo oscuro
+                background: '#f8fafc',    // Gris muy claro
+                white: '#ffffff'
+              };
+
+              this.vulnerabilityColors = {
+                critical: { bg: '#fef2f2', border: '#dc2626', text: '#7f1d1d' },
+                high: { bg: '#fff7ed', border: '#ea580c', text: '#9a3412' },
+                moderate: { bg: '#fffbeb', border: '#d97706', text: '#92400e' },
+                low: { bg: '#f0fdf4', border: '#059669', text: '#064e3b' },
+                none: { bg: '#f8fafc', border: '#6b7280', text: '#374151' }
+              };
+            }
+
+            async generate() {
+              console.log('📄 Generando PDF profesional...');
+              
+              this.doc.pipe(fs.createWriteStream('security-audit-report.pdf'));
+              
+              await this.createCoverPage();
+              await this.createExecutiveSummary();
+              await this.createVulnerabilityOverview();
+              await this.createTopVulnerabilities();
+              await this.createDependencyTable();
+              await this.createRecommendations();
+              await this.createAppendix();
+              
+              this.doc.end();
+              console.log('✅ PDF generado: security-audit-report.pdf');
+            }
+
+            async createCoverPage() {
+              // Fondo degradado
+              const gradient = this.doc.linearGradient(0, 0, 0, this.doc.page.height);
+              gradient.stop(0, this.colors.primary);
+              gradient.stop(1, this.colors.accent);
+              
+              this.doc.rect(0, 0, this.doc.page.width, this.doc.page.height).fill(gradient);
+
+              // Logo/Icono (simulado con texto)
+              this.doc.fontSize(48)
+                .fillColor(this.colors.white)
+                .text('🔒', this.doc.page.width / 2 - 30, 150);
+
+              // Título principal
+              this.doc.fontSize(32)
+                .font('Helvetica-Bold')
+                .fillColor(this.colors.white)
+                .text('REPORTE DE AUDITORÍA', 0, 220, { align: 'center' });
+                
+              this.doc.fontSize(28)
+                .text('DE SEGURIDAD', 0, 260, { align: 'center' });
+
+              // Subtítulo
+              this.doc.fontSize(16)
+                .font('Helvetica')
+                .fillColor('#e2e8f0')
+                .text('Análisis Completo de Dependencias y Vulnerabilidades', 0, 320, { align: 'center' });
+
+              // Información del proyecto
+              const projectInfo = [
+                `📊 Total Dependencias: ${this.data.summary.totalDependencies}`,
+                `🚨 Vulnerabilidades Críticas: ${this.data.summary.vulnerabilityCounts.critical}`,
+                `⚠️ Vulnerabilidades Altas: ${this.data.summary.vulnerabilityCounts.high}`,
+                `📅 Fecha de Análisis: ${new Date(this.data.summary.date).toLocaleDateString()}`
+              ];
+
+              let yPos = 400;
+              projectInfo.forEach(info => {
+                this.doc.fontSize(14)
+                  .fillColor(this.colors.white)
+                  .text(info, 0, yPos, { align: 'center' });
+                yPos += 25;
+              });
+
+              // Línea decorativa
+              this.doc.moveTo(100, 550)
+                .lineTo(this.doc.page.width - 100, 550)
+                .strokeColor(this.colors.white)
+                .lineWidth(2)
+                .stroke();
+
+              // Footer
+              this.doc.fontSize(12)
+                .fillColor('#cbd5e1')
+                .text('Generado automáticamente por el sistema de auditoría de seguridad', 0, 700, { align: 'center' });
+
+              this.doc.addPage();
+            }
+
+            async createExecutiveSummary() {
+              this.addHeader('📊 RESUMEN EJECUTIVO');
+
+              // Estadísticas principales en cards
+              const stats = [
+                { 
+                  title: 'Total Dependencias', 
+                  value: this.data.summary.totalDependencies, 
+                  color: this.colors.primary,
+                  icon: '📦'
+                },
+                { 
+                  title: 'Vulnerabilidades Críticas', 
+                  value: this.data.summary.vulnerabilityCounts.critical, 
+                  color: this.colors.danger,
+                  icon: '🚨'
+                },
+                { 
+                  title: 'Vulnerabilidades Altas', 
+                  value: this.data.summary.vulnerabilityCounts.high, 
+                  color: this.colors.warning,
+                  icon: '⚠️'
+                },
+                { 
+                  title: 'Paquetes Seguros', 
+                  value: this.data.summary.vulnerabilityCounts.none, 
+                  color: this.colors.success,
+                  icon: '✅'
+                }
+              ];
+
+              let xPos = 60;
+              const cardWidth = 120;
+              const cardHeight = 80;
+              
+              stats.forEach(stat => {
+                // Card background
+                this.doc.rect(xPos, this.doc.y, cardWidth, cardHeight)
+                  .fillAndStroke(this.colors.white, stat.color);
+
+                // Icon
+                this.doc.fontSize(20)
+                  .fillColor(stat.color)
+                  .text(stat.icon, xPos + 10, this.doc.y + 10);
+
+                // Value
+                this.doc.fontSize(24)
+                  .font('Helvetica-Bold')
+                  .fillColor(stat.color)
+                  .text(stat.value.toString(), xPos + 40, this.doc.y + 10);
+
+                // Title
+                this.doc.fontSize(10)
+                  .font('Helvetica')
+                  .fillColor(this.colors.secondary)
+                  .text(stat.title, xPos + 5, this.doc.y + 50, { width: cardWidth - 10, align: 'center' });
+
+                xPos += cardWidth + 20;
+              });
+
+              this.doc.moveDown(6);
+
+              // Distribución de riesgo
+              this.addSubHeader('📈 Distribución de Riesgo');
+              
+              const riskData = Object.entries(this.data.summary.riskDistribution)
+                .filter(([_, count]) => count > 0)
+                .sort(([_, a], [__, b]) => b - a);
+
+              riskData.forEach(([risk, count]) => {
+                const percentage = ((count / this.data.summary.totalDependencies) * 100).toFixed(1);
+                this.doc.fontSize(12)
+                  .fillColor(this.colors.secondary)
+                  .text(`${risk}: ${count} paquetes (${percentage}%)`);
+                this.doc.moveDown(0.3);
+              });
+
+              this.doc.addPage();
+            }
+
+            async createVulnerabilityOverview() {
+              this.addHeader('🔍 PANORAMA DE VULNERABILIDADES');
+
+              if (this.data.summary.vulnerabilityCounts.critical + this.data.summary.vulnerabilityCounts.high === 0) {
+                this.doc.fontSize(16)
+                  .fillColor(this.colors.success)
+                  .text('✅ ¡Excelente! No se encontraron vulnerabilidades críticas o altas.', { align: 'center' });
+                this.doc.moveDown(2);
+              } else {
+                // Gráfico de barras simple de vulnerabilidades
+                const vulnTypes = ['critical', 'high', 'moderate', 'low'];
+                const vulnLabels = ['Críticas', 'Altas', 'Moderadas', 'Bajas'];
+                const maxCount = Math.max(...vulnTypes.map(type => this.data.summary.vulnerabilityCounts[type]));
+                
+                this.addSubHeader('📊 Distribución por Severidad');
+                
+                vulnTypes.forEach((type, index) => {
+                  const count = this.data.summary.vulnerabilityCounts[type];
+                  const barWidth = maxCount > 0 ? (count / maxCount) * 300 : 0;
+                  const color = this.vulnerabilityColors[type];
+                  
+                  // Label
+                  this.doc.fontSize(12)
+                    .fillColor(this.colors.secondary)
+                    .text(`${vulnLabels[index]}:`, 60, this.doc.y);
+                  
+                  // Barra
+                  this.doc.rect(150, this.doc.y - 5, barWidth, 15)
+                    .fill(color.border);
+                  
+                  // Valor
+                  this.doc.fontSize(12)
+                    .fillColor(this.colors.secondary)
+                    .text(count.toString(), 460, this.doc.y - 12);
+                  
+                  this.doc.moveDown(1.2);
+                });
+              }
+
+              this.doc.addPage();
+            }
+
+            async createTopVulnerabilities() {
+              this.addHeader('🚨 VULNERABILIDADES PRIORITARIAS');
+
+              if (this.data.summary.topVulnerable.length === 0) {
+                this.doc.fontSize(14)
+                  .fillColor(this.colors.success)
+                  .text('✅ No se encontraron paquetes con vulnerabilidades.');
+                this.doc.addPage();
+                return;
+              }
+
+              this.data.summary.topVulnerable.slice(0, 10).forEach((pkg, index) => {
+                const color = this.vulnerabilityColors[pkg.severity];
+                
+                // Card para cada vulnerabilidad
+                const cardY = this.doc.y;
+                this.doc.rect(50, cardY, 500, 60)
+                  .fillAndStroke(color.bg, color.border);
+
+                // Ranking
+                this.doc.fontSize(18)
+                  .font('Helvetica-Bold')
+                  .fillColor(color.border)
+                  .text(`#${index + 1}`, 60, cardY + 10);
+
+                // Nombre del paquete
+                this.doc.fontSize(14)
+                  .font('Helvetica-Bold')
+                  .fillColor(this.colors.secondary)
+                  .text(pkg.name, 90, cardY + 8);
+
+                // Versión
+                this.doc.fontSize(10)
+                  .font('Helvetica')
+                  .fillColor(this.colors.secondary)
+                  .text(`v${pkg.currentVersion}`, 90, cardY + 25);
+
+                // Severidad
+                this.doc.fontSize(12)
+                  .font('Helvetica-Bold')
+                  .fillColor(color.text)
+                  .text(pkg.severity.toUpperCase(), 300, cardY + 10);
+
+                // Contador de vulnerabilidades
+                this.doc.fontSize(16)
+                  .font('Helvetica-Bold')
+                  .fillColor(color.border)
+                  .text(`${pkg.vulnerabilityCount}`, 450, cardY + 8);
+
+                this.doc.fontSize(10)
+                  .font('Helvetica')
+                  .fillColor(this.colors.secondary)
+                  .text('vulnerabilidades', 420, cardY + 30);
+
+                // Recomendación
+                this.doc.fontSize(10)
+                  .font('Helvetica')
+                  .fillColor(this.colors.secondary)
+                  .text(pkg.recommendation, 90, cardY + 40, { width: 300 });
+
+                this.doc.y = cardY + 75;
+              });
+
+              this.doc.addPage();
+            }
+
+            async createDependencyTable() {
+              this.addHeader('📋 TABLA DE DEPENDENCIAS');
+
+              // Configuración de la tabla
+              const tableHeaders = ['Paquete', 'Versión', 'Última', 'Severidad', 'Riesgo', 'Días'];
+              const colWidths = [120, 60, 60, 70, 70, 50];
+              const tableX = 50;
+              let tableY = this.doc.y;
+
+              // Headers de la tabla
+              this.doc.rect(tableX, tableY, colWidths.reduce((a, b) => a + b, 0), 25)
+                .fill(this.colors.primary);
+
+              let xPos = tableX;
+              tableHeaders.forEach((header, i) => {
+                this.doc.fontSize(10)
+                  .font('Helvetica-Bold')
+                  .fillColor(this.colors.white)
+                  .text(header, xPos + 5, tableY + 8, { width: colWidths[i] - 10 });
+                xPos += colWidths[i];
+              });
+
+              tableY += 25;
+
+              // Filtrar y ordenar dependencias por severidad
+              const sortedDeps = this.data.dependencies
+                .filter(dep => !dep.isDev || process.env.INCLUDE_DEV === 'true')
+                .sort((a, b) => {
+                  const severityOrder = { critical: 0, high: 1, moderate: 2, low: 3, none: 4 };
+                  return severityOrder[a.severity] - severityOrder[b.severity];
+                })
+                .slice(0, 50); // Limitar a 50 para evitar páginas excesivas
+
+              sortedDeps.forEach((dep, index) => {
+                // Alternar colores de fila
+                const rowColor = index % 2 === 0 ? this.colors.white : this.colors.background;
+                
+                this.doc.rect(tableX, tableY, colWidths.reduce((a, b) => a + b, 0), 20)
+                  .fill(rowColor);
+
+                // Color de borde según severidad
+                const vulnColor = this.vulnerabilityColors[dep.severity];
+                this.doc.rect(tableX, tableY, 5, 20).fill(vulnColor.border);
+
+                // Contenido de las celdas
+                const cellData = [
+                  dep.name.length > 15 ? dep.name.substring(0, 15) + '...' : dep.name,
+                  dep.currentVersion,
+                  dep.latestVersion === 'N/A' ? 'N/A' : dep.latestVersion,
+                  dep.severity === 'none' ? '✅' : dep.severity.charAt(0).toUpperCase(),
+                  dep.riskLevel,
+                  dep.daysSinceUpdate ? dep.daysSinceUpdate.toString() : 'N/A'
+                ];
+
+                xPos = tableX + 5;
+                cellData.forEach((data, i) => {
+                  this.doc.fontSize(8)
+                    .font('Helvetica')
+                    .fillColor(this.colors.secondary)
+                    .text(data, xPos, tableY + 6, { width: colWidths[i] - 10 });
+                  xPos += colWidths[i];
+                });
+
+                tableY += 20;
+
+                // Nueva página si es necesario
+                if (tableY > 700) {
+                  this.doc.addPage();
+                  tableY = 100;
+                }
+              });
+
+              this.doc.y = tableY + 20;
+              this.doc.addPage();
+            }
+
+            async createRecommendations() {
+              this.addHeader('💡 RECOMENDACIONES DE SEGURIDAD');
+
+              const recommendations = [
+                {
+                  priority: 'CRÍTICA',
+                  icon: '🚨',
+                  title: 'Vulnerabilidades Críticas',
+                  action: 'Actualizar inmediatamente todos los paquetes con vulnerabilidades críticas',
+                  timeline: 'Dentro de 24 horas',
+                  color: this.colors.danger
+                },
+                {
+                  priority: 'ALTA',
+                  icon: '⚡',
+                  title: 'Vulnerabilidades Altas',
+                  action: 'Programar actualizaciones de paquetes con vulnerabilidades altas',
+                  timeline: 'Dentro de 1 semana',
+                  color: this.colors.warning
+                },
+                {
+                  priority: 'MEDIA',
+                  icon: '📅',
+                  title: 'Mantenimiento Regular',
+                  action: 'Establecer calendario de actualizaciones mensuales',
+                  timeline: 'Próximo mes',
+                  color: this.colors.primary
+                },
+                {
+                  priority: 'PREVENTIVA',
+                  icon: '🔍',
+                  title: 'Monitoreo Continuo',
+                  action: 'Implementar auditorías automáticas semanales',
+                  timeline: 'Configurar esta semana',
+                  color: this.colors.success
+                }
+              ];
+
+              recommendations.forEach((rec, index) => {
+                const cardY = this.doc.y;
+                
+                // Card background
+                this.doc.rect(50, cardY, 500, 70)
+                  .fillAndStroke(this.colors.white, rec.color);
+
+                // Icono y prioridad
+                this.doc.fontSize(20)
+                  .text(rec.icon, 65, cardY + 15);
+
+                this.doc.fontSize(12)
+                  .font('Helvetica-Bold')
+                  .fillColor(rec.color)
+                  .text(rec.priority, 100, cardY + 10);
+
+                // Título
+                this.doc.fontSize(14)
+                  .font('Helvetica-Bold')
+                  .fillColor(this.colors.secondary)
+                  .text(rec.title, 100, cardY + 25);
+
+                // Acción
+                this.doc.fontSize(11)
+                  .font('Helvetica')
+                  .fillColor(this.colors.secondary)
+                  .text(rec.action, 100, cardY + 42, { width: 300 });
+
+                // Timeline
+                this.doc.fontSize(10)
+                  .font('Helvetica-Bold')
+                  .fillColor(rec.color)
+                  .text(`⏱️ ${rec.timeline}`, 420, cardY + 15);
+
+                this.doc.y = cardY + 85;
+              });
+
+              // Comandos útiles
+              this.addSubHeader('🛠️ Comandos Útiles');
+              
+              const commands = [
+                'npm audit fix          # Arreglar vulnerabilidades automáticamente',
+                'npm audit fix --force  # Forzar correcciones (puede romper compatibilidad)',
+                'npm outdated          # Ver paquetes desactualizados',
+                'npm update             # Actualizar paquetes menores',
+                'npm install package@latest # Actualizar paquete específico'
+              ];
+
+              commands.forEach(cmd => {
+                this.doc.fontSize(10)
+                  .font('Courier')
+                  .fillColor(this.colors.secondary)
+                  .text(cmd, 60);
+                this.doc.moveDown(0.5);
+              });
+
+              this.doc.addPage();
+            }
+
+            async createAppendix() {
+              this.addHeader('📚 APÉNDICE');
+
+              // Glosario de términos
+              this.addSubHeader('📖 Glosario de Términos');
+              
+              const glossary = [
+                { term: 'Vulnerabilidad Crítica', definition: 'Falla de seguridad que permite ejecución remota de código o acceso completo al sistema.' },
+                { term: 'Vulnerabilidad Alta', definition: 'Falla que puede comprometer significativamente la seguridad de la aplicación.' },
+                { term: 'Vulnerabilidad Moderada', definition: 'Problema de seguridad con riesgo limitado pero que requiere atención.' },
+                { term: 'Vulnerabilidad Baja', definition: 'Problema menor de seguridad con riesgo mínimo para la aplicación.' },
+                { term: 'Dependencia Obsoleta', definition: 'Paquete que no ha sido actualizado por más de 2 años.' },
+                { term: 'CVE', definition: 'Common Vulnerabilities and Exposures - Identificador único para vulnerabilidades conocidas.' }
+              ];
+
+              glossary.forEach(item => {
+                this.doc.fontSize(11)
+                  .font('Helvetica-Bold')
+                  .fillColor(this.colors.primary)
+                  .text(`${item.term}:`, 60);
+                
+                this.doc.fontSize(10)
+                  .font('Helvetica')
+                  .fillColor(this.colors.secondary)
+                  .text(item.definition, 60, this.doc.y, { width: 480 });
+                
+                this.doc.moveDown(1);
+              });
+
+              // Información adicional
+              this.addSubHeader('ℹ️ Información del Sistema');
+              
+              const systemInfo = [
+                `Fecha de generación: ${new Date().toLocaleString()}`,
+                `Versión de Node.js: ${process.env.NODE_VERSION || 'N/A'}`,
+                `Herramienta de auditoría: npm audit`,
+                `Nivel de auditoría: ${process.env.AUDIT_LEVEL || 'info'}`,
+                `Dependencias de desarrollo incluidas: ${process.env.INCLUDE_DEV === 'true' ? 'Sí' : 'No'}`
+              ];
+
+              systemInfo.forEach(info => {
+                this.doc.fontSize(10)
+                  .fillColor(this.colors.secondary)
+                  .text(`• ${info}`, 60);
+                this.doc.moveDown(0.3);
+              });
+
+              // Footer final
+              this.doc.moveDown(3);
+              this.doc.fontSize(8)
+                .fillColor(this.colors.secondary)
+                .text('Este reporte fue generado automáticamente por el sistema de auditoría de seguridad.', 0, this.doc.y, { align: 'center' });
+              this.doc.text('Para más información, consulte la documentación del proyecto.', 0, this.doc.y + 10, { align: 'center' });
+            }
+
+            addHeader(title) {
+              this.doc.fontSize(20)
+                .font('Helvetica-Bold')
+                .fillColor(this.colors.primary)
+                .text(title, 50);
+              
+              // Línea decorativa
+              this.doc.moveTo(50, this.doc.y + 5)
+                .lineTo(550, this.doc.y + 5)
+                .strokeColor(this.colors.accent)
+                .lineWidth(2)
+                .stroke();
+              
+              this.doc.moveDown(2);
+            }
+
+            addSubHeader(title) {
+              this.doc.moveDown(1);
+              this.doc.fontSize(14)
+                .font('Helvetica-Bold')
+                .fillColor(this.colors.secondary)
+                .text(title, 50);
+              this.doc.moveDown(0.5);
+            }
+          }
+
+          // Generar el PDF
+          (async () => {
+            try {
+              const reportData = JSON.parse(fs.readFileSync('audit-complete-report.json', 'utf8'));
+              const pdfGenerator = new ProfessionalPDFGenerator(reportData);
+              await pdfGenerator.generate();
+              console.log('✅ PDF profesional generado exitosamente');
+            } catch (error) {
+              console.error('❌ Error generando PDF:', error);
+              // Continuar sin fallar el workflow
+            }
+          })();
+          EOF
+
+      - name: 📤 Subir artefactos del reporte
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-audit-reports-${{ github.run_number }}
+          path: |
+            audit-complete-report.json
+            audit-summary.json
+            audit-summary.txt
+            security-audit-report.pdf
+            dependency-tree.json
+            direct-dependencies.json
+          retention-days: 30
+
+      - name: 💬 Comentar en PR (si aplica)
+        if: github.event_name == 'pull_request' && steps.audit-summary.outputs.critical-high-count != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('audit-summary.txt', 'utf8');
+            
+            const comment = `## 🔒 Reporte de Auditoría de Seguridad
+            
+            ${summary}
+            
+            📊 **Archivos generados:**
+            - 📄 Reporte PDF profesional
+            - 📋 Datos completos en JSON
+            - 📈 Resumen ejecutivo
+            
+            Para ver el reporte completo, descarga los artefactos de este workflow.
+            
+            ${steps.audit-summary.outputs.critical-high-count > 0 ? '⚠️ **ACCIÓN REQUERIDA:** Se encontraron vulnerabilidades críticas o altas que requieren atención inmediata.' : '✅ No se encontraron vulnerabilidades críticas.'}`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: 🚨 Fallar si hay vulnerabilidades críticas
+        if: steps.audit-summary.outputs.critical-high-count != '0'
+        run: |
+          echo "❌ Se encontraron ${{ steps.audit-summary.outputs.critical-high-count }} vulnerabilidades críticas/altas"
+          echo "📊 Total de vulnerabilidades: ${{ steps.audit-summary.outputs.total-vulnerabilities }}"
+          echo "📄 Revisa el reporte PDF generado para más detalles"
+          exit 1
+
+      - name: ✅ Éxito - Sin vulnerabilidades críticas
+        if: steps.audit-summary.outputs.critical-high-count == '0'
+        run: |
+          echo "✅ ¡Excelente! No se encontraron vulnerabilidades críticas"
+          echo "📊 Total de vulnerabilidades encontradas: ${{ steps.audit-summary.outputs.total-vulnerabilities }}"
+          echo "📄 Reporte completo disponible en los artefactos"

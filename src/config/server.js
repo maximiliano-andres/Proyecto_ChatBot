@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import mongoSanitize from "express-mongo-sanitize";
 import hpp from "hpp";
+import { connectDB } from "./database.js"; // Asegúrate de que la ruta sea correcta
 
 const DEBUG_SERVER = debug("app: SERVER.JS");
 
@@ -20,7 +21,7 @@ const __dirname = path.dirname(__filename);
 
 export const createServer = () => {
     const app = express();
-    
+
     // Ayuda a Ver solicitudes en consola
     app.use(morgan("dev"));
 
@@ -30,7 +31,8 @@ export const createServer = () => {
             contentSecurityPolicy: {
                 directives: {
                     defaultSrc: ["'self'"],
-                    scriptSrc: ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com"],
+                    scriptSrc: ["'self'", "'unsafe-inline'", "cdnjs.cloudflare.com", "cdn.jsdelivr.net"],
+
                     styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com", "cdn.jsdelivr.net"],
                     fontSrc: ["'self'", "fonts.gstatic.com"],
                     imgSrc: ["'self'", "data:"],
@@ -43,7 +45,7 @@ export const createServer = () => {
         })
     );
 
-    
+
     // Seguridad: Configurar CORS de manera más estricta
     app.use(
         cors({
@@ -74,7 +76,7 @@ export const createServer = () => {
         standardHeaders: true, // Muestra límites en headers
         legacyHeaders: false, // No usa headers obsoletos
     });
-    
+
     app.use(limiter);
 
     // Seguridad: Evita inyecciones NoSQL
@@ -94,6 +96,16 @@ export const createServer = () => {
 
     //DEBUG_SERVER("RUTA PUBLIC: " + path.join(__dirname, '../../public'));
     DEBUG_SERVER("Servidor Activado")
+
+
+    if (process.env.NODE_ENV !== "test") {
+        connectDB().then(() => {
+            DEBUG_SERVER("BD conectada Exitosamente");
+        }).catch(error => {
+            console.error("Error conectando a MongoDB:", error);
+            process.exit(1); // Detener si no se puede conectar a la BD
+        });
+    }
 
 
     return app;

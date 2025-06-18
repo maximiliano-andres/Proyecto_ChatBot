@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administración Raíz Financiera</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="Administracion.css">
+
+  <link rel="shortcut icon" href="#" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="#" />
+
+
+    <link href="../../../css/main.css" rel="stylesheet">
+    <link href="../../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="../../../vendor/aos/aos.css" rel="stylesheet">
+    <link href="../../../vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <link href="../../../vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+
+  <header class="bg-dark text-white p-3">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <h1 class="h3">Raíz Financiera - <span class="badge bg-primary">Panel de Administración</span></h1>
+
+
+      <h2>
+        <a href="/grupo"><span class="badge bg-primary">Grupo</span></a> 
+        <a href="/Finanzas_Raiz"><span class="badge bg-success">Home</span></a> 
+        <a href="/logout"><span class="badge bg-danger">Salir</span></a>
+      </h2>
+    </div>
+  </header>
+
+  <main class="container-fluid py-4">
+    <ul class="nav nav-tabs" id="adminTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="usuarios-tab" data-bs-toggle="tab" data-bs-target="#usuarios" type="button"
+          role="tab">Usuarios</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="contratos-tab" data-bs-toggle="tab" data-bs-target="#contratos" type="button"
+          role="tab">Contratos</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="prestamos-tab" data-bs-toggle="tab" data-bs-target="#prestamos" type="button"
+          role="tab">Préstamos</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="seguros-tab" data-bs-toggle="tab" data-bs-target="#seguros" type="button"
+          role="tab">Seguros</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tarjetas-tab" data-bs-toggle="tab" data-bs-target="#tarjetas" type="button"
+          role="tab">Tarjetas</button>
+      </li>
+    </ul>
+
+    <div class="tab-content mt-4" id="adminTabContent">
+      <!-- Usuarios -->
+      <div class="tab-pane fade show active" id="usuarios" role="tabpanel">
+        <div class="mb-3">
+          <label for="filtro-usuarios" class="form-label">Buscar por RUT o Email:</label>
+          <input type="text" class="form-control" id="filtro-usuarios"
+            placeholder="Ej: 12345678-9 o ejemplo@correo.com">
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+              <tr>
+                <th>Nombres</th>
+                <th>Apellidos</th>
+                <th>RUT</th>
+                <th>Documento</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+                <th>Rol</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% usuarios.forEach(usuario=> { %>
+                <tr>
+                  <td>
+                    <%= usuario.nombre1 %> <%= usuario.nombre1 %>
+                  </td>
+                  <td>
+                    <%= usuario.apellido1 %> <%= usuario.apellido2 %>
+                  </td>
+                  <td>
+                    <%= usuario.rut %>
+                  </td>
+                  <td>
+                    <%= usuario.numero_documento %>
+                  </td>
+                  <td>
+                    <%= usuario.email %>
+                  </td>
+                  <td>
+                    <%= usuario.telefono %>
+                  </td>
+                  <td>
+                    <% if (usuario.role === "admin") { %>
+                      <span class="badge bg-primary"><%= usuario.role %></span>
+                    <% } else if (usuario.role === "cliente") { %>
+                      <span class="badge bg-warning"><%= usuario.role %></span>
+                    <% } %>
+                  </td>
+                </tr>
+                <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Contratos -->
+      <div class="tab-pane fade" id="contratos" role="tabpanel">
+        <div class="mb-3">
+          <label for="filtro-contratos" class="form-label">Buscar por número de tarjeta o estado:</label>
+          <input type="text" class="form-control" id="filtro-contratos" placeholder="Ej: activa o 1234-5678-1234-5678">
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+              <tr>
+                <th>ID Usuario</th>
+                <th>Cod Veridicador</th>
+                <th>Nº Tarjeta</th>
+                <th>F Expiracion</th>
+                <th>CVV</th>
+                <th>Limite Credito</th>
+                <th>Estado</th>
+                <th>F Emision</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% contratos.forEach(contrato=> { %>
+                <tr>
+                  <td>
+                    <%= contrato.user %>
+                  </td>
+                  <td>
+                    <%= contrato.codigo_verificador %>
+                  </td>
+                  <td>
+                    <%= contrato.numero_tarjeta %>
+                  </td>
+                  <td>
+                    <span class="badge bg-primary"><%= contrato.fecha_expiracion %></span>
+                  </td>
+                  <td>
+                    <%= contrato.cvv %>
+                  </td>
+                  <td>
+                    <%= contrato.limite_credito %>
+                  </td>
+                  <td>
+                    <% if (contrato.estado === "activa") { %>
+                      <span class="badge bg-success"><%= contrato.estado %></span>
+                    <% } else if (contrato.estado === "bloqueada") { %>
+                      <span class="badge bg-danger"><%= contrato.estado %></span>
+                    <% } else if (contrato.estado === "vencida") { %>
+                      <span class="badge bg-warning text-dark"><%= contrato.estado %></span>
+                    <% } %>
+                  </td>
+                  <td>
+                    
+                    <%= new Date(contrato.fecha_emision).toLocaleDateString('es-CL') %>
+                  </td>
+                </tr>
+                <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Préstamos -->
+      <div class="tab-pane fade" id="prestamos" role="tabpanel">
+        <div class="mb-3">
+          <label for="filtro-prestamos" class="form-label">Buscar por estado o monto:</label>
+          <input type="text" class="form-control" id="filtro-prestamos" placeholder="Ej: aprobado o 500000">
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+              <tr>
+                <th>Usuario</th>
+                <th>Monto</th>
+                <th>Plazo</th>
+                <th>Interés</th>
+                <th>Estado</th>
+                <th>Solicitud</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-prestamos">
+              <!-- Datos de préstamos -->
+               <% prestamos.forEach(prestamo=> { %>
+                <tr>
+                  <td>
+                    <%= prestamo.user %>
+                  </td>
+                  <td>
+                    <%= prestamo.monto %>
+                  </td>
+                  <td>
+                    <%= prestamo.plazo_meses %>
+                  </td>
+                  <td>
+                    <%= prestamo.tasa_interes %>
+                  </td>
+                  <td>
+                    <% if (prestamo.estado === "activa") { %>
+                      <span class="badge bg-success"><%= prestamo.estado %></span>
+                    <% } else if (prestamo.estado === "bloqueada") { %>
+                      <span class="badge bg-danger"><%= prestamo.estado %></span>
+                    <% } else if (prestamo.estado === "vencida") { %>
+                      <span class="badge bg-warning text-dark"><%= prestamo.estado %></span>
+                    <% } %>
+                  </td>
+                  <td>
+                    
+                    <%= new Date(prestamo.fecha_solicitud).toLocaleDateString('es-CL') %>
+                  </td>
+                  <td>
+                    
+                    <%= new Date(prestamo.fecha_aprobacion).toLocaleDateString('es-CL') %>
+                  </td>
+                  <td>
+                    
+                    <%= new Date(prestamo.fecha_vencimiento).toLocaleDateString('es-CL') %>
+                  </td>
+                  
+                </tr>
+                <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Seguros -->
+      <div class="tab-pane fade" id="seguros" role="tabpanel">
+        <div class="mb-3">
+          <label for="filtro-seguros" class="form-label">Buscar por tipo o estado:</label>
+          <input type="text" class="form-control" id="filtro-seguros" placeholder="Ej: vida o vencido">
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+              <tr>
+                <th>Usuario</th>
+                <th>Tipo Seguro</th>
+                <th>Monto Cobertura</th>
+                <th>Prima Mensual</th>
+                <th>Estado</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Vencimiento</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-seguros">
+              <!-- Datos de seguros -->
+               <% seguros.forEach(seguro=> { %>
+                <tr>
+                  <td>
+                    <%= seguro.user %>
+                  </td>
+                  <td>
+                    <%= seguro.tipo_seguro %>
+                  </td>
+                  <td>
+                    <%= seguro.monto_cobertura %>
+                  </td>
+                  <td>
+                    <%= seguro.prima_mensual %>
+                  </td>
+                  <td>
+                    <% if (seguro.estado === "activa") { %>
+                      <span class="badge bg-success"><%= seguro.estado %></span>
+                    <% } else if (seguro.estado === "bloqueada") { %>
+                      <span class="badge bg-danger"><%= seguro.estado %></span>
+                    <% } else if (seguro.estado === "vencida") { %>
+                      <span class="badge bg-warning text-dark"><%= seguro.estado %></span>
+                    <% } %>
+                  </td>
+                  <td>
+                    
+                    <%= new Date(seguro.fecha_inicio).toLocaleDateString('es-CL') %>
+                  </td>
+                  <td>
+                    
+                    <%= new Date(seguro.fecha_vencimiento).toLocaleDateString('es-CL') %>
+                  </td>
+                  
+                </tr>
+                <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tarjetas -->
+      <div class="tab-pane fade" id="tarjetas" role="tabpanel">
+        <div class="mb-3">
+          <label for="filtro-tarjetas" class="form-label">Buscar por estado o tarjeta:</label>
+          <input type="text" class="form-control" id="filtro-tarjetas"
+            placeholder="Ej: bloqueada o 1111-2222-3333-4444">
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+              <tr>
+                <th>Usuario</th>
+                <th>N° Tarjeta</th>
+                <th>Fecha Expiracion</th>
+                <th>CVV</th>
+                <th>Crédito</th> 
+                <th>Estado</th>
+                <th>Fecha Emisión</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-tarjetas">
+              <!-- Datos de tarjetas -->
+              <% tarjetas.forEach(tarjeta=> { %>
+                <tr>
+                  <td>
+                    <%= tarjeta.user %>
+                  </td>
+                  <td>
+                    <%= tarjeta.numero_tarjeta %>
+                  </td>
+                  <td>
+                    
+                    <%= new Date(tarjeta.fecha_expiracion).toLocaleDateString('es-CL') %>
+                  </td>
+                  <td>
+                    <%= tarjeta.cvv %>
+                  </td>
+                  <td>
+                    <%= tarjeta.limite_credito %>
+                  </td>
+                  <td>
+                    <% if (tarjeta.estado === "activa") { %>
+                      <span class="badge bg-success"><%= tarjeta.estado %></span>
+                    <% } else if (tarjeta.estado === "bloqueada") { %>
+                      <span class="badge bg-danger"><%= tarjeta.estado %></span>
+                    <% } else if (tarjeta.estado === "vencida") { %>
+                      <span class="badge bg-warning text-dark"><%= tarjeta.estado %></span>
+                    <% } %>
+                  </td>
+                  <td>
+                    
+                    <%= new Date(tarjeta.fecha_emision).toLocaleDateString('es-CL') %>
+                  </td>
+                  
+                </tr>
+                <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+   
+  <footer id="footer" class="footer dark-background">
+
+        <div class="footer-top">
+            <div class="container">
+                <div class="row gy-4">
+                    <div class="col-lg-4 col-md-6 footer-about">
+                        <a href="/" class="logo d-flex align-items-center">
+                            <img src="../../../images/back/logo_raiz_financiera.webp" alt="" style="max-height: 120px;">
+                        </a>
+
+                        <div class="social-links d-flex mt-4">
+                            <a href=""><i class="bi bi-twitter-x"></i></a>
+                            <a href=""><i class="bi bi-facebook"></i></a>
+                            <a href=""><i class="bi bi-instagram"></i></a>
+                            <a href=""><i class="bi bi-linkedin"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-3 footer-links">
+                        <h4>Acceso Rapido</h4>
+                        <ul>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Home</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Acerca de Nosotros</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Servicios</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Otros</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Grupo de Trabajo</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-2 col-md-3 footer-links">
+                        <h4>Nuestros Servicios</h4>
+                        <ul>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Web Design</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Web Development</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Product Management</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Marketing</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Graphic Design</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-4 col-md-12 footer-newsletter">
+                        <h4>Our Newsletter</h4>
+                        <p>Subscribe to our newsletter and receive the latest news about our products and services!</p>
+                        <form action="forms/newsletter.php" method="post" class="php-email-form">
+                            <div class="newsletter-form"><input type="email" name="email"><input type="submit"
+                                    value="Subscribe"></div>
+                            <div class="loading">Loading</div>
+                            <div class="error-message"></div>
+                            <div class="sent-message">Your subscription request has been sent. Thank you!</div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="copyright">
+            <div class="container text-center">
+                <p>© <span>Copyright</span> <strong class="px-1 sitename">Raíz Financiera</strong> <span>All Rights
+                        Reserved</span></p>
+
+            </div>
+        </div>
+
+    </footer>
+    
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+  <script src="../../../js/Administracion.js"></script>
+
+
+</body>
+
+
+
+</html>

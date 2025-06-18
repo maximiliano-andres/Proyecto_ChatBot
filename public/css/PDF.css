@@ -1,31 +1,108 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background-image: url("../../images/registro.jpg"); color: #333; }
-        .container { display: flex; gap: 20px; max-width: 1200px; margin: 50px auto; padding: 30px; background: #0000007c; box-shadow: 0px 0px 20px rgba(0,0,0,0.1); border-radius: 15px; flex-wrap: wrap; }
-        .pdf-viewer, .legal-info { width: 100%; }
-        .pdf-viewer { flex: 2; }
-        .legal-info { flex: 1; background-color: #1f1f1f; padding: 20px; border-radius: 10px; color: #fff; }
-        .btn { padding: 15px 30px; margin: 15px 0; text-decoration: none; color: #ffffff; border-radius: 10px; font-size: 16px; font-weight: bold; display: inline-block; transition: background-color 0.3s ease; }
-        .btn-primary { background-color: #4CAF50; }
-        .btn-secondary { background-color: #2196F3; }
-        .btn:hover { opacity: 0.9; }
-        iframe { width: 100%; height: 700px; border-radius: 10px; border: none; margin-bottom: 20px; }
-        .error { color: red; font-size: 18px; margin-top: 10px; font-weight: bold; }
-        h1 { font-size: 32px; margin-bottom: 20px; color: whitesmoke;}
-        h2 { font-size: 20px; margin-bottom: 10px; }
-        p { font-size: 16px; line-height: 1.5; }
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9;
+    color: #2c3e50;
+}
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container { padding: 20px; }
-            h1 { font-size: 24px; }
-            h2 { font-size: 18px; }
-            .btn { padding: 10px 20px; font-size: 14px; }
-            iframe { height: 500px; }
-        }
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+}
 
-        @media (max-width: 480px) {
-            h1 { font-size: 20px; }
-            h2 { font-size: 16px; }
-            .btn { padding: 8px 16px; font-size: 12px; }
-            iframe { height: 400px; }
-        }
+h1,
+h2 {
+    color: #1a237e;
+}
+
+h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+h2 {
+    font-size: 1.4rem;
+    margin-top: 2rem;
+}
+
+iframe {
+    width: 100%;
+    height: 600px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+    margin-right: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: #1e88e5;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #1565c0;
+}
+
+.btn-secondary {
+    background-color: #90a4ae;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #607d8b;
+}
+
+.legal-info {
+    margin-top: 2rem;
+    background: #f0f4f8;
+    padding: 1.5rem;
+    border-radius: 10px;
+    border-left: 5px solid #1a237e;
+}
+
+.legal-info p {
+    margin: 0.5rem 0;
+    line-height: 1.6;
+}
+
+.fw-bold {
+    font-weight: bold;
+}
+
+.error {
+    color: #c0392b;
+    font-weight: bold;
+    background-color: #fdecea;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    iframe {
+        height: 400px;
+    }
+
+    .btn {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+}

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro de Administrador | Entidad Financiera</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+    <link rel="stylesheet" href="../../../css/registroADMIN.css">
+
+</head>
+
+<body>
+    <div class="overlay">
+        <div class="register-wrapper">
+            <div class="register-info">
+                <!-- Agrega aquí tu logo -->
+                <img src="/images/back/Logo_Cuadro.webp" alt="Logo Empresa">
+                <h2>Zona de Registro Restringida</h2>
+                <p>Esta interfaz está oculta y exclusivamente diseñada para crear nuevos administradores del sistema.
+                </p>
+            </div>
+
+            <div class="register-form">
+                <% if (error) { %>
+                    <div class="alert alert-danger">
+                        <%= error %>
+                    </div>
+                    <% } %>
+
+                        <form action="/registro_usuario" method="POST">
+                            <h2 class="mb-4">Registro de Administrador</h2>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="inputNombre1">Primer Nombre</label>
+                                    <input type="text" class="form-control" id="inputNombre1" name="nombre1" required />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="inputNombre2">Segundo Nombre</label>
+                                    <input type="text" class="form-control" id="inputNombre2" name="nombre2" required />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="inputApellido1">Primer Apellido</label>
+                                    <input type="text" class="form-control" id="inputApellido1" name="apellido1"
+                                        required />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="inputApellido2">Segundo Apellido</label>
+                                    <input type="text" class="form-control" id="inputApellido2" name="apellido2"
+                                        required />
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputRut">RUT</label>
+                                <input type="text" class="form-control" id="inputRut" name="rut" required
+                                    pattern="^\d{7,8}-[0-9kK]{1}$" title="Ej: 19174477-2" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputNumeroDocumento">Número de Documento</label>
+                                <input type="text" class="form-control" id="inputNumeroDocumento"
+                                    name="numero_documento" required pattern="^\d{3}\.\d{3}\.\d{3}$"
+                                    title="Ej: 123.123.123" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputTelefono">Teléfono</label>
+                                <input type="tel" class="form-control" id="inputTelefono" name="telefono" required
+                                    pattern="^\+569\d{8}$" title="Ej: +56912345678" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputFechaNacimiento">Fecha de Nacimiento</label>
+                                <input type="date" class="form-control" id="inputFechaNacimiento"
+                                    name="fecha_nacimiento" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputEmail">Correo Electrónico</label>
+                                <input type="email" class="form-control" id="inputEmail" name="email" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputPassword">Contraseña</label>
+                                <input type="password" class="form-control" id="inputPassword" name="password" required
+                                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                                    title="Debe tener mayúsculas, minúsculas, números y símbolo" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputConfirmPassword">Confirmar Contraseña</label>
+                                <input type="password" class="form-control" id="inputConfirmPassword" required />
+                            </div>
+
+                            <input type="hidden" name="role" value="admin" />
+
+                            <button type="submit" class="btn btn-primary w-100">Crear Cuenta</button>
+                            <p class="mt-3 text-center">¿Ya tienes una cuenta? <a href="/login">Inicia sesión aquí</a>
+                            </p>
+                            <a href="/" class="boton_volver">Volver al inicio</a>
+                        </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

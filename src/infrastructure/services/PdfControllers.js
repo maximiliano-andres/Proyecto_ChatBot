@@ -2,26 +2,31 @@ import { User } from "../../domain/models/User.js";
 import { Contratos } from "../../domain/models/Contrato.js";
 import { config } from "dotenv";
 import env from "env-var";
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 import debug from "debug";
 
-import { generarFirmaCliente, generarContratoPDF , generarDatosTarjeta} from "../controllers/GenerarDoc.controller.js";
-import { render } from "ejs";
+
+
+import {
+    generarFirmaCliente,
+    generarContratoPDF,
+    generarDatosTarjeta,
+} from "../controllers/GenerarDoc.controller.js";
 
 
 const DEBUG = debug("app: PDF_CONTROLLERS: ");
 config();
 
 export default class Contrato {
-    static async crear_contrato(req,res){
+    static async crear_contrato(req, res) {
         try {
             const token = req.cookies.token;
             DEBUG(`TOKEN: ${token}`);
 
-            if (!token) return res.status(400).render("error404", { title: "Error 404" });
+            if (!token)
+                return res.status(400).render("error404", { title: "Error 404" });
 
             const { intent } = req.query;
-
 
             DEBUG(`INTENT : => ${intent}`);
 
@@ -31,8 +36,9 @@ export default class Contrato {
 
             const user_data = await User.findById(userId);
             DEBUG(`DATOS USUARIO: ${user_data}`);
-            if (!user_data) return res.status(400).render("error404",{ title: "Error 404" });
-            
+            if (!user_data)
+                return res.status(400).render("error404", { title: "Error 404" });
+
             const datos = {
                 _id: user_data._id,
                 email: user_data.email,
@@ -43,12 +49,12 @@ export default class Contrato {
                 rut: user_data.rut,
                 role: user_data.role,
                 telefono: user_data.telefono,
-                numero_documento: user_data.numero_documento
+                numero_documento: user_data.numero_documento,
             };
 
             DEBUG("============== DATOS FICTICIOS ==============");
             DEBUG(datos);
-            const logo_banco = "./public/images/Logo_Cuadro.png";
+            const logo_banco = "./public/images/pdf/Logo_Cuadro.png";
 
             //Firma_Validadora();
             //generarFirmaBanco();
@@ -62,9 +68,9 @@ export default class Contrato {
             DEBUG(Obtener_firma.codigo_verificador);
             DEBUG(datos_tarjeta);
 
-            const guardar_contrato = new Contratos ({
-                user:userId,
-                codigo_verificador:Obtener_firma.codigo_verificador,
+            const guardar_contrato = new Contratos({
+                user: userId,
+                codigo_verificador: Obtener_firma.codigo_verificador,
                 numero_tarjeta: datos_tarjeta.numero_tarjeta,
                 fecha_expiracion: datos_tarjeta.fecha_expiracion,
                 cvv: datos_tarjeta.cvv,
@@ -79,34 +85,37 @@ export default class Contrato {
 
             const vista_pdf = Obtener_firma.nombre_contrato;
 
-
             DEBUG(vista_pdf);
 
             DEBUG("Visualizacion Exitosa!!!!!");
 
-            return res.status(200).render("PDF", {vista_pdf})
+            let role = user_data.role;
+            DEBUG("crear_contrato: Token del usuario:", token);
+            DEBUG("crear_contrato: Rol del usuario:", role);
 
+
+            return res.status(200).render("PDF", { vista_pdf, token, role });
         } catch (error) {
             console.error("Error en Registro:", error);
             return res.status(500).render("error500", {
-                title: "Error 500"
+                title: "Error 500",
             });
         }
-    };
+    }
 
-
-
-    static async Firma_contrato(req,res){
+    static async Firma_contrato(req, res) {
         try {
             const token = req.cookies.token;
-            if (!token) return res.status(400).render("error404", { title: "Error 404" });
+            if (!token)
+                return res.status(400).render("error404", { title: "Error 404" });
 
             const decorador = jwt.verify(token, process.env.JWT_SECRET);
             const userId = decorador.id;
 
             const user_data = await User.findById(userId);
-            if (!user_data) return res.status(400).render("error404",{ title: "Error 404" });
-            
+            if (!user_data)
+                return res.status(400).render("error404", { title: "Error 404" });
+
             const datos = {
                 _id: user_data._id,
                 email: user_data.email,
@@ -117,11 +126,10 @@ export default class Contrato {
                 rut: user_data.rut,
                 role: user_data.role,
                 telefono: user_data.telefono,
-                numero_documento: user_data.numero_documento
+                numero_documento: user_data.numero_documento,
             };
 
-            const logo_banco = "./public/images/Logo_Cuadro.png"
-
+            const logo_banco = "./public/images/pdf/Logo_Cuadro.png";
 
             generarFirmaCliente(datos);
             const Obtener_firma = generarContratoPDF(datos, logo_banco);
@@ -133,9 +141,9 @@ export default class Contrato {
             DEBUG(Obtener_firma.codigo_verificador);
             DEBUG(datos_tarjeta);
 
-            const guardar_contrato = new Contratos ({
-                user:userId,
-                codigo_verificador:Obtener_firma.codigo_verificador,
+            const guardar_contrato = new Contratos({
+                user: userId,
+                codigo_verificador: Obtener_firma.codigo_verificador,
                 numero_tarjeta: datos_tarjeta.numero_tarjeta,
                 fecha_expiracion: datos_tarjeta.fecha_expiracion,
                 cvv: datos_tarjeta.cvv,
@@ -150,7 +158,6 @@ export default class Contrato {
 
             const vista_pdf = Obtener_firma.rutaPDF;
 
-
             DEBUG(vista_pdf);
             //../../PDF/contrato_123.456.789.pdf
 
@@ -161,21 +168,32 @@ export default class Contrato {
 
             DEBUG(`INTENT : ${intent}`);
 
-            return res.render("index", { token: token ,
-                title: 'Raíz Finanziera',
-                titulo_1: "Bienvenido a Raíz Finanziera",
-                subtitulo:"Seguridad, crecimiento y confianza en cada inversión.",
-                titulo_NH:"Nuestra Historia",
-                texto_NH1:"En Raíz Finanziera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes."
-            });
+            // ----------------------------------------- role ------------------------------------
 
+            let role = user_data.role;
+
+            
+            DEBUG("Firma_contrato: Token del usuario:", token);
+            
+            DEBUG("Firma_contrato: Rol del usuario:", role);
+
+            // ------------------------------------------------------------------------------------
+
+            return res.render("index", {
+                role,
+                token: token,
+                title: "Raíz Finanziera",
+                titulo_1: "Bienvenido a Raíz Finanziera",
+                subtitulo: "Seguridad, crecimiento y confianza en cada inversión.",
+                titulo_NH: "Nuestra Historia",
+                texto_NH1:
+                    "En Raíz Finanziera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes.",
+            });
         } catch (error) {
             console.error("Error en Registro:", error);
             return res.status(500).render("error500", {
-                title: "Error 500"
+                title: "Error 500",
             });
         }
-    };
-
-
-};
+    }
+}

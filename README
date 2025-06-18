@@ -1,0 +1,174 @@
+# Raíz Financiera - ChatBot Bancario
+
+Raíz Financiera es una plataforma web bancaria con un asistente virtual (chatbot) que permite a los usuarios interactuar para solicitar productos financieros como préstamos, tarjetas de crédito y seguros, así como gestionar contratos y visualizar documentos PDF. El sistema está desarrollado con Node.js, Express, MongoDB y EJS, y utiliza Bootstrap para una experiencia responsiva y segura.
+
+---
+
+## Características principales
+
+- **Chatbot inteligente:** Asistente virtual que responde consultas sobre productos financieros, requisitos y procesos.
+- **Registro e inicio de sesión:** Sistema de autenticación seguro con JWT y cookies.
+- **Gestión de usuarios:** Registro, inicio de sesión, cierre de sesión y gestión de perfiles.
+- **Contratos digitales:** Generación y visualización de contratos en PDF, con firma digital simulada.
+- **Productos financieros:** Solicitud y gestión de préstamos personales, tarjetas de crédito y seguros.
+- **Panel de administración:** Acceso exclusivo para administradores mediante una URL oculta.
+- **Frontend responsivo:** Interfaz moderna y adaptable para dispositivos móviles y escritorio.
+- **Seguridad:** Protección contra ataques comunes (rate limiting, sanitización, validación de datos).
+- **Pruebas automáticas:** Validación de rutas principales y roles mediante tests automatizados.
+- **Reporte PDF de tests:** Generación automática de un reporte PDF detallado de los resultados de los tests usando GitHub Actions.
+
+---
+
+## Estructura del proyecto
+
+```
+├── src/
+│   ├── app.js                  # Punto de entrada principal
+│   ├── config/                 # Configuración de servidor, base de datos y variables de entorno
+│   ├── domain/                 # Modelos de datos (Usuarios, Contratos, Préstamos, etc.)
+│   ├── infrastructure/
+│   │   ├── controllers/        # Lógica de negocio y generación de documentos
+│   │   └── services/           # Controladores de vistas y autenticación
+│   ├── interfaces/
+│   │   ├── routes/             # Definición de rutas Express
+│   │   └── views/              # Vistas EJS (login, registro, index, PDF, errores)
+│   └── shared/
+│       ├── errors/             # Manejo de errores personalizados
+│       ├── middleware/         # Middlewares de autenticación y seguridad
+│       └── utils/              # Utilidades y mensajes del chatbot
+├── public/
+│   ├── css/                    # Hojas de estilo (Bootstrap, chat, registro, etc.)
+│   ├── js/                     # Scripts de frontend (chatbot, validaciones)
+│   ├── images/                 # Imágenes y logos
+│   └── PDF/                    # Contratos generados en PDF
+├── test/
+│   └── app.test.mjs            # Pruebas automáticas de rutas principales
+├── .github/
+│   ├── workflows/
+│   │   └── generate-pdf-report.yml # Workflow para generar reporte PDF de tests
+│   └── scripts/
+│       └── generate-pdf.js     # Script para generar PDF desde resultados de tests
+├── package.json
+├── Dockerfile
+├── .env
+└── README.md
+```
+
+---
+
+## Instalación
+
+1. **Clona el repositorio:**
+   ```sh
+   git clone <URL-del-repo>
+   cd Proyecto_ChatBot
+   ```
+
+2. **Instala las dependencias:**
+   ```sh
+   npm install
+   ```
+
+3. **Configura las variables de entorno:**
+   - Crea un archivo `.env` en la raíz con las siguientes variables:
+     ```
+     PUERTO=1010
+     JWT_SECRET=tu_clave_secreta
+     WIT_TOKEN=tu_token_de_wit_ai
+     MONGO_URI=mongodb://localhost:27017/raizfinanciera
+     ```
+
+4. **Inicia la base de datos MongoDB** (si no está corriendo).
+
+5. **Ejecuta el servidor en desarrollo:**
+   ```sh
+   npm run dev
+   ```
+   O en producción:
+   ```sh
+   npm start
+   ```
+
+6. **Accede a la aplicación:**
+   - Abre tu navegador en [http://localhost:1010](http://localhost:1010)
+
+---
+
+## Pruebas automáticas
+
+El proyecto incluye pruebas automáticas para las rutas principales usando Mocha y Supertest.
+
+- Las pruebas se encuentran en `test/app.test.mjs`.
+- Se validan los códigos de estado esperados para cada ruta, incluyendo rutas protegidas por roles (`CLIENTE`, `ADMIN`).
+- Ejemplo de ejecución de pruebas:
+  ```sh
+  npx mocha test/app.test.mjs
+  ```
+
+### Detalle de los tests
+
+El archivo `test/app.test.mjs` realiza pruebas sobre las rutas principales de la aplicación, incluyendo:
+
+- Rutas públicas (`/`, `/login`, `/logout`, `/registro_usuario`, etc.)
+- Rutas protegidas por rol CLIENTE (`/perfil`, `/chatbot`, `/pdf`, `/grupo`)
+- Rutas protegidas por rol ADMIN (`/tablas`)
+- Rutas especiales y de error (`/registro_usuario/ADMINISTRADOR2025`, `/Finanzas_Raiz`, `/noexiste`)
+- Cada test verifica que la respuesta HTTP esté dentro de los códigos esperados para cada ruta.
+
+---
+
+## Generación automática de reporte PDF de tests
+
+El repositorio incluye un workflow de GitHub Actions que ejecuta las pruebas y genera un reporte PDF detallado con los resultados.
+
+- El workflow se encuentra en `.github/workflows/generate-pdf-report.yml`.
+- Al hacer push a la rama `main` o ejecutar manualmente el workflow, se:
+  1. Ejecutan los tests y se guarda el resultado en formato JSON.
+  2. Se genera un PDF con el resumen y detalle de los tests usando Puppeteer.
+  3. El PDF se sube como artefacto descargable en GitHub Actions.
+
+
+## Pruebas de la API con Postman
+
+Puedes importar la siguiente colección de Postman para probar los endpoints principales:
+
+1. Descarga el archivo [`RaizFinanciera.postman_collection.json`](RaizFinanciera.postman_collection.json).
+2. Importa el archivo en Postman.
+3. Modifica los datos de ejemplo según tus pruebas.
+4. Si algún endpoint requiere token, primero haz login y usa el token en las variables de entorno de Postman.
+
+---
+
+## Docker
+
+Para ejecutar el proyecto en Docker:
+
+1. **Construye la imagen:**
+   ```sh
+   docker build -t chatbot-image .
+   ```
+
+2. **Ejecuta el contenedor:**
+   ```sh
+   docker run -p 1010:1010 --name chatbot-container chatbot-image
+   ```
+
+---
+
+## Seguridad
+
+- El acceso a rutas administrativas está protegido y solo es accesible mediante una URL oculta.
+- El sistema implementa validaciones, sanitización de datos y manejo de errores personalizados.
+- JWT y cookies seguras para autenticación y autorización.
+
+---
+
+http://localhost:1010/api-docs/
+
+## Créditos
+
+Desarrollado por Grupo 2 - Universidad Mayor.
+
+---
+
+**Nota:** Este proyecto es solo para fines educativos y de demostración. No utilizar en producción sin una revisión exhaustiva de seguridad.

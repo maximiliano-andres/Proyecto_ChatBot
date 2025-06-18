@@ -1,0 +1,53 @@
+body {
+            background-image: url('../images/admin/back_admin.webp');
+            /* Imagen de fondo elegante */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .register-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #0d6efd;
+            font-weight: 600;
+        }
+
+        label {
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #084298;
+        }
+
+        .alert {
+            text-align: center;
+        }
+
+        .boton_volver {
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+            color: #0d6efd;
+            text-decoration: underline;
+        }
