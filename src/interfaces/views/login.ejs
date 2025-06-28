@@ -13,23 +13,20 @@
   <link href="../../../css/main.css" rel="stylesheet">
 
   <style>
-
     @media (prefers-color-scheme: dark) {
-  body {
-    background-image: url('/images/back/login.jpg');
-    background-color: #000; /* O el color que prefieras para fondo */
-    filter: none !important; /* Previene que el navegador oscurezca la imagen */
-  }
-
-  .login-card {
-    background-color: #fff;
-    color: #2c3e50;
-  }
-}
-
+      body {
+        background-image: url('../../../images/back/login.jpg');
+        background-color: #111; /* Fondo oscuro pero no negro absoluto */
+        filter: none !important;
+      }
+      .login-card {
+        background-color: #fff;
+        color: #2c3e50;
+      }
+    }
     body {
       font-family: 'Montserrat', sans-serif;
-      background-image: url('/images/back/login.jpg');
+      background-image: url('../../../images/back/login.jpg');
       background-size: cover;
       background-position: center;
       color: #fff;
@@ -38,6 +35,7 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
+      background-color: #f5f5f5; /* Color de respaldo si la imagen no carga */
     }
 
     .login-card {
@@ -109,7 +107,7 @@
 
             <a href="/" class="logo d-flex align-items-center me-auto me-lg-0">
                 <!-- Uncomment the line below if you also wish to use an image logo -->
-                <img src="/images/back/logo_raiz_financiera.webp" alt="" style="max-height: 64px;">
+                <img src="../../../images/back/logo_raiz_financiera.webp" alt="Logo Raíz Financiera" style="max-height: 64px;">
 
 
             </a>
@@ -132,23 +130,23 @@
   <div class="login-card">
 
     <% if (error) { %>
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-message">
         <%= error %>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
       </div>
     <% } %>
 
-    <form action="/login" method="POST">
+    <form action="/login" method="POST" autocomplete="on">
       <h2>Iniciar Sesión</h2>
 
       <div class="mb-3">
         <label for="email" class="form-label">Correo Electrónico</label>
-        <input type="email" class="form-control" id="email" name="email" placeholder="usuario@ejemplo.com" required />
+        <input type="email" class="form-control" id="email" name="email" placeholder="usuario@ejemplo.com" required autocomplete="email" <%= error ? 'aria-describedby="error-message"' : '' %> />
       </div>
 
       <div class="mb-4">
         <label for="password" class="form-label">Contraseña</label>
-        <input type="password" class="form-control" id="password" name="password" placeholder="●●●●●●●●" required />
+        <input type="password" class="form-control" id="password" name="password" placeholder="●●●●●●●●" required autocomplete="current-password" />
       </div>
 
       <div class="d-grid mb-3">

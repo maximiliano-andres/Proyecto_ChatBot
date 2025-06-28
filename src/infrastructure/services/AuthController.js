@@ -23,6 +23,8 @@ export default class AuthController {
             const { error } = validateUser(req.body);
             if (error) return res.status(400).render("registro",{title:"Login", error: error.details.map(err => err.message) });
 
+            DEBUG("Datos validados ERRORES: ", error);
+
             // Verificar si el usuario ya existe
             const existingUser = await User.findOne({ email: req.body.email });
             if (existingUser) return res.status(400).render("registro",{ error: "El Email ya está registrado" });
