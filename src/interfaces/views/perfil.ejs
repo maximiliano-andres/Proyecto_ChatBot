@@ -16,7 +16,7 @@
     <link href="../../../vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
     <link href="../../../vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
 
-    <link href="css/perfil.css" rel="stylesheet">
+    <link href="../../../css/perfil.css" rel="stylesheet">
 
 
 </head>
@@ -29,7 +29,7 @@
 
             <a href="/" class="logo d-flex align-items-center me-auto me-lg-0">
                 <!-- Uncomment the line below if you also wish to use an image logo -->
-                <img src="/images/back/logo_raiz_financiera.webp" alt="" style="max-height: 64px;">
+                <img src="../../../images/back/logo_raiz_financiera.webp" alt="Logo Raíz Financiera" style="max-height: 64px;">
 
 
             </a>
@@ -62,7 +62,7 @@
         </div>
     </header>
     
-<section class="d-flex align-items-center justify-content-center min-vh-100">
+<section class="d-flex align-items-center justify-content-center min-vh-100" style="margin-top: 90px;">
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-8">
@@ -70,7 +70,7 @@
           <div class="card-body p-5">
             <% usuario.forEach(datos => { %>
               <div class="text-center mb-4">
-                <img src="/images/perfil/perfil_default.webp" alt="Avatar" class="rounded-circle shadow-sm" width="120" height="120">
+                <img src="../../../images/perfil/perfil_default.webp" alt="Avatar de usuario" class="rounded-circle shadow-sm" width="120" height="120">
                 <h3 class="mt-3 fw-semibold">
                   <%= datos.nombre1 %> <%= datos.nombre2 %> <%= datos.apellido1 %> <%= datos.apellido2 %>
                 </h3>
@@ -120,7 +120,7 @@
             <% }) %>
 
             <div class="d-flex justify-content-between mt-4">
-              <a href="/usuarios/editar/<%= usuario.id %>" class="btn btn-outline-primary">Editar Perfil</a>
+              <a href="/usuarios/editar/<%= usuario[0].id %>" class="btn btn-outline-primary">Editar Perfil</a>
               <a href="/" class="btn btn-outline-success">Volver al Home</a>
             </div>
           </div>

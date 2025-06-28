@@ -82,12 +82,12 @@
 
         <!-- chatbot mejorado -->
         <div id="chat-container">
-            <button id="chat-button">💬</button>
+            <button id="chat-button" type="button" aria-label="Abrir chat">💬</button>
 
             <div id="chat-box">
                 <div id="chat-header">
                     <span>🤖 Asistente Virtual</span>
-                    <button id="close-chat">✖</button>
+                    <button id="close-chat" type="button" aria-label="Cerrar chat">✖</button>
                 </div>
 
                 <% if (!token) { %>
@@ -101,8 +101,8 @@
                     </div>
 
                     <div id="chat-footer">
-                        <input type="text" id="chat-input" placeholder="Escribe un mensaje..." disabled>
-                        <button id="send-button" disabled>➤</button>
+                        <input type="text" id="chat-input" class="form-control" placeholder="Escribe un mensaje..." disabled>
+                        <button id="send-button" type="button" class="btn btn-primary" disabled>➤</button>
                     </div>
                     <% } else { %>
                         <div id="chat-messages">
@@ -120,8 +120,8 @@
                         </div>
 
                         <div id="chat-footer">
-                            <input type="text" id="chat-input" placeholder="Escribe tu mensaje...">
-                            <button id="send-button">➤</button>
+                            <input type="text" id="chat-input" class="form-control" placeholder="Escribe tu mensaje...">
+                            <button id="send-button" type="button" class="btn btn-primary">➤</button>
                         </div>
                         <% } %>
             </div>
@@ -256,7 +256,7 @@
 
                 <div class="row gy-4">
                     <div class="col-lg-6 order-1 order-lg-2">
-                        <img src="../../../images/back/logo_raiz_financiera.webp" class="img-fluid" alt="">
+                        <img src="../../../images/back/logo_raiz_financiera.webp" class="img-fluid" alt="Logo Raíz Financiera">
                     </div>
                     <div class="col-lg-6 order-2 order-lg-1 content">
                         <h3>Quienes Somos</h3>
@@ -743,7 +743,7 @@
                     <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="100">
                         <div class="team-member">
                             <div class="member-img">
-                                <img src="../../../images/grupo/jocelyn_rivera.jpg" class="img-fluid" alt="">
+                                <img src="../../../images/grupo/jocelyn_rivera.jpg" class="img-fluid" alt="Jocelyn Rivera">
                                 <div class="social">
                                     <a href=""><i class="bi bi-twitter-x"></i></a>
                                     <a href=""><i class="bi bi-facebook"></i></a>
@@ -761,7 +761,7 @@
                     <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="200">
                         <div class="team-member">
                             <div class="member-img">
-                                <img src="../../../images/grupo/lisette_godoy.jpg" class="img-fluid" alt="">
+                                <img src="../../../images/grupo/lisette_godoy.jpg" class="img-fluid" alt="Lisette Godoy">
                                 <div class="social">
                                     <a href=""><i class="bi bi-twitter-x"></i></a>
                                     <a href=""><i class="bi bi-facebook"></i></a>
@@ -779,7 +779,7 @@
                     <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="300">
                         <div class="team-member">
                             <div class="member-img">
-                                <img src="../../../images/grupo/maximiliano_caniullan.jpg" class="img-fluid" alt="">
+                                <img src="../../../images/grupo/maximiliano_caniullan.jpg" class="img-fluid" alt="Maximiliano Caniullan">
                                 <div class="social">
                                     <a href=""><i class="bi bi-twitter-x"></i></a>
                                     <a href=""><i class="bi bi-facebook"></i></a>
@@ -797,7 +797,7 @@
                     <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="400">
                         <div class="team-member">
                             <div class="member-img">
-                                <img src="../../../images/grupo/ramiro_fonseca.jpg" class="img-fluid" alt="">
+                                <img src="../../../images/grupo/ramiro_fonseca.jpg" class="img-fluid" alt="Ramiro Fonseca">
                                 <div class="social">
                                     <a href=""><i class="bi bi-twitter-x"></i></a>
                                     <a href=""><i class="bi bi-facebook"></i></a>
@@ -834,7 +834,7 @@
                 <div class="row gy-4">
                     <div class="col-lg-4 col-md-6 footer-about">
                         <a href="/" class="logo d-flex align-items-center">
-                            <img src="../../../images/back/logo_raiz_financiera.webp" alt="" style="max-height: 120px;">
+                            <img src="../../../images/back/logo_raiz_financiera.webp" alt="Logo Raíz Financiera" style="max-height: 120px;">
                         </a>
 
                         <div class="social-links d-flex mt-4">
@@ -848,11 +848,11 @@
                     <div class="col-lg-2 col-md-3 footer-links">
                         <h4>Acceso Rapido</h4>
                         <ul>
-                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Home</a></li>
-                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Acerca de Nosotros</a></li>
-                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Servicios</a></li>
-                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Otros</a></li>
-                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Grupo de Trabajo</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#hero"> Home</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#about"> Acerca de Nosotros</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#services"> Servicios</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#portfolio"> Otros</a></li>
+                            <li><i class="bi bi-chevron-right"></i> <a href="#team"> Grupo de Trabajo</a></li>
                         </ul>
                     </div>
 
@@ -867,12 +867,20 @@
                         </ul>
                     </div>
 
+                    <!-- Footer Newsletter Mejorado -->
                     <div class="col-lg-4 col-md-12 footer-newsletter">
                         <h4>Our Newsletter</h4>
                         <p>Subscribe to our newsletter and receive the latest news about our products and services!</p>
                         <form action="forms/newsletter.php" method="post" class="php-email-form">
-                            <div class="newsletter-form"><input type="email" name="email"><input type="submit"
-                                    value="Subscribe"></div>
+                            <div class="newsletter-form row g-2 align-items-center">
+                                <div class="col-12 col-sm-8">
+                                    <label for="newsletter-email" class="visually-hidden">Correo electrónico</label>
+                                    <input type="email" id="newsletter-email" name="email" class="form-control" placeholder="Tu correo electrónico" required>
+                                </div>
+                                <div class="col-12 col-sm-4">
+                                    <input type="submit" value="Subscribe" class="btn btn-primary w-100">
+                                </div>
+                            </div>
                             <div class="loading">Loading</div>
                             <div class="error-message"></div>
                             <div class="sent-message">Your subscription request has been sent. Thank you!</div>

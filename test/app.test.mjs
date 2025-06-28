@@ -5,7 +5,7 @@ import app from "../src/app.js";
 
 
 
-// ✅ Generar tokens con el mismo secreto que usas en producción
+//Generar tokens con el mismo secreto que usas en producción
 const tokenCliente = jwt.sign(
   { id: "cliente123", rol: "cliente" },
   process.env.JWT_SECRET || "secreto_de_prueba",

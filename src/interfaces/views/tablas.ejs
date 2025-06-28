@@ -7,6 +7,64 @@
   <title>Administración Raíz Financiera</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="Administracion.css">
+  <style>
+    /* Mejorar responsividad de tablas en móviles */
+    @media (max-width: 767.98px) {
+      .table-responsive {
+        border: none;
+      }
+      .table-responsive::-webkit-scrollbar {
+        height: 6px;
+      }
+      .table-responsive {
+        -webkit-overflow-scrolling: touch;
+      }
+      .table thead {
+        display: none;
+      }
+      .table tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        background: #fff;
+      }
+      .table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        border: none;
+        border-bottom: 1px solid #f1f1f1;
+        font-size: 0.97rem;
+      }
+      .table td:last-child {
+        border-bottom: none;
+      }
+      .table td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #495057;
+        flex-basis: 50%;
+        text-align: left;
+      }
+    }
+    @media (max-width: 767.98px) {
+      .swipe-hint {
+        display: block;
+        text-align: center;
+        font-size: 0.95rem;
+        color: #888;
+        margin-bottom: 0.5rem;
+      }
+    }
+    @media (min-width: 768px) {
+      .swipe-hint {
+        display: none;
+      }
+    }
+  </style>
 
   <link rel="shortcut icon" href="#" type="image/x-icon" />
     <link rel="apple-touch-icon" href="#" />
@@ -37,6 +95,7 @@
   </header>
 
   <main class="container-fluid py-4">
+  <div class="swipe-hint">Desliza la tabla para ver todas las columnas &rarr;</div>
     <ul class="nav nav-tabs" id="adminTab" role="tablist">
       <li class="nav-item" role="presentation">
         <button class="nav-link active" id="usuarios-tab" data-bs-toggle="tab" data-bs-target="#usuarios" type="button"
@@ -84,25 +143,25 @@
             <tbody>
               <% usuarios.forEach(usuario=> { %>
                 <tr>
-                  <td>
+                  <td data-label="Nombres">
                     <%= usuario.nombre1 %> <%= usuario.nombre1 %>
                   </td>
-                  <td>
+                  <td data-label="Apellidos">
                     <%= usuario.apellido1 %> <%= usuario.apellido2 %>
                   </td>
-                  <td>
+                  <td data-label="RUT">
                     <%= usuario.rut %>
                   </td>
-                  <td>
+                  <td data-label="Documento">
                     <%= usuario.numero_documento %>
                   </td>
-                  <td>
+                  <td data-label="Email">
                     <%= usuario.email %>
                   </td>
-                  <td>
+                  <td data-label="Teléfono">
                     <%= usuario.telefono %>
                   </td>
-                  <td>
+                  <td data-label="Rol">
                     <% if (usuario.role === "admin") { %>
                       <span class="badge bg-primary"><%= usuario.role %></span>
                     <% } else if (usuario.role === "cliente") { %>
@@ -139,25 +198,25 @@
             <tbody>
               <% contratos.forEach(contrato=> { %>
                 <tr>
-                  <td>
+                  <td data-label="ID Usuario">
                     <%= contrato.user %>
                   </td>
-                  <td>
+                  <td data-label="Cod Veridicador">
                     <%= contrato.codigo_verificador %>
                   </td>
-                  <td>
+                  <td data-label="Nº Tarjeta">
                     <%= contrato.numero_tarjeta %>
                   </td>
-                  <td>
+                  <td data-label="F Expiracion">
                     <span class="badge bg-primary"><%= contrato.fecha_expiracion %></span>
                   </td>
-                  <td>
+                  <td data-label="CVV">
                     <%= contrato.cvv %>
                   </td>
-                  <td>
+                  <td data-label="Limite Credito">
                     <%= contrato.limite_credito %>
                   </td>
-                  <td>
+                  <td data-label="Estado">
                     <% if (contrato.estado === "activa") { %>
                       <span class="badge bg-success"><%= contrato.estado %></span>
                     <% } else if (contrato.estado === "bloqueada") { %>
@@ -166,8 +225,7 @@
                       <span class="badge bg-warning text-dark"><%= contrato.estado %></span>
                     <% } %>
                   </td>
-                  <td>
-                    
+                  <td data-label="F Emision">
                     <%= new Date(contrato.fecha_emision).toLocaleDateString('es-CL') %>
                   </td>
                 </tr>
@@ -199,19 +257,19 @@
               <!-- Datos de préstamos -->
                <% prestamos.forEach(prestamo=> { %>
                 <tr>
-                  <td>
+                  <td data-label="Usuario">
                     <%= prestamo.user %>
                   </td>
-                  <td>
+                  <td data-label="Monto">
                     <%= prestamo.monto %>
                   </td>
-                  <td>
+                  <td data-label="Plazo">
                     <%= prestamo.plazo_meses %>
                   </td>
-                  <td>
+                  <td data-label="Interés">
                     <%= prestamo.tasa_interes %>
                   </td>
-                  <td>
+                  <td data-label="Estado">
                     <% if (prestamo.estado === "activa") { %>
                       <span class="badge bg-success"><%= prestamo.estado %></span>
                     <% } else if (prestamo.estado === "bloqueada") { %>
@@ -220,19 +278,15 @@
                       <span class="badge bg-warning text-dark"><%= prestamo.estado %></span>
                     <% } %>
                   </td>
-                  <td>
-                    
+                  <td data-label="Solicitud">
                     <%= new Date(prestamo.fecha_solicitud).toLocaleDateString('es-CL') %>
                   </td>
-                  <td>
-                    
+                  <td data-label="Aprobación">
                     <%= new Date(prestamo.fecha_aprobacion).toLocaleDateString('es-CL') %>
                   </td>
-                  <td>
-                    
+                  <td data-label="Vencimiento">
                     <%= new Date(prestamo.fecha_vencimiento).toLocaleDateString('es-CL') %>
                   </td>
-                  
                 </tr>
                 <% }) %>
             </tbody>
@@ -263,19 +317,19 @@
               <!-- Datos de seguros -->
                <% seguros.forEach(seguro=> { %>
                 <tr>
-                  <td>
+                  <td data-label="Usuario">
                     <%= seguro.user %>
                   </td>
-                  <td>
+                  <td data-label="Tipo Seguro">
                     <%= seguro.tipo_seguro %>
                   </td>
-                  <td>
+                  <td data-label="Monto Cobertura">
                     <%= seguro.monto_cobertura %>
                   </td>
-                  <td>
+                  <td data-label="Prima Mensual">
                     <%= seguro.prima_mensual %>
                   </td>
-                  <td>
+                  <td data-label="Estado">
                     <% if (seguro.estado === "activa") { %>
                       <span class="badge bg-success"><%= seguro.estado %></span>
                     <% } else if (seguro.estado === "bloqueada") { %>
@@ -284,15 +338,12 @@
                       <span class="badge bg-warning text-dark"><%= seguro.estado %></span>
                     <% } %>
                   </td>
-                  <td>
-                    
+                  <td data-label="Fecha Inicio">
                     <%= new Date(seguro.fecha_inicio).toLocaleDateString('es-CL') %>
                   </td>
-                  <td>
-                    
+                  <td data-label="Fecha Vencimiento">
                     <%= new Date(seguro.fecha_vencimiento).toLocaleDateString('es-CL') %>
                   </td>
-                  
                 </tr>
                 <% }) %>
             </tbody>
@@ -324,23 +375,22 @@
               <!-- Datos de tarjetas -->
               <% tarjetas.forEach(tarjeta=> { %>
                 <tr>
-                  <td>
+                  <td data-label="Usuario">
                     <%= tarjeta.user %>
                   </td>
-                  <td>
+                  <td data-label="N° Tarjeta">
                     <%= tarjeta.numero_tarjeta %>
                   </td>
-                  <td>
-                    
+                  <td data-label="Fecha Expiracion">
                     <%= new Date(tarjeta.fecha_expiracion).toLocaleDateString('es-CL') %>
                   </td>
-                  <td>
+                  <td data-label="CVV">
                     <%= tarjeta.cvv %>
                   </td>
-                  <td>
+                  <td data-label="Crédito">
                     <%= tarjeta.limite_credito %>
                   </td>
-                  <td>
+                  <td data-label="Estado">
                     <% if (tarjeta.estado === "activa") { %>
                       <span class="badge bg-success"><%= tarjeta.estado %></span>
                     <% } else if (tarjeta.estado === "bloqueada") { %>
@@ -349,11 +399,9 @@
                       <span class="badge bg-warning text-dark"><%= tarjeta.estado %></span>
                     <% } %>
                   </td>
-                  <td>
-                    
+                  <td data-label="Fecha Emisión">
                     <%= new Date(tarjeta.fecha_emision).toLocaleDateString('es-CL') %>
                   </td>
-                  
                 </tr>
                 <% }) %>
             </tbody>
