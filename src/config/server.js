@@ -99,7 +99,7 @@ export const createServer = () => {
         connectDB().then(() => {
             logger.info(nameServer + "BASE DE DATOS: conectada Exitosamente");
         }).catch(error => {
-            console.error("Error conectando a MongoDB:", error);
+            logger.error("Error conectando a MongoDB:", error);
             process.exit(1); // Detener si no se puede conectar a la BD
         });
     }

@@ -16,21 +16,28 @@ export default class Contrato {
     static async crear_contrato(req, res) {
         try {
             const token = req.cookies.token;
-            logger.info(namePdfController + `TOKEN: ${token}`);
+            if (process.env.NODE_ENV !== "production") {
+                logger.info(namePdfController + `TOKEN: ${token}`);
+            }
 
             if (!token)
                 return res.status(400).render("error404", { title: "Error 404" });
 
             const { intent } = req.query;
-
-            logger.info(namePdfController + `INTENT : => ${intent}`);
+            if (process.env.NODE_ENV !== "production") {
+                logger.info(namePdfController + `INTENT : => ${intent}`);
+            }
 
             const decorador = jwt.verify(token, process.env.JWT_SECRET);
             const userId = decorador.id;
-            logger.info(namePdfController + `ID USUARIO: ${userId}`);
+            if (process.env.NODE_ENV !== "production") {
+                logger.info(namePdfController + `ID USUARIO: ${userId}`);
+            }
 
             const user_data = await User.findById(userId);
-            logger.info(namePdfController + `DATOS USUARIO: ${user_data}`);
+            if (process.env.NODE_ENV !== "production") {
+                logger.info(namePdfController + `DATOS USUARIO: ${user_data}`);
+            }
             if (!user_data)
                 return res.status(400).render("error404", { title: "Error 404" });
 
@@ -47,21 +54,22 @@ export default class Contrato {
                 numero_documento: user_data.numero_documento,
             };
 
-            logger.info(namePdfController + "============== DATOS FICTICIOS ==============");
-            logger.info(namePdfController + datos);
+            if (process.env.NODE_ENV !== "production") {
+                logger.info(namePdfController + "============== DATOS FICTICIOS ==============");
+                logger.info(namePdfController + datos);
+            }
             const logo_banco = "./public/images/pdf/Logo_Cuadro.png";
 
-            //Firma_Validadora();
-            //generarFirmaBanco();
             generarFirmaCliente(datos);
             const Obtener_firma = generarContratoPDF(datos, logo_banco);
-
             const datos_tarjeta = generarDatosTarjeta();
 
-            logger.info(namePdfController + "============== DATOS TARJETA FICTICIA==============");
-            logger.info(namePdfController + `ID USUARIO: ${userId}`);
-            logger.info(namePdfController + Obtener_firma.codigo_verificador);
-            logger.info(namePdfController + datos_tarjeta);
+            if (process.env.NODE_ENV !== "production") {
+                logger.info(namePdfController + "============== DATOS TARJETA FICTICIA==============");
+                logger.info(namePdfController + `ID USUARIO: ${userId}`);
+                logger.info(namePdfController + Obtener_firma.codigo_verificador);
+                logger.info(namePdfController + datos_tarjeta);
+            }
 
             const guardar_contrato = new Contratos({
                 user: userId,
@@ -75,19 +83,17 @@ export default class Contrato {
                 fecha_emision: datos_tarjeta.fecha_emision,
             });
 
-            logger.info(namePdfController + "=============== DATOS DE CONTRATO ===============");
-            logger.info(namePdfController + guardar_contrato);
+            if (process.env.NODE_ENV !== "production") {
+                logger.info(namePdfController + "=============== DATOS DE CONTRATO ===============");
+                logger.info(namePdfController + guardar_contrato);
+                logger.info(namePdfController + Obtener_firma.nombre_contrato);
+                logger.info(namePdfController + "Visualizacion Exitosa!!!!!");
+                logger.info(namePdfController + "crear_contrato: Token del usuario:", token);
+                logger.info(namePdfController + "crear_contrato: Rol del usuario:", user_data.role);
+            }
 
             const vista_pdf = Obtener_firma.nombre_contrato;
-
-            logger.info(namePdfController + vista_pdf);
-
-            logger.info(namePdfController + "Visualizacion Exitosa!!!!!");
-
             let role = user_data.role;
-            logger.info(namePdfController + "crear_contrato: Token del usuario:", token);
-            logger.info(namePdfController + "crear_contrato: Rol del usuario:", role);
-
 
             return res.status(200).render("PDF", { vista_pdf, token, role });
         } catch (error) {
@@ -128,13 +134,17 @@ export default class Contrato {
 
             generarFirmaCliente(datos);
             const Obtener_firma = generarContratoPDF(datos, logo_banco);
-
             const datos_tarjeta = generarDatosTarjeta();
 
-            logger.info(namePdfController + "============== DATOS TARJETA FICTICIA==============");
-            logger.info(namePdfController + `ID USUARIO: ${userId}`);
-            logger.info(namePdfController + Obtener_firma.codigo_verificador);
-            logger.info(namePdfController + datos_tarjeta);
+            if (process.env.NODE_ENV !== "production") {
+                logger.info(namePdfController + "============== DATOS TARJETA FICTICIA==============");
+                logger.info(namePdfController + `ID USUARIO: ${userId}`);
+                logger.info(namePdfController + Obtener_firma.codigo_verificador);
+                logger.info(namePdfController + datos_tarjeta);
+                logger.info(namePdfController + "=============== DATOS DE CONTRATO EXITOSO ===============");
+                logger.info(namePdfController + guardar_contrato);
+                logger.info(namePdfController + Obtener_firma.rutaPDF);
+            }
 
             const guardar_contrato = new Contratos({
                 user: userId,
@@ -148,31 +158,19 @@ export default class Contrato {
                 fecha_emision: datos_tarjeta.fecha_emision,
             });
 
-            logger.info(namePdfController + "=============== DATOS DE CONTRATO EXITOSO ===============");
-            logger.info(namePdfController + guardar_contrato);
-
-            const vista_pdf = Obtener_firma.rutaPDF;
-
-            logger.info(namePdfController + vista_pdf);
-            //../../PDF/contrato_123.456.789.pdf
-
             await guardar_contrato.save();
 
-            logger.info(namePdfController + "GUARDADO CON EXITO!!!!!");
+            if (process.env.NODE_ENV !== "production") {
+                logger.info(namePdfController + "GUARDADO CON EXITO!!!!!");
+            }
             const { intent } = req.query;
-
-            logger.info(namePdfController + `INTENT : ${intent}`);
-
-            // ----------------------------------------- role ------------------------------------
+            if (process.env.NODE_ENV !== "production") {
+                logger.info(namePdfController + `INTENT : ${intent}`);
+                logger.info(namePdfController + "Firma_contrato: Token del usuario:", token);
+                logger.info(namePdfController + "Firma_contrato: Rol del usuario:", user_data.role);
+            }
 
             let role = user_data.role;
-
-            
-            logger.info(namePdfController + "Firma_contrato: Token del usuario:", token);
-            
-            logger.info(namePdfController + "Firma_contrato: Rol del usuario:", role);
-
-            // ------------------------------------------------------------------------------------
 
             return res.render("index", {
                 role,

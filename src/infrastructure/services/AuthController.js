@@ -112,40 +112,26 @@ export default class AuthController {
 
     static async login(req, res) {
         try {
-
-            //console.log("Datos recibidos:", req.body);
-
             let { email, password } = req.body;
-
             email = email.trim();
-
-            //logger.info(email)
-
-            //logger.info("Datos recibidos:", req.body);
 
             if (!email || !password) return res.status(400).render("login", { title: "Login", error: "Email y contraseña son requeridos" });
 
             // Verificar usuario
             const user = await User.findOne({ email });
 
-            //logger.info("USUARIO ");
-
             if (!user) {
-                logger.info("NO HAY USER QUE COINCIDA CON LAS CREDENCIALES INGRESADAS")
+                if (process.env.NODE_ENV !== "production") {
+                    logger.info("NO HAY USER QUE COINCIDA CON LAS CREDENCIALES INGRESADAS");
+                }
                 return res.status(400).render("login", { title: "Login", error: "Usuario o Contraseña No son Validas" });
             }
-            //logger.info("EMAIL: " + user.email);
-            //logger.info("NOMBRE: " + user.name);
-            //logger.info("CONTRASEÑA: " + user.password);
 
-            
-            //logger.info("Contraseña ingresada en bcrypt:", password);
-            //logger.info("Contraseña encriptada en bcrypt:", user.password);
             const validPassword = await bcrypt.compare(password, user.password);
-            //logger.info("Resultado de bcrypt.compare:", validPassword); // Esto debería ser 'true' si las contraseñas coinciden.
-            
             if (!validPassword) {
-                logger.info("CONTRASEÑA INVALIDA")
+                if (process.env.NODE_ENV !== "production") {
+                    logger.info("CONTRASEÑA INVALIDA");
+                }
                 return res.status(400).render("login", { title: "Login", error: "Usuario o Contraseña No son Validas" });
             }
 
@@ -174,12 +160,10 @@ export default class AuthController {
             });
 
             logger.info(nameAuthController + "Inicio de sesión exitoso");
-
-            const role = user.role; 
-            logger.info(nameAuthController + "Rol del usuario:", role);
+            logger.info(nameAuthController + "Rol del usuario:", user.role);
             
             return res.render("index", { token: token ,
-                role,
+                role: user.role,
                 title: 'Raíz Finanziera',
                 titulo_1: "Bienvenido a Raíz Finanziera",
                 subtitulo:"Seguridad, crecimiento y confianza en cada inversión.",

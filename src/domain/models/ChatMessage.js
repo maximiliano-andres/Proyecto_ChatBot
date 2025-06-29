@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Joi from "joi";
+import { z } from "zod";
 
 // Esquema de Mongoose
 const chatMessageSchema = new mongoose.Schema({
@@ -12,12 +12,12 @@ const chatMessageSchema = new mongoose.Schema({
 // Modelo de Mongoose
 export const ChatMessage = mongoose.model("ChatMessage", chatMessageSchema);
 
-// Validación con Joi
+// Validación con Zod
 export const validateChatMessage = (data) => {
-    const schema = Joi.object({
-        userId: Joi.string().required(),
-        message: Joi.string().min(1).max(500).required(),
-        response: Joi.string().required()
+    const schema = z.object({
+        userId: z.string().min(1, "El userId es obligatorio."),
+        message: z.string().min(1, "El mensaje no puede estar vacío.").max(500, "El mensaje es demasiado largo."),
+        response: z.string().min(1, "La respuesta es obligatoria.")
     });
-    return schema.validate(data);
+    return schema.safeParse(data);
 };
