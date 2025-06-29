@@ -100,13 +100,16 @@ Raíz Financiera es una plataforma web bancaria con un asistente virtual (chatbo
 
 1. **Asegúrate de tener Docker y Docker Compose instalados.**
 
-2. **Configura tu archivo `.env`** (ver ejemplo arriba).
+2. **Configura tu archivo `.env`** (ver ejemplo arriba). Asegúrate de que la variable `MONGO_URI` sea:
+   ```env
+   MONGO_URI=mongodb://mongo:27017/raizfinanciera
+   ```
 
-3. **Construye y levanta el servicio:**
+3. **Construye y levanta los servicios (aplicación + base de datos):**
    ```sh
    docker compose up --build
    ```
-   Esto construirá la imagen y levantará el contenedor mapeando el puerto 1010.
+   Esto construirá la imagen y levantará los contenedores de la app y MongoDB, mapeando el puerto 1010.
 
 4. **Accede a la aplicación:**
    - [http://localhost:1010](http://localhost:1010)
@@ -116,7 +119,7 @@ Raíz Financiera es una plataforma web bancaria con un asistente virtual (chatbo
    docker compose down
    ```
 
-> **Nota:** Si necesitas MongoDB como contenedor, puedes agregarlo fácilmente al `docker-compose.yml`.
+> **Nota:** El archivo `docker-compose.yml` ya incluye el servicio de MongoDB listo para usar. No necesitas instalar MongoDB localmente.
 
 ---
 
