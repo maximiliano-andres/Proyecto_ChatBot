@@ -2,11 +2,11 @@ import { createServer } from "./config/server.js";
 import router from "./interfaces/routes/rutas_vistas.js";
 import ErrorHandler from "./shared/errors/errores.js";
 import { config } from "./config/env.js";
-import debug from "debug";
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swagger.js';
+import {logger} from "./config/logger.js";
 
-const DEBUG = debug("app:APP_CHATBOT");
+const nameApp = "APP: ";
 
 const app = createServer();
 
@@ -33,7 +33,7 @@ app.use(ErrorHandler.error500);
 // Solo iniciar servidor si este archivo se ejecuta directamente
 if (process.env.NODE_ENV !== "test") {
     app.listen(config.port, "0.0.0.0", () => {
-        DEBUG("Servidor Activado y Corriendo en http://localhost:" + config.port);
+        logger.info(nameApp + "Servidor Activado y Corriendo en http://localhost:" + config.port);
     });
 }
 

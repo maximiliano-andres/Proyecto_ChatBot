@@ -1,4 +1,6 @@
+import { logger } from "../../config/logger.js";
 
+const nameLoginViewsController= "LoginViewsController: ";
 //COntroladores de las vistas
 class AuthControllers {
 
@@ -12,7 +14,7 @@ class AuthControllers {
             )
             
         } catch (error) {
-            console.error("Error en login_page:", error);
+            logger.error(nameLoginViewsController + "Error en login_page:", error);
             return res.status(500).render("error500", {
                 title: "Error 500", 
             });
@@ -27,7 +29,7 @@ class AuthControllers {
                     title: "Registro de Usuario",error: ""
                 })
         } catch (error) {
-            console.error("Error en registro_page:", error);
+            logger.error(nameLoginViewsController + "Error en registro_page:", error);
             return res.status(500).render("error500", {
                 title: "Error 500"
             });
@@ -42,7 +44,7 @@ class AuthControllers {
                     title: "Registro de Usuario",error: ""
                 })
         } catch (error) {
-            console.error("Error en registro_page:", error);
+            logger.error(nameLoginViewsController + "Error en registro_page:", error);
             return res.status(500).render("error500", {
                 title: "Error 500"
             });

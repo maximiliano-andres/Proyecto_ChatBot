@@ -16,6 +16,7 @@ Raíz Financiera es una plataforma web bancaria con un asistente virtual (chatbo
 - **Seguridad:** Protección contra ataques comunes (rate limiting, sanitización, validación de datos).
 - **Pruebas automáticas:** Validación de rutas principales y roles mediante tests automatizados.
 - **Reporte PDF de tests:** Generación automática de un reporte PDF detallado de los resultados de los tests usando GitHub Actions.
+- **Despliegue con Docker y Docker Compose:** Fácil ejecución en cualquier entorno.
 
 ---
 
@@ -28,7 +29,7 @@ Raíz Financiera es una plataforma web bancaria con un asistente virtual (chatbo
 │   ├── domain/                 # Modelos de datos (Usuarios, Contratos, Préstamos, etc.)
 │   ├── infrastructure/
 │   │   ├── controllers/        # Lógica de negocio y generación de documentos
-│   │   └── services/           # Controladores de vistas y autenticación
+│   │   └── services/           # Servicios de negocio
 │   ├── interfaces/
 │   │   ├── routes/             # Definición de rutas Express
 │   │   └── views/              # Vistas EJS (login, registro, index, PDF, errores)
@@ -50,13 +51,14 @@ Raíz Financiera es una plataforma web bancaria con un asistente virtual (chatbo
 │       └── generate-pdf.js     # Script para generar PDF desde resultados de tests
 ├── package.json
 ├── Dockerfile
+├── docker-compose.yml
 ├── .env
 └── README.md
 ```
 
 ---
 
-## Instalación
+## Instalación y ejecución local
 
 1. **Clona el repositorio:**
    ```sh
@@ -71,7 +73,7 @@ Raíz Financiera es una plataforma web bancaria con un asistente virtual (chatbo
 
 3. **Configura las variables de entorno:**
    - Crea un archivo `.env` en la raíz con las siguientes variables:
-     ```
+     ```env
      PUERTO=1010
      JWT_SECRET=tu_clave_secreta
      WIT_TOKEN=tu_token_de_wit_ai
@@ -91,6 +93,30 @@ Raíz Financiera es una plataforma web bancaria con un asistente virtual (chatbo
 
 6. **Accede a la aplicación:**
    - Abre tu navegador en [http://localhost:1010](http://localhost:1010)
+
+---
+
+## Ejecución con Docker y Docker Compose
+
+1. **Asegúrate de tener Docker y Docker Compose instalados.**
+
+2. **Configura tu archivo `.env`** (ver ejemplo arriba).
+
+3. **Construye y levanta el servicio:**
+   ```sh
+   docker compose up --build
+   ```
+   Esto construirá la imagen y levantará el contenedor mapeando el puerto 1010.
+
+4. **Accede a la aplicación:**
+   - [http://localhost:1010](http://localhost:1010)
+
+5. **Parar los servicios:**
+   ```sh
+   docker compose down
+   ```
+
+> **Nota:** Si necesitas MongoDB como contenedor, puedes agregarlo fácilmente al `docker-compose.yml`.
 
 ---
 
@@ -127,6 +153,7 @@ El repositorio incluye un workflow de GitHub Actions que ejecuta las pruebas y g
   2. Se genera un PDF con el resumen y detalle de los tests usando Puppeteer.
   3. El PDF se sube como artefacto descargable en GitHub Actions.
 
+---
 
 ## Pruebas de la API con Postman
 
@@ -139,9 +166,9 @@ Puedes importar la siguiente colección de Postman para probar los endpoints pri
 
 ---
 
-## Docker
+## Docker (comandos manuales)
 
-Para ejecutar el proyecto en Docker:
+Si prefieres usar Docker sin Compose:
 
 1. **Construye la imagen:**
    ```sh
@@ -150,7 +177,7 @@ Para ejecutar el proyecto en Docker:
 
 2. **Ejecuta el contenedor:**
    ```sh
-   docker run -p 1010:1010 --name chatbot-container chatbot-image
+   docker run -p 1010:1010 --env-file .env --name chatbot-container chatbot-image
    ```
 
 ---

@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import Joi from "joi";
 import bcrypt from "bcryptjs";
-import debug from "debug";
+import { logger } from "../../config/logger.js";
 
-const DEBUG = debug("app: VELIDADOR MODELO USER: ")
+const nameUser = "VELIDADOR MODELO USER: ";
 
 // Esquema de usuario
 const userSchema = new mongoose.Schema({

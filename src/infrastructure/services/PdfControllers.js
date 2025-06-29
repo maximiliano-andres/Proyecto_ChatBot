@@ -3,39 +3,34 @@ import { Contratos } from "../../domain/models/Contrato.js";
 import { config } from "dotenv";
 import env from "env-var";
 import jwt from "jsonwebtoken";
-import debug from "debug";
+import { logger } from "../../config/logger.js";
 
 
+import { generarFirmaCliente, generarContratoPDF, generarDatosTarjeta } from "../controllers/GenerarDoc.controller.js";
 
-import {
-    generarFirmaCliente,
-    generarContratoPDF,
-    generarDatosTarjeta,
-} from "../controllers/GenerarDoc.controller.js";
+const namePdfController = "PDF_CONTROLLERS: ";
 
-
-const DEBUG = debug("app: PDF_CONTROLLERS: ");
 config();
 
 export default class Contrato {
     static async crear_contrato(req, res) {
         try {
             const token = req.cookies.token;
-            DEBUG(`TOKEN: ${token}`);
+            logger.info(namePdfController + `TOKEN: ${token}`);
 
             if (!token)
                 return res.status(400).render("error404", { title: "Error 404" });
 
             const { intent } = req.query;
 
-            DEBUG(`INTENT : => ${intent}`);
+            logger.info(namePdfController + `INTENT : => ${intent}`);
 
             const decorador = jwt.verify(token, process.env.JWT_SECRET);
             const userId = decorador.id;
-            DEBUG(`ID USUARIO: ${userId}`);
+            logger.info(namePdfController + `ID USUARIO: ${userId}`);
 
             const user_data = await User.findById(userId);
-            DEBUG(`DATOS USUARIO: ${user_data}`);
+            logger.info(namePdfController + `DATOS USUARIO: ${user_data}`);
             if (!user_data)
                 return res.status(400).render("error404", { title: "Error 404" });
 
@@ -52,8 +47,8 @@ export default class Contrato {
                 numero_documento: user_data.numero_documento,
             };
 
-            DEBUG("============== DATOS FICTICIOS ==============");
-            DEBUG(datos);
+            logger.info(namePdfController + "============== DATOS FICTICIOS ==============");
+            logger.info(namePdfController + datos);
             const logo_banco = "./public/images/pdf/Logo_Cuadro.png";
 
             //Firma_Validadora();
@@ -63,10 +58,10 @@ export default class Contrato {
 
             const datos_tarjeta = generarDatosTarjeta();
 
-            DEBUG("============== DATOS TARJETA FICTICIA==============");
-            DEBUG(`ID USUARIO: ${userId}`);
-            DEBUG(Obtener_firma.codigo_verificador);
-            DEBUG(datos_tarjeta);
+            logger.info(namePdfController + "============== DATOS TARJETA FICTICIA==============");
+            logger.info(namePdfController + `ID USUARIO: ${userId}`);
+            logger.info(namePdfController + Obtener_firma.codigo_verificador);
+            logger.info(namePdfController + datos_tarjeta);
 
             const guardar_contrato = new Contratos({
                 user: userId,
@@ -80,23 +75,23 @@ export default class Contrato {
                 fecha_emision: datos_tarjeta.fecha_emision,
             });
 
-            DEBUG("=============== DATOS DE CONTRATO ===============");
-            DEBUG(guardar_contrato);
+            logger.info(namePdfController + "=============== DATOS DE CONTRATO ===============");
+            logger.info(namePdfController + guardar_contrato);
 
             const vista_pdf = Obtener_firma.nombre_contrato;
 
-            DEBUG(vista_pdf);
+            logger.info(namePdfController + vista_pdf);
 
-            DEBUG("Visualizacion Exitosa!!!!!");
+            logger.info(namePdfController + "Visualizacion Exitosa!!!!!");
 
             let role = user_data.role;
-            DEBUG("crear_contrato: Token del usuario:", token);
-            DEBUG("crear_contrato: Rol del usuario:", role);
+            logger.info(namePdfController + "crear_contrato: Token del usuario:", token);
+            logger.info(namePdfController + "crear_contrato: Rol del usuario:", role);
 
 
             return res.status(200).render("PDF", { vista_pdf, token, role });
         } catch (error) {
-            console.error("Error en Registro:", error);
+            logger.error("Error en Registro:", error);
             return res.status(500).render("error500", {
                 title: "Error 500",
             });
@@ -136,10 +131,10 @@ export default class Contrato {
 
             const datos_tarjeta = generarDatosTarjeta();
 
-            DEBUG("============== DATOS TARJETA FICTICIA==============");
-            DEBUG(`ID USUARIO: ${userId}`);
-            DEBUG(Obtener_firma.codigo_verificador);
-            DEBUG(datos_tarjeta);
+            logger.info(namePdfController + "============== DATOS TARJETA FICTICIA==============");
+            logger.info(namePdfController + `ID USUARIO: ${userId}`);
+            logger.info(namePdfController + Obtener_firma.codigo_verificador);
+            logger.info(namePdfController + datos_tarjeta);
 
             const guardar_contrato = new Contratos({
                 user: userId,
@@ -153,29 +148,29 @@ export default class Contrato {
                 fecha_emision: datos_tarjeta.fecha_emision,
             });
 
-            DEBUG("=============== DATOS DE CONTRATO EXITOSO ===============");
-            DEBUG(guardar_contrato);
+            logger.info(namePdfController + "=============== DATOS DE CONTRATO EXITOSO ===============");
+            logger.info(namePdfController + guardar_contrato);
 
             const vista_pdf = Obtener_firma.rutaPDF;
 
-            DEBUG(vista_pdf);
+            logger.info(namePdfController + vista_pdf);
             //../../PDF/contrato_123.456.789.pdf
 
             await guardar_contrato.save();
 
-            DEBUG("GUARDADO CON EXITO!!!!!");
+            logger.info(namePdfController + "GUARDADO CON EXITO!!!!!");
             const { intent } = req.query;
 
-            DEBUG(`INTENT : ${intent}`);
+            logger.info(namePdfController + `INTENT : ${intent}`);
 
             // ----------------------------------------- role ------------------------------------
 
             let role = user_data.role;
 
             
-            DEBUG("Firma_contrato: Token del usuario:", token);
+            logger.info(namePdfController + "Firma_contrato: Token del usuario:", token);
             
-            DEBUG("Firma_contrato: Rol del usuario:", role);
+            logger.info(namePdfController + "Firma_contrato: Rol del usuario:", role);
 
             // ------------------------------------------------------------------------------------
 
@@ -190,7 +185,7 @@ export default class Contrato {
                     "En Raíz Finanziera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes.",
             });
         } catch (error) {
-            console.error("Error en Registro:", error);
+            logger.error("Error en Registro:", error);
             return res.status(500).render("error500", {
                 title: "Error 500",
             });

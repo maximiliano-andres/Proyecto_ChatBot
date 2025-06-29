@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { logger } from '../../config/logger.js';
 
 const BASE_URL = 'http://localhost:1010/registro_usuario';
 
@@ -26,12 +27,12 @@ export const registrarUsuarios = async () => {
                 }
             });
 
-            console.log(`✅ Usuario ${user.email} registrado:`, response.status);
+            logger.info(`✅ Usuario ${user.email} registrado:`, response.status);
         } catch (error) {
             if (error.response) {
-                console.error(`❌ Error en ${user.email}:`, error.response.data?.error || error.response.statusText);
+                logger.error(`❌ Error en ${user.email}:`, error.response.data?.error || error.response.statusText);
             } else {
-                console.error(`❌ Fallo general:`, error.message);
+                logger.error(`❌ Fallo general:`, error.message);
             }
         }
     }

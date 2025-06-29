@@ -3,12 +3,12 @@ import { Loan } from "../../domain/models/Prestamos_Personales.js";
 import { Insurance } from "../../domain/models/Seguros.js";
 import { CreditCard } from "../../domain/models/TarjetasCredito.js";
 import { User } from "../../domain/models/User.js";
-import debug from "debug";
 import { config } from "dotenv";
 import env from "env-var";
 import jwt from 'jsonwebtoken';
+import { logger } from "../../config/logger.js";
 
-const DEBUG = debug("app: VISTA_TABLAS: ")
+const nameTablasController = "VISTA_TABLAS: ";
 
 config();
 
@@ -21,7 +21,7 @@ class ViewsTables {
             const token = req.cookies.token || "";
 
             if (!token) {
-                debug("VER_TABLAS: No se proporcionó token.");
+                logger.info(nameTablasController + "VER_TABLAS: No se proporcionó token.");
                 return res.status(403).render("error403");
             }
 
@@ -29,10 +29,10 @@ class ViewsTables {
 
             const role = decoded.role;
 
-            DEBUG("VER_TABLAS: Rol del usuario decodificado:", role);
+            logger.info(nameTablasController + "VER_TABLAS: Rol del usuario decodificado:", role);
 
             if (role !== "admin") {
-                debug("VER_TABLAS: Rol no autorizado:", role);
+                logger.info(nameTablasController + "VER_TABLAS: Rol no autorizado:", role);
                 return res.status(403).render("error403");
             }
 
@@ -59,7 +59,7 @@ class ViewsTables {
             });
 
         } catch (error) {
-            console.error("Error al cargar las tablas:", error);
+            logger.error("Error al cargar las tablas:", error);
             return res.status(500).render("tablas", {
                 title: "Tablas de Amortización",
                 error: "Error al cargar los datos",
