@@ -26,8 +26,9 @@ export const registrarUsuarios = async () => {
                     'Accept': 'application/json'
                 }
             });
-
-            logger.info(`✅ Usuario ${user.email} registrado:`, response.status);
+            if (process.env.NODE_ENV !== "production") {
+                logger.info(`✅ Usuario ${user.email} registrado:`, response.status);
+            }
         } catch (error) {
             if (error.response) {
                 logger.error(`❌ Error en ${user.email}:`, error.response.data?.error || error.response.statusText);

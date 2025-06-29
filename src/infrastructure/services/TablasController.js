@@ -17,36 +17,34 @@ const JWT_SECRET = env.get("JWT_SECRET").required().asString();
 class ViewsTables {
     static async verTablas(req, res) {
         try {
-
             const token = req.cookies.token || "";
 
             if (!token) {
-                logger.info(nameTablasController + "VER_TABLAS: No se proporcionó token.");
+                if (process.env.NODE_ENV !== "production") {
+                    logger.info(nameTablasController + "VER_TABLAS: No se proporcionó token.");
+                }
                 return res.status(403).render("error403");
             }
 
             const decoded = jwt.verify(token, JWT_SECRET);
-
             const role = decoded.role;
 
-            logger.info(nameTablasController + "VER_TABLAS: Rol del usuario decodificado:", role);
+            if (process.env.NODE_ENV !== "production") {
+                logger.info(nameTablasController + "VER_TABLAS: Rol del usuario decodificado:", role);
+            }
 
             if (role !== "admin") {
-                logger.info(nameTablasController + "VER_TABLAS: Rol no autorizado:", role);
+                if (process.env.NODE_ENV !== "production") {
+                    logger.info(nameTablasController + "VER_TABLAS: Rol no autorizado:", role);
+                }
                 return res.status(403).render("error403");
             }
 
-
-
             const usuarios = await User.find();
-
             const contratos = await Contratos.find();
-
             const prestamos = await Loan.find();
             const seguros = await Insurance.find();
             const tarjetas = await CreditCard.find();
-
-
 
             return res.status(200).render("tablas", {
                 title: "Tablas de Amortización",

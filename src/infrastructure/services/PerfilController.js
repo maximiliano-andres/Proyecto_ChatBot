@@ -12,13 +12,9 @@ export default class Perfil {
 
     static async perfil(req, res) {
         try {
-
             const token = req.cookies.token || "";
-
             const title = "Perfil de Usuario"
-
             let role = "";
-
             let email = "";
 
             if (token) {
@@ -26,18 +22,20 @@ export default class Perfil {
                     const decoded = jwt.verify(token, JWT_SECRET);
                     role = decoded.role;
                     email = decoded.email;
-                    
-                    logger.info(namePerfilController + "Rol del usuario decodificado:", role);
-                    logger.info(namePerfilController + "ID del usuario decodificado:", email);
-                    logger.info(namePerfilController + "ID del usuario decodificado:", decoded.email);
+                    if (process.env.NODE_ENV !== "production") {
+                        logger.info(namePerfilController + "Rol del usuario decodificado:", role);
+                        logger.info(namePerfilController + "ID del usuario decodificado:", email);
+                    }
                 } catch (err) {
-                    console.error("Token inválido o expirado:", err.message);
+                    logger.error(namePerfilController + "Token inválido o expirado:", err.message);
                 }
             }
-            logger.info(namePerfilController + "Token del usuario:", token);
-            logger.info(namePerfilController + "Rol del usuario:", role);
+            if (process.env.NODE_ENV !== "production") {
+                logger.info(namePerfilController + "Token del usuario:", token);
+                logger.info(namePerfilController + "Rol del usuario:", role);
+            }
 
-            const usuario = await User.find({email});
+            const usuario = await User.find({ email });
             if (!usuario) {
                 return res.status(404).render("error404", {
                     title: "Error 404",
@@ -45,16 +43,15 @@ export default class Perfil {
                 });
             }
 
-            logger.info(namePerfilController + usuario);
-            
-            logger.info(namePerfilController + "TODO SALIO BIEN EN PERFIL");
+            if (process.env.NODE_ENV !== "production") {
+                logger.info(namePerfilController + usuario);
+                logger.info(namePerfilController + "TODO SALIO BIEN EN PERFIL");
+            }
 
             return res.status(200).render("perfil",
                 {
                     title, error: "", usuario, role, token,
                 })
-
-
         } catch (error) {
             logger.error("Error en perfil:", error);
             return res.status(500).render("error500", {

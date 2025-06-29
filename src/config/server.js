@@ -71,13 +71,16 @@ export const createServer = () => {
     // Seguridad: Limitar peticiones (Rate Limiting)
     const limiter = rateLimit({
         windowMs: 15 * 60 * 1000, // 15 minutos
-        max: 500, // Máximo 200 peticiones por IP
+        max: 500, // Máximo 500 peticiones por IP
         message: "Demasiadas peticiones, intenta más tarde.",
         standardHeaders: true, // Muestra límites en headers
         legacyHeaders: false, // No usa headers obsoletos
     });
 
-    app.use(limiter);
+    // Solo aplicar rate limit en producción
+    if (process.env.NODE_ENV === "production") {
+        app.use(limiter);
+    }
 
     // Seguridad: Evita inyecciones NoSQL
     app.use(mongoSanitize());
@@ -99,7 +102,7 @@ export const createServer = () => {
         connectDB().then(() => {
             logger.info(nameServer + "BASE DE DATOS: conectada Exitosamente");
         }).catch(error => {
-            console.error("Error conectando a MongoDB:", error);
+            logger.error("Error conectando a MongoDB:", error);
             process.exit(1); // Detener si no se puede conectar a la BD
         });
     }

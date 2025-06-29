@@ -12,25 +12,26 @@ const JWT_SECRET = env.get("JWT_SECRET").required().asString();
 export const verifyToken = (req, res, next) => {
     const token = req.cookies.token;
 
-    const cokk = req.cookies;
-    logger.info(nameVerificarToken + "COOKIES recibido:", cokk);
-    // Mostrar el token recibido
-    logger.info(nameVerificarToken + "Token recibido:", token);
+    if (process.env.NODE_ENV !== "production") {
+        logger.info(nameVerificarToken + "COOKIES recibido:", req.cookies);
+        logger.info(nameVerificarToken + "Token recibido:", token);
+    }
 
     if (!token) {
-        logger.info(nameVerificarToken + "NO HAY TOKEN");
+        if (process.env.NODE_ENV !== "production") {
+            logger.info(nameVerificarToken + "NO HAY TOKEN");
+        }
         return res.status(401).render("login", { title: "Login", error: "Debe iniciar sesión para acceder" });
     }
 
     jwt.verify(token, JWT_SECRET, (err, decoded) => {
         if (err) {
-            logger.error(nameVerificarToken + "Error de verificación del token:", err);
+            logger.error(nameVerificarToken + "Error de verificación del token:", err?.message || err);
             return res.status(401).render("login", { title: "Login", error: "Sesión expirada, debe volver a iniciar sesión" });
         }
-
-        // Mostrar los datos decodificados del token
-        logger.info(nameVerificarToken + "Token verificado, datos del usuario:", decoded);
-
+        if (process.env.NODE_ENV !== "production") {
+            logger.info(nameVerificarToken + "Token verificado, datos del usuario:", decoded);
+        }
         req.user = decoded; // Guardar los datos del usuario en la solicitud
         next();
     });
