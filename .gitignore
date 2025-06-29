@@ -1,2 +1,32 @@
 node_modules
 .env
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Build
+/dist
+/build
+
+# Coverage
+coverage/
+
+# Docker
+*.local
+.env.*.local
+docker-compose.override.yml
+
+# PDF generados
+/public/PDF/

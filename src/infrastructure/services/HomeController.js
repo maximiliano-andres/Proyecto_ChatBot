@@ -21,15 +21,15 @@ class HomeController {
                     const decoded = jwt.verify(token, JWT_SECRET);
                     role = decoded.role;
                     if (process.env.NODE_ENV !== "production") {
-                        logger.info(nameHomeController + "INDEX_NEUTRO: Rol del usuario decodificado:", role);
+                        logger.info(`${nameHomeController}INDEX: Rol del usuario decodificado: ${role}`);
                     }
                 } catch (err) {
-                    logger.error(nameHomeController + "Token inválido o expirado:", err.message);
+                    logger.error(`${nameHomeController}Token inválido o expirado: ${err.message}`);
                 }
             }
             if (process.env.NODE_ENV !== "production") {
-                logger.info(nameHomeController + "INDEX_NEUTRO: Token del usuario:", token);
-                logger.info(nameHomeController + "INDEX_NEUTRO VERIFICACION: Rol del usuario:", role);
+                logger.info(`${nameHomeController}INDEX: Token del usuario: ${token}`);
+                logger.info(`${nameHomeController}INDEX VERIFICACION: Rol del usuario: ${role}`);
             }
             return res.status(200).render('index', { token, title, role });
         } catch (error) {
@@ -51,15 +51,15 @@ class HomeController {
                     const decoded = jwt.verify(token, JWT_SECRET);
                     role = decoded.role;
                     if (process.env.NODE_ENV !== "production") {
-                        logger.info(nameHomeController + "INDEX_NEUTRO: Rol del usuario decodificado:", role);
+                        logger.info(`${nameHomeController}INDEX_NEUTRO: Rol del usuario decodificado: ${role}`);
                     }
                 } catch (err) {
-                    logger.error(nameHomeController + "Token inválido o expirado:", err.message);
+                    logger.error(`${nameHomeController}Token inválido o expirado: ${err.message}`);
                 }
             }
             if (process.env.NODE_ENV !== "production") {
-                logger.info(nameHomeController + "INDEX_NEUTRO: Token del usuario:", token);
-                logger.info(nameHomeController + "INDEX_NEUTRO VERIFICACION: Rol del usuario:", role);
+                logger.info(`${nameHomeController}INDEX_NEUTRO: Token del usuario: ${token}`);
+                logger.info(`${nameHomeController}INDEX_NEUTRO VERIFICACION: Rol del usuario: ${role}`);
             }
             return res.status(200).render("index", { token, title, role })
         } catch (error) {
@@ -80,10 +80,10 @@ class HomeController {
                     const decoded = jwt.verify(token, JWT_SECRET);
                     role = decoded.role;
                     if (process.env.NODE_ENV !== "production") {
-                        logger.info(nameHomeController + "INDEX_GRUPO: Rol del usuario decodificado:", role);
+                        logger.info(`${nameHomeController}INDEX_GRUPO: Rol del usuario decodificado: ${role}`);
                     }
                 } catch (err) {
-                    logger.error(nameHomeController + "Token inválido o expirado:", err.message);
+                    logger.error(`${nameHomeController}Token inválido o expirado: ${err.message}`);
                 }
             }
 

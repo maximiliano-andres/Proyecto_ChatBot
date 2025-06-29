@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { logger } from "../../config/logger.js";
 
 const nameUser = "VELIDADOR MODELO USER: ";
 

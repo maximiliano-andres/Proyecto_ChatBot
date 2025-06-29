@@ -1,7 +1,5 @@
 import axios from "axios";
-import { config } from "../../config/env.js";
 import { ChatMessage, validateChatMessage } from "../../domain/models/ChatMessage.js";
-import { User } from "../../domain/models/User.js";
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import env from "env-var";

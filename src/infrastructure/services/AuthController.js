@@ -54,7 +54,8 @@ export default class AuthController {
 
             await user.save();
             logger.info(nameAuthController + "Usuario registrado exitosamente");
-            logger.info(nameAuthController + user);
+            logger.info(user);
+            logger.info("=======================================");
             
 
             // Generar el token JWT
@@ -159,8 +160,10 @@ export default class AuthController {
                 sameSite: 'Strict' // La cookie no se envía en solicitudes de origen cruzado
             });
 
+            logger.info("=======================================");
             logger.info(nameAuthController + "Inicio de sesión exitoso");
-            logger.info(nameAuthController + "Rol del usuario:", user.role);
+            logger.info("Rol del usuario:", user.role);
+            logger.info("=======================================");
             
             return res.render("index", { token: token ,
                 role: user.role,

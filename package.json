@@ -11,7 +11,8 @@
   "scripts": {
     "start": "node src/app.js",
     "test": "cross-env NODE_ENV=test mocha --timeout 10000",
-    "dev": "set DEBUG=app:* && nodemon src/app.js"
+    "dev": "set DEBUG=app:* && nodemon src/app.js",
+    "bench": "npx autocannon -c 50 -d 20 -o benchmark.txt http://localhost:1010/ && echo '---\n' && cat benchmark.txt > benchmark_report.txt && echo 'Reporte guardado en benchmark_report.txt'"
   },
   "keywords": [],
   "author": "",
