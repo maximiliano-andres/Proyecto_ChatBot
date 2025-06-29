@@ -1,10 +1,10 @@
-import debug from 'debug';
 import dotenv from 'dotenv';
 import env from "env-var";
+import { logger } from "./logger.js";
 
 dotenv.config();
 
-const DEBUG = debug("app: ENV.JS")
+const nameEnv = "ENV: ";
 
 export const config = {
     port: env.get("PUERTO").required().asIntPositive(),
@@ -16,10 +16,9 @@ export const config = {
 // Verificar si alguna variable importante no está definida
 Object.entries(config).forEach(([key, value]) => {
     if (!value) {
-        DEBUG("ERROR");
-        console.error(`ERROR: La variable de entorno ${key} no está definida.`);
+        logger.error(nameEnv + `ERROR: La variable de entorno ${key} no está definida.`);
         process.exit(1); // Detiene la ejecución si faltan variables críticas
     }
 });
 
-DEBUG("Configuración cargada correctamente");
+logger.info(nameEnv + "Configuracion cargada correctamente");

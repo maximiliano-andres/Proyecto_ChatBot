@@ -1,15 +1,14 @@
 import dotenv from 'dotenv';
 import env from "env-var";
-import debug from "debug";
 import jwt from "jsonwebtoken";  // Asegúrate de importar jwt si no lo tienes
+import { logger } from '../../config/logger.js';
 
-const DEBUG = debug("app: Middleware : ")
+const nameAuthMiddlerware =  "Middleware : ";
 
 dotenv.config();
 
 const JWT_SECRET = env.get("JWT_SECRET").required().asString();
 
-//DEBUG(JWT_SECRET)
 
 export const authenticateUser = (req, res, next) => {
     const token = req.header("Authorization");
@@ -32,6 +31,7 @@ export const authenticateUser = (req, res, next) => {
 
         next();
     } catch (error) {
+        logger.error(nameAuthMiddlerware + "ERROR" + error)
         res.status(400).json({ error: "Token inválido." });
     }
 };

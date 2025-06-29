@@ -1,10 +1,10 @@
 import jwt from 'jsonwebtoken';
 import { config } from 'dotenv';
 import env from 'env-var';
-import debug from 'debug';
 import { User } from '../../domain/models/User.js';
+import { logger } from '../../config/logger.js';
 
-const DEBUG = debug('app: PerfilController');
+const namePerfilController = "PerfilController: ";
 const JWT_SECRET = env.get("JWT_SECRET").asString();
 
 config();
@@ -27,15 +27,15 @@ export default class Perfil {
                     role = decoded.role;
                     email = decoded.email;
                     
-                    DEBUG(" Rol del usuario decodificado:", role);
-                    DEBUG(" ID del usuario decodificado:", email);
-                    DEBUG("ID del usuario decodificado:", decoded.email);
+                    logger.info(namePerfilController + "Rol del usuario decodificado:", role);
+                    logger.info(namePerfilController + "ID del usuario decodificado:", email);
+                    logger.info(namePerfilController + "ID del usuario decodificado:", decoded.email);
                 } catch (err) {
                     console.error("Token inválido o expirado:", err.message);
                 }
             }
-            DEBUG(" Token del usuario:", token);
-            DEBUG(" Rol del usuario:", role);
+            logger.info(namePerfilController + "Token del usuario:", token);
+            logger.info(namePerfilController + "Rol del usuario:", role);
 
             const usuario = await User.find({email});
             if (!usuario) {
@@ -45,9 +45,9 @@ export default class Perfil {
                 });
             }
 
-            DEBUG(usuario);
+            logger.info(namePerfilController + usuario);
             
-            DEBUG("TODO SALIO BIEN EN PERFIL");
+            logger.info(namePerfilController + "TODO SALIO BIEN EN PERFIL");
 
             return res.status(200).render("perfil",
                 {
@@ -56,7 +56,7 @@ export default class Perfil {
 
 
         } catch (error) {
-            console.error("Error en perfil:", error);
+            logger.error("Error en perfil:", error);
             return res.status(500).render("error500", {
                 title: "Error 500"
             });
