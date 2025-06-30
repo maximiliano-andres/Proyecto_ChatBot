@@ -2,14 +2,14 @@ import { v4 as uuidv4 } from 'uuid';
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import os from 'os';
-import debug from 'debug';
+import { logger } from '../../config/logger.js';
 
-const DEBUG = debug("app: GENERADOR DOCUMENTO: ");
+const nameGenerarDocController = "GENERADOR DOCUMENTO: ";
 
 // Generar Firma Validadora
 export function Firma_Validadora() {
     const uuid = uuidv4();
-    //DEBUG("FIRMA VALIDADORA UUID Generado:", uuid);
+    //logger.info("FIRMA VALIDADORA UUID Generado:", uuid);
     return uuid;
 }
 
@@ -86,8 +86,8 @@ export function generarContratoPDF(user, logoPath) {
     doc.moveDown();
     doc.end();
 
-    DEBUG("Contrato bancario y de seguros generado en:", rutaArchivo);
-    DEBUG(`FIRMA: ${firma_oficial}`);
+    logger.info(nameGenerarDocController + "Contrato bancario y de seguros generado en:", rutaArchivo);
+    logger.info(nameGenerarDocController + `FIRMA: ${firma_oficial}`);
     return {
         codigo_verificador: firma_oficial,
         nombre_contrato: nombre_contrato,

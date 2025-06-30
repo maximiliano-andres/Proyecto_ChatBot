@@ -1,18 +1,20 @@
 FROM node:20
 
-WORKDIR /usr/src/PROYECTO-CHATBOT
+# Establece el directorio de trabajo
+WORKDIR /usr/src/app
 
-# Copia solo los archivos de dependencias
-COPY package.json package-lock.json* ./
+# Copia los archivos de dependencias
+COPY package*.json ./
 
 # Instala las dependencias
-RUN npm install
+RUN npm install --production
 
-# Copia el resto del código
+# Copia el resto del código de la aplicación
 COPY . .
 
-# Expone el puerto interno (debe coincidir con el .env)
-EXPOSE 1010
+# Usa el puerto definido por la variable de entorno o 1010 por defecto
+ENV PORT=1010
+EXPOSE $PORT
 
-# Comando para iniciar la aplicación (sin nodemon)
+# Comando para iniciar la aplicación
 CMD ["node", "src/app.js"]

@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
 import { config } from 'dotenv';
 import env from 'env-var';
-import debug from 'debug';
+import { logger } from '../../config/logger.js';
 
-const DEBUG = debug('app: HomeController');
+const nameHomeController = "HomeController: ";
 
 config();
 
@@ -20,24 +20,25 @@ class HomeController {
                 try {
                     const decoded = jwt.verify(token, JWT_SECRET);
                     role = decoded.role;
-
-                    DEBUG("INDEX_NEUTRO: Rol del usuario decodificado:", role);
+                    if (process.env.NODE_ENV !== "production") {
+                        logger.info(`${nameHomeController}INDEX: Rol del usuario decodificado: ${role}`);
+                    }
                 } catch (err) {
-                    console.error("Token inválido o expirado:", err.message);
+                    logger.error(`${nameHomeController}Token inválido o expirado: ${err.message}`);
                 }
             }
-            DEBUG("INDEX_NEUTRO: Token del usuario:", token);
-            DEBUG("INDEX_NEUTRO VERIFICACION: Rol del usuario:", role);
-
+            if (process.env.NODE_ENV !== "production") {
+                logger.info(`${nameHomeController}INDEX: Token del usuario: ${token}`);
+                logger.info(`${nameHomeController}INDEX VERIFICACION: Rol del usuario: ${role}`);
+            }
             return res.status(200).render('index', { token, title, role });
         } catch (error) {
-            console.error("Error en Home:", error);
+            logger.error(nameHomeController + "Error en Home:", error);
             return res.status(500).render("error500", {
                 title: "Error 500"
             });
         }
     }
-
 
     static index_neutro(req, res) {
         try {
@@ -49,27 +50,25 @@ class HomeController {
                 try {
                     const decoded = jwt.verify(token, JWT_SECRET);
                     role = decoded.role;
-
-                    DEBUG("INDEX_NEUTRO: Rol del usuario decodificado:", role);
+                    if (process.env.NODE_ENV !== "production") {
+                        logger.info(`${nameHomeController}INDEX_NEUTRO: Rol del usuario decodificado: ${role}`);
+                    }
                 } catch (err) {
-                    console.error("Token inválido o expirado:", err.message);
+                    logger.error(`${nameHomeController}Token inválido o expirado: ${err.message}`);
                 }
             }
-            DEBUG("INDEX_NEUTRO: Token del usuario:", token);
-            DEBUG("INDEX_NEUTRO VERIFICACION: Rol del usuario:", role);
-
+            if (process.env.NODE_ENV !== "production") {
+                logger.info(`${nameHomeController}INDEX_NEUTRO: Token del usuario: ${token}`);
+                logger.info(`${nameHomeController}INDEX_NEUTRO VERIFICACION: Rol del usuario: ${role}`);
+            }
             return res.status(200).render("index", { token, title, role })
         } catch (error) {
-            console.error("Error en Home:", error);
+            logger.error(nameHomeController + "Error en Home:", error);
             return res.status(500).render("error500", {
                 title: "Error 500"
             });
         }
-
     }
-
-
-
 
     static index_grupo(req, res) {
         try {
@@ -80,10 +79,11 @@ class HomeController {
                 try {
                     const decoded = jwt.verify(token, JWT_SECRET);
                     role = decoded.role;
-
-                    DEBUG("INDEX_GRUPO: Rol del usuario decodificado:", role);
+                    if (process.env.NODE_ENV !== "production") {
+                        logger.info(`${nameHomeController}INDEX_GRUPO: Rol del usuario decodificado: ${role}`);
+                    }
                 } catch (err) {
-                    console.error("Token inválido o expirado:", err.message);
+                    logger.error(`${nameHomeController}Token inválido o expirado: ${err.message}`);
                 }
             }
 
@@ -103,13 +103,11 @@ class HomeController {
             })
 
         } catch (error) {
-            console.error("Error en Home:", error);
+            logger.error(nameHomeController + "Error en Home:", error);
             return res.status(500).render("error500", {
                 title: "Error 500"
             });
         }
-
-
     }
 }
 

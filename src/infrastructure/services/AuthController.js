@@ -2,14 +2,12 @@ import jwt from "jsonwebtoken";
 import bcrypt from 'bcryptjs';
 import { User, validateUser } from "../../domain/models/User.js";
 import { config } from "../../config/env.js";
-import debug from "debug";
-
 import dotenv from 'dotenv';
 import env from "env-var";
 import validator from 'validator';
+import { logger } from "../../config/logger.js";
 
-
-const DEBUG = debug("app:AuthControoller ");
+const nameAuthController = "AuthControoller: ";
 
 dotenv.config();
 
@@ -19,11 +17,11 @@ export default class AuthController {
     static async register(req, res) {
         try {
             // Validar datos con Joi
-            //DEBUG("Datos recibidos:", req.body);
+            //logger.info("Datos recibidos:", req.body);
             const { error } = validateUser(req.body);
             if (error) return res.status(400).render("registro",{title:"Login", error: error.details.map(err => err.message) });
 
-            DEBUG("Datos validados ERRORES: ", error);
+            logger.info(nameAuthController + "Datos validados ERRORES: ", error);
 
             // Verificar si el usuario ya existe
             const existingUser = await User.findOne({ email: req.body.email });
@@ -55,8 +53,9 @@ export default class AuthController {
             
 
             await user.save();
-            DEBUG("Usuario registrado exitosamente");
-            DEBUG( user);
+            logger.info(nameAuthController + "Usuario registrado exitosamente");
+            logger.info(user);
+            logger.info("=======================================");
             
 
             // Generar el token JWT
@@ -77,7 +76,7 @@ export default class AuthController {
             );
             
 
-            //DEBUG("Token Exitoso");
+            //logger.info("Token Exitoso");
             // Guardar el token en una cookie HTTP-only (más seguro)
             res.cookie("token", token, {
                 httpOnly: true,
@@ -85,9 +84,9 @@ export default class AuthController {
                 maxAge: 3600000 // 1 hora en milisegundos
             });
 
-            //DEBUG("Usuario registrado");
-            //DEBUG("TOKEN: " + token);
-            DEBUG("TODO SALIO BIEN SIIIIIIIIIIIIIIIIIIIIUUUUUUUUUUUUUUUUUU!!!!!!!");
+            //logger.info("Usuario registrado");
+            //logger.info("TOKEN: " + token);
+            logger.info(nameAuthController + "TODO SALIO BIEN SIIIIIIIIIIIIIIIIIIIIUUUUUUUUUUUUUUUUUU!!!!!!!");
 
             const role = user.role;
 
@@ -103,7 +102,7 @@ export default class AuthController {
             
 
         } catch (error) {
-            console.error("Error en Registro:", error);
+            logger.error("Error en Registro:", error);
             return res.status(500).render("error500", {
                 title: "Error 500"
             });
@@ -114,40 +113,26 @@ export default class AuthController {
 
     static async login(req, res) {
         try {
-
-            //console.log("Datos recibidos:", req.body);
-
             let { email, password } = req.body;
-
             email = email.trim();
-
-            //DEBUG(email)
-
-            //DEBUG("Datos recibidos:", req.body);
 
             if (!email || !password) return res.status(400).render("login", { title: "Login", error: "Email y contraseña son requeridos" });
 
             // Verificar usuario
             const user = await User.findOne({ email });
 
-            //DEBUG("USUARIO ");
-
             if (!user) {
-                DEBUG("NO HAY USER QUE COINCIDA CON LAS CREDENCIALES INGRESADAS")
+                if (process.env.NODE_ENV !== "production") {
+                    logger.info("NO HAY USER QUE COINCIDA CON LAS CREDENCIALES INGRESADAS");
+                }
                 return res.status(400).render("login", { title: "Login", error: "Usuario o Contraseña No son Validas" });
             }
-            //DEBUG("EMAIL: " + user.email);
-            //DEBUG("NOMBRE: " + user.name);
-            //DEBUG("CONTRASEÑA: " + user.password);
 
-            
-            //DEBUG("Contraseña ingresada en bcrypt:", password);
-            //DEBUG("Contraseña encriptada en bcrypt:", user.password);
             const validPassword = await bcrypt.compare(password, user.password);
-            //DEBUG("Resultado de bcrypt.compare:", validPassword); // Esto debería ser 'true' si las contraseñas coinciden.
-            
             if (!validPassword) {
-                DEBUG("CONTRASEÑA INVALIDA")
+                if (process.env.NODE_ENV !== "production") {
+                    logger.info("CONTRASEÑA INVALIDA");
+                }
                 return res.status(400).render("login", { title: "Login", error: "Usuario o Contraseña No son Validas" });
             }
 
@@ -175,13 +160,13 @@ export default class AuthController {
                 sameSite: 'Strict' // La cookie no se envía en solicitudes de origen cruzado
             });
 
-            DEBUG("Inicio de sesión exitoso");
-
-            const role = user.role; 
-            DEBUG("Rol del usuario:", role);
+            logger.info("=======================================");
+            logger.info(nameAuthController + "Inicio de sesión exitoso");
+            logger.info("Rol del usuario:", user.role);
+            logger.info("=======================================");
             
             return res.render("index", { token: token ,
-                role,
+                role: user.role,
                 title: 'Raíz Finanziera',
                 titulo_1: "Bienvenido a Raíz Finanziera",
                 subtitulo:"Seguridad, crecimiento y confianza en cada inversión.",
@@ -192,7 +177,7 @@ export default class AuthController {
 
 
         } catch (error) {
-            console.error("Error en login:", error);
+            logger.error("Error en login:", error);
             return res.status(500).render("error500", {
                 title: "Error 500"
             });
@@ -212,7 +197,7 @@ export default class AuthController {
             // Forzar expiración
             res.cookie("token", "", { expires: new Date(0), httpOnly: true });
 
-            DEBUG("TOKEN ELIMINADO CON EXITO")
+            logger.info(nameAuthController + "TOKEN ELIMINADO CON EXITO")
             
             return res.status(200).render('index', { 
                 role: "",
@@ -227,7 +212,7 @@ export default class AuthController {
             });
 
         } catch (error) {
-            console.error("Error en login:", error);
+            logger.error("Error en login:", error);
             return res.status(500).render("error500", {
                 title: "Error 500"
             });

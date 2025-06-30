@@ -4,15 +4,15 @@ import helmet from 'helmet';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import { fileURLToPath } from 'url';
-import debug from 'debug';
 import morgan from 'morgan';
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import mongoSanitize from "express-mongo-sanitize";
 import hpp from "hpp";
-import { connectDB } from "./database.js"; // Asegúrate de que la ruta sea correcta
+import { connectDB } from "./database.js"; 
+import { logger } from './logger.js';
 
-const DEBUG_SERVER = debug("app: SERVER.JS");
+const nameServer = "SERVER: "
 
 // Configuración para __dirname en ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -71,13 +71,16 @@ export const createServer = () => {
     // Seguridad: Limitar peticiones (Rate Limiting)
     const limiter = rateLimit({
         windowMs: 15 * 60 * 1000, // 15 minutos
-        max: 500, // Máximo 200 peticiones por IP
+        max: 500, // Máximo 500 peticiones por IP
         message: "Demasiadas peticiones, intenta más tarde.",
         standardHeaders: true, // Muestra límites en headers
         legacyHeaders: false, // No usa headers obsoletos
     });
 
-    app.use(limiter);
+    // Solo aplicar rate limit en producción
+    if (process.env.NODE_ENV === "production") {
+        app.use(limiter);
+    }
 
     // Seguridad: Evita inyecciones NoSQL
     app.use(mongoSanitize());
@@ -89,20 +92,17 @@ export const createServer = () => {
     app.set('view engine', 'ejs');
     app.set('views', path.join(__dirname, '../interfaces/views'));
 
-    //DEBUG_SERVER("Ruta de views:", path.join(__dirname, '../interfaces/views'));
-
     // Servir archivos estáticos
     app.use(express.static(path.join(__dirname, '../../public')));
 
-    //DEBUG_SERVER("RUTA PUBLIC: " + path.join(__dirname, '../../public'));
-    DEBUG_SERVER("Servidor Activado")
+    logger.info(nameServer + "Servidor Activado")
 
 
     if (process.env.NODE_ENV !== "test") {
         connectDB().then(() => {
-            DEBUG_SERVER("BD conectada Exitosamente");
+            logger.info(nameServer + "BASE DE DATOS: conectada Exitosamente");
         }).catch(error => {
-            console.error("Error conectando a MongoDB:", error);
+            logger.error("Error conectando a MongoDB:", error);
             process.exit(1); // Detener si no se puede conectar a la BD
         });
     }
