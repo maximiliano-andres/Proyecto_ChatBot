@@ -1,5 +1,6 @@
 node_modules
 .env
+.env.*
 # Logs
 logs
 *.log
@@ -31,3 +32,37 @@ docker-compose.override.yml
 # PDF generados
 /public/PDF/
 .pdf
+
+# Archivos sensibles y de configuración
+*.pem
+*.key
+*.crt
+*.p12
+*.jks
+*.bak
+*.old
+secrets.*
+config/*.js
+!config/env.js
+
+# Otros
+*.sqlite
+*.db
+*.tgz
+
+# Evitar subir archivos temporales
+*.tmp
+*.temp
+~$*
+
+# Evitar subir archivos de entorno y credenciales
+.envrc
+.env.backup
+.env.example
+
+# Evitar subir archivos de sesión
+.session
+
+# Evitar subir archivos de usuario
+*.sublime-workspace
+*.sublime-project
