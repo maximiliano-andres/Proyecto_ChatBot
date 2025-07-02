@@ -52,8 +52,8 @@ export const validateUser = (data) => {
         nombre2: z.string().min(1, "El segundo nombre no puede estar vacío.").transform(val => val.trim().toUpperCase()),
         apellido1: z.string().min(1, "El primer apellido no puede estar vacío.").transform(val => val.trim().toUpperCase()),
         apellido2: z.string().min(1, "El segundo apellido no puede estar vacío.").transform(val => val.trim().toUpperCase()),
-        rut: z.string().regex(/^\d{7,8}-[0-9kK]{1}$/, "El RUT debe tener el formato 12345678-9."),
-        numero_documento: z.string().regex(/^\d{3}\.\d{3}\.\d{3}$/, "El número de documento debe tener el formato 123.456.789."),
+        rut: z.string().regex(/^[\d]{7,8}-[0-9kK]{1}$/, "El RUT debe tener el formato 12345678-9."),
+        numero_documento: z.string().regex(/^[\d]{3}\.[\d]{3}\.[\d]{3}$/, "El número de documento debe tener el formato 123.456.789."),
         telefono: z.string().regex(/^\+569\d{8}$/, "El teléfono debe tener el formato +569XXXXXXXX."),
         fecha_nacimiento: z.string().refine((val) => {
             const today = new Date();
@@ -71,5 +71,19 @@ export const validateUser = (data) => {
             .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, "La contraseña debe incluir al menos una mayúscula, una minúscula, un número y un símbolo especial (@$!%*?&)."),
         role: z.enum(["cliente", "admin"]).optional()
     });
-    return schema.safeParse(data);
+    const result = schema.safeParse(data);
+    if (result.success) {
+        return { value: result.data };
+    } else {
+        // Adaptar la estructura para que el controlador pueda usar error.details
+        return {
+            error: {
+                details: result.error.errors.map(err => ({
+                    message: err.message,
+                    path: err.path,
+                    code: err.code
+                }))
+            }
+        };
+    }
 };
