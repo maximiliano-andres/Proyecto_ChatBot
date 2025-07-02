@@ -53,7 +53,7 @@ export default class Perfil {
                     title, error: "", usuario, role, token,
                 })
         } catch (error) {
-            logger.error("Error en perfil:", error);
+            logger.error(namePerfilController + `Error en Perfil: ${error}`);
             return res.status(500).render("error500", {
                 title: "Error 500"
             });

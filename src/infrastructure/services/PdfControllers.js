@@ -1,7 +1,6 @@
 import { User } from "../../domain/models/User.js";
 import { Contratos } from "../../domain/models/Contrato.js";
 import { config } from "dotenv";
-import env from "env-var";
 import jwt from "jsonwebtoken";
 import { logger } from "../../config/logger.js";
 
@@ -97,7 +96,7 @@ export default class Contrato {
 
             return res.status(200).render("PDF", { vista_pdf, token, role });
         } catch (error) {
-            logger.error("Error en Registro:", error);
+            logger.error(`Error en Crear Contrato: ${error}`);
             return res.status(500).render("error500", {
                 title: "Error 500",
             });
@@ -186,7 +185,7 @@ export default class Contrato {
                     "En Raíz Finanziera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes.",
             });
         } catch (error) {
-            logger.error(`Error en Registro: ${error}`);
+            logger.error(`Error en Firmar Contrato: ${error}`);
             return res.status(500).render("error500", {
                 title: "Error 500",
             });

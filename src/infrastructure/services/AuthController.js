@@ -1,10 +1,8 @@
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcryptjs';
 import { User, validateUser } from "../../domain/models/User.js";
-import { config } from "../../config/env.js";
 import dotenv from 'dotenv';
 import env from "env-var";
-import validator from 'validator';
 import { logger } from "../../config/logger.js";
 
 const nameAuthController = "AuthControoller: ";
@@ -56,13 +54,11 @@ export default class AuthController {
                 password: req.body.password.trim(),
                 role: req.body.role || 'cliente',  // Asignación de rol por defecto si no se especifica
             });
-            
 
             await user.save();
             logger.info(nameAuthController + "Usuario registrado exitosamente");
             logger.info(user);
             logger.info("=======================================");
-            
 
             // Generar el token JWT
             const token = jwt.sign(
@@ -80,8 +76,6 @@ export default class AuthController {
                 JWT_SECRET,  // Clave secreta desde configuración
                 { expiresIn: "1h" }  // Tiempo de expiración del token
             );
-            
-
             //logger.info("Token Exitoso");
             // Guardar el token en una cookie HTTP-only (más seguro)
             res.cookie("token", token, {
@@ -90,8 +84,6 @@ export default class AuthController {
                 maxAge: 3600000 // 1 hora en milisegundos
             });
 
-            //logger.info("Usuario registrado");
-            //logger.info("TOKEN: " + token);
             logger.info(nameAuthController + "TODO SALIO BIEN SIIIIIIIIIIIIIIIIIIIIUUUUUUUUUUUUUUUUUU!!!!!!!");
 
             const role = user.role;
@@ -103,10 +95,7 @@ export default class AuthController {
                 subtitulo:"Seguridad, crecimiento y confianza en cada inversión.",
                 titulo_NH:"Nuestra Historia",
                 texto_NH1:"En Raíz Finanziera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes."
-
             });
-            
-
         } catch (error) {
             logger.error(`Error REGISTRO: ${error}`)
             return res.status(500).render("error500", {
@@ -168,7 +157,7 @@ export default class AuthController {
 
             logger.info("=======================================");
             logger.info(nameAuthController + "Inicio de sesión exitoso");
-            logger.info("Rol del usuario:", user.role);
+            logger.info(`Rol del usuario: ${user.role}`);
             logger.info("=======================================");
             
             return res.render("index", { token: token ,
@@ -178,12 +167,9 @@ export default class AuthController {
                 subtitulo:"Seguridad, crecimiento y confianza en cada inversión.",
                 titulo_NH:"Nuestra Historia",
                 texto_NH1:"En Raíz Finanziera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes."
-
             });
-
-
         } catch (error) {
-            logger.error("Error en login:", error);
+            logger.error(`Error en login: ${error}`);
             return res.status(500).render("error500", {
                 title: "Error 500"
             });
@@ -213,12 +199,9 @@ export default class AuthController {
                 subtitulo:"Seguridad, crecimiento y confianza en cada inversión.",
                 titulo_NH:"Nuestra Historia",
                 texto_NH1:"En Raíz Finanziera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes."
-
-                
             });
-
         } catch (error) {
-            logger.error("Error en login:", error);
+            logger.error(`Error en logout: ${error}`);
             return res.status(500).render("error500", {
                 title: "Error 500"
             });
