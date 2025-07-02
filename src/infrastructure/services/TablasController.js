@@ -57,7 +57,7 @@ class ViewsTables {
             });
 
         } catch (error) {
-            logger.error("Error al cargar las tablas:", error);
+            logger.error(nameTablasController + `Error en Ver Tablas: ${error}`);
             return res.status(500).render("tablas", {
                 title: "Tablas de Amortización",
                 error: "Error al cargar los datos",

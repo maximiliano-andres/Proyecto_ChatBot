@@ -33,7 +33,7 @@ class HomeController {
             }
             return res.status(200).render('index', { token, title, role });
         } catch (error) {
-            logger.error(nameHomeController + "Error en Home:", error);
+            logger.error(nameHomeController + `Error en Index: ${error}`);
             return res.status(500).render("error500", {
                 title: "Error 500"
             });
@@ -63,7 +63,7 @@ class HomeController {
             }
             return res.status(200).render("index", { token, title, role })
         } catch (error) {
-            logger.error(nameHomeController + "Error en Home:", error);
+            logger.error(nameHomeController + `Error en Index Neutro: ${error}`);
             return res.status(500).render("error500", {
                 title: "Error 500"
             });
@@ -103,7 +103,7 @@ class HomeController {
             })
 
         } catch (error) {
-            logger.error(nameHomeController + "Error en Home:", error);
+            logger.error(nameHomeController + `Error en Index Grupo: ${error}`);
             return res.status(500).render("error500", {
                 title: "Error 500"
             });

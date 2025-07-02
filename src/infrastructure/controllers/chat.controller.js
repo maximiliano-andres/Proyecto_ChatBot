@@ -147,7 +147,7 @@ export class ChatController {
 
             return res.json({ reply });
         } catch (error) {
-            logger.error(nameChatController + "ERROR EN CHATCONTROLLER:JS", error);
+            logger.error(nameChatController + `ERROR EN CHATCONTROLLER:JS: ${error}`)
             return res.status(500).render("error500", { title: "Error 500" });
         }
     }
