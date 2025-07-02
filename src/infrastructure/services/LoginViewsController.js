@@ -11,7 +11,7 @@ class AuthControllers {
                 error: "",
             });
         } catch (error) {
-            logger.error(nameLoginViewsController + "Error en login_page:", error);
+            logger.error(nameLoginViewsController + `Error en Login Page: ${error}`);
             return res.status(500).render("error500", {
                 title: "Error 500",
             });
@@ -26,7 +26,7 @@ class AuthControllers {
                 error: "",
             });
         } catch (error) {
-            logger.error(nameLoginViewsController + "Error en registro_page:", error);
+            logger.error(nameLoginViewsController + `Error en Registro Page: ${error}`);
             return res.status(500).render("error500", {
                 title: "Error 500",
             });
@@ -40,10 +40,7 @@ class AuthControllers {
                 error: "",
             });
         } catch (error) {
-            logger.error(
-                nameLoginViewsController + "Error en registroADMIN_page:",
-                error
-            );
+            logger.error(nameLoginViewsController + `Error en Registro Page Admin: ${error}`);
             return res.status(500).render("error500", {
                 title: "Error 500",
             });
