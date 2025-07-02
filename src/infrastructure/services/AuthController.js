@@ -40,6 +40,7 @@ export default class AuthController {
             if (existingTelefono) return res.status(400).render("registro",{ error: "El telefono ya está registrado" });
 
             //Agregar validaciones por que el registro nno maneja errores???
+            //revisar validaciones que no sirven
             
             // Crear nuevo usuario con la contraseña hasheada
             let user = new User({
