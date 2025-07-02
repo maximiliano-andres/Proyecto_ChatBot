@@ -19,7 +19,10 @@ export default class AuthController {
             // Validar datos con Joi
             //logger.info("Datos recibidos:", req.body);
             const { error } = validateUser(req.body);
-            if (error) return res.status(400).render("registro",{title:"Login", error: error.details.map(err => err.message) });
+            if (error) {
+                const errorMessages = error.details ? error.details.map(err => err.message) : ["Error de validación debes llenar los campos que faltan"];
+                return res.status(400).render("registro",{title:"Login", error: errorMessages });
+            }
 
             logger.info(nameAuthController + "Datos validados ERRORES: ", error);
 
@@ -35,6 +38,8 @@ export default class AuthController {
 
             const existingTelefono = await User.findOne({ telefono: req.body.telefono });
             if (existingTelefono) return res.status(400).render("registro",{ error: "El telefono ya está registrado" });
+
+            //Agregar validaciones por que el registro nno maneja errores???
             
             // Crear nuevo usuario con la contraseña hasheada
             let user = new User({
@@ -102,7 +107,7 @@ export default class AuthController {
             
 
         } catch (error) {
-            logger.error("Error en Registro:", error);
+            logger.error(`Error REGISTRO: ${error}`)
             return res.status(500).render("error500", {
                 title: "Error 500"
             });
