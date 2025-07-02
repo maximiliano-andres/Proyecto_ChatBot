@@ -30,3 +30,4 @@ docker-compose.override.yml
 
 # PDF generados
 /public/PDF/
+.pdf
