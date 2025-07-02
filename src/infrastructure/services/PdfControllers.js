@@ -141,9 +141,6 @@ export default class Contrato {
                 logger.info(namePdfController + `ID USUARIO: ${userId}`);
                 logger.info(namePdfController + Obtener_firma.codigo_verificador);
                 logger.info(namePdfController + datos_tarjeta);
-                logger.info(namePdfController + "=============== DATOS DE CONTRATO EXITOSO ===============");
-                logger.info(namePdfController + guardar_contrato);
-                logger.info(namePdfController + Obtener_firma.rutaPDF);
             }
 
             const guardar_contrato = new Contratos({
@@ -157,6 +154,12 @@ export default class Contrato {
                 estado: datos_tarjeta.estado,
                 fecha_emision: datos_tarjeta.fecha_emision,
             });
+
+            if (process.env.NODE_ENV !== "production") {
+                logger.info(namePdfController + "=============== DATOS DE CONTRATO EXITOSO ===============");
+                logger.info(namePdfController + guardar_contrato);
+                logger.info(namePdfController + Obtener_firma.rutaPDF);
+            }
 
             await guardar_contrato.save();
 
@@ -183,7 +186,7 @@ export default class Contrato {
                     "En Raíz Finanziera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes.",
             });
         } catch (error) {
-            logger.error("Error en Registro:", error);
+            logger.error(`Error en Registro: ${error}`);
             return res.status(500).render("error500", {
                 title: "Error 500",
             });
