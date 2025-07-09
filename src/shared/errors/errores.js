@@ -11,7 +11,7 @@ class ErrorHandler {
 
     // Middleware para manejar errores de autorización (Error 403)
     static error403(err, req, res, next) {
-        logger.error(nameErrores + 'Error 403:', err?.message || err);
+        logger.error(`${nameErrores} ${err.message}`);
         return res.status(403).render("error403", {
             title: "Error 403"
         });

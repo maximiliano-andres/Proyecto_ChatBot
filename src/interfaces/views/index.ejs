@@ -1,909 +1,1326 @@
 <!DOCTYPE html>
 <html lang="es">
-
-<head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>
-        <%= title %>
-    </title>
-    <meta name="description" content="">
-    <meta name="keywords" content="">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title><%= title %></title>
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
 
     <!-- Favicons -->
-    <link href="../../../img/Logo_Cuadro.png" rel="icon">
-    <link href="../../../img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link href="../../../img/Logo_Cuadro.png" rel="icon" />
+    <link href="../../../img/apple-touch-icon.png" rel="apple-touch-icon" />
 
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com" rel="preconnect">
-    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-        rel="stylesheet">
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- Vendor CSS Files -->
-    <link href="../../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../../../vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-    <link href="../../../vendor/aos/aos.css" rel="stylesheet">
-    <link href="../../../vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
-    <link href="../../../vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-
+    <link
+      href="../../../vendor/bootstrap/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="../../../vendor/bootstrap-icons/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="../../../vendor/aos/aos.css" rel="stylesheet" />
+    <link
+      href="../../../vendor/swiper/swiper-bundle.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="../../../vendor/glightbox/css/glightbox.min.css"
+      rel="stylesheet"
+    />
 
     <!-- Main CSS File -->
-    <link href="../../../css/main.css" rel="stylesheet">
-    <link href="../../../css/chat.css" rel="stylesheet">
+    <link href="../../../css/main.css" rel="stylesheet" />
+    <link href="../../../css/chat.css" rel="stylesheet" />
+  </head>
 
-
-</head>
-
-<body class="index-page">
-
-
-
+  <body class="index-page">
     <header id="header" class="header d-flex align-items-center fixed-top">
-        <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+      <div
+        class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between"
+      >
+        <a href="/" class="logo d-flex align-items-center me-auto me-lg-0">
+          <!-- Uncomment the line below if you also wish to use an image logo -->
+          <img
+            src="../../../images/back/logo_raiz_financiera.webp"
+            alt=""
+            style="max-height: 64px"
+          />
+        </a>
 
-            <a href="/" class="logo d-flex align-items-center me-auto me-lg-0">
-                <!-- Uncomment the line below if you also wish to use an image logo -->
-                <img src="../../../images/back/logo_raiz_financiera.webp" alt="" style="max-height: 64px;">
+        <nav id="navmenu" class="navmenu">
+          <ul>
+            <li>
+              <a href="#hero" class="active">Home<br /></a>
+            </li>
+            <li><a href="#about">Acerca de Nosotros</a></li>
+            <li><a href="#services">Servicios</a></li>
+            <li><a href="#portfolio">Otros</a></li>
+            <li><a href="#team">Grupo de trabajo</a></li>
+            <% if (token) { %>
+            <li><a href="/perfil">Perfil</a></li>
+            <% } %> <% if (role==="admin" ) { %>
+            <li><a href="/tablas">Control Administracion</a></li>
+            <% } %>
+          </ul>
+          <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
 
-
-            </a>
-
-            <nav id="navmenu" class="navmenu">
-                <ul>
-                    <li><a href="#hero" class="active">Home<br></a></li>
-                    <li><a href="#about">Acerca de Nosotros</a></li>
-                    <li><a href="#services">Servicios</a></li>
-                    <li><a href="#portfolio">Otros</a></li>
-                    <li><a href="#team">Grupo de trabajo</a></li>
-                    <% if (token) { %>
-                        <li><a href="/perfil">Perfil</a></li>
-                        <% } %>
-
-                            <% if (role==="admin" ) { %>
-                                <li><a href="/tablas">Control Administracion</a></li>
-                                <% } %>
-
-                </ul>
-                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-            </nav>
-
-            <% if (!token) { %>
-                <a class="btn-getstarted" href="/login">Login</a>
-                <% } else { %>
-                    <a class="btn-getstarted" href="/logout">Cerrar Sesion</a>
-                    <% } %>
-
-        </div>
+        <% if (!token) { %>
+        <a class="btn-getstarted" href="/login">Login</a>
+        <% } else { %>
+        <a class="btn-getstarted" href="/logout">Cerrar Sesion</a>
+        <% } %>
+      </div>
     </header>
 
     <main class="main">
+      <% if (typeof mensaje_titulo !== 'undefined' && typeof mensaje_final !== 'undefined' && typeof mensaje_cuerpo !== 'undefined') { %>
+  <div
+    id="custom-toast"
+    class="toast show position-fixed top-50 start-50 translate-middle w-100 px-3"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+    style="z-index: 1080; max-width: 800px; min-height: 30vh; border: none; box-shadow: none; background: transparent;"
+  >
+    <div
+      class="toast-header rounded-top"
+      style="background-color: #d4af37; border: none; box-shadow: none; border-radius: 0.375rem 0.375rem 0 0 !important;"
+    >
+      <strong
+        class="me-auto fw-bold"
+        style="color: #000000; font-size: 1.3rem;"
+      >
+        <%= mensaje_titulo %>
+      </strong>
+      <button
+        type="button"
+        class="btn-close btn-close-black"
+        data-bs-dismiss="toast"
+        aria-label="Cerrar"
+        style="filter: invert(0);"
+      ></button>
+    </div>
+    <div
+      class="toast-body"
+      style="background-color: #d4af37; color: white; border: none; box-shadow: none; padding: 1.5rem 2rem; font-size: 1rem; line-height: 1.4; border-radius: 0 0 0.375rem 0.375rem !important;"
+    >
+      <p class="mb-3"><%= mensaje_cuerpo %></p>
+      <p class="mb-0" style="opacity: 0.9;"><%= mensaje_final %></p>
+    </div>
+  </div>
+<% } %>
 
-        <!-- chatbot mejorado -->
-        <div id="chat-container">
-            <button id="chat-button" type="button" aria-label="Abrir chat">💬</button>
 
-            <div id="chat-box">
-                <div id="chat-header">
-                    <span>🤖 Asistente Virtual</span>
-                    <button id="close-chat" type="button" aria-label="Cerrar chat">✖</button>
-                </div>
+      <!-- chatbot mejorado -->
+      <div id="chat-container">
+        <button id="chat-button" type="button" aria-label="Abrir chat">
+          💬
+        </button>
 
-                <% if (!token) { %>
-                    <div id="chat-messages">
-                        <p class="bot-message">🤖 ¡Hola! Bienvenido a nuestro servicio. Para ofrecerte la mejor
-                            experiencia, por favor <strong>inicia sesión</strong> con tu cuenta.</p>
+        <div id="chat-box">
+          <div id="chat-header">
+            <span>🤖 Asistente Virtual</span>
+            <button id="close-chat" type="button" aria-label="Cerrar chat">
+              ✖
+            </button>
+          </div>
 
-                        <div class="login-button-container">
-                            <a href="/login" class="login-button">🔐 Iniciar Sesión</a>
-                        </div>
-                    </div>
+          <% if (!token) { %>
+          <div id="chat-messages">
+            <p class="bot-message">
+              🤖 ¡Hola! Bienvenido a nuestro servicio. Para ofrecerte la mejor
+              experiencia, por favor <strong>inicia sesión</strong> con tu
+              cuenta.
+            </p>
 
-                    <div id="chat-footer">
-                        <input type="text" id="chat-input" class="form-control" placeholder="Escribe un mensaje..." disabled>
-                        <button id="send-button" type="button" class="btn btn-primary" disabled>➤</button>
-                    </div>
-                    <% } else { %>
-                        <div id="chat-messages">
-                            <p class="bot-message">🤖 ¡Hola de nuevo! Estamos aquí para ayudarte a tomar decisiones
-                                financieras informadas. Ofrecemos:</p>
-                            <ul>
-                                <p class="bot-message">💰 <strong>Préstamos personales</strong>, flexibles y adaptados a
-                                    tus necesidades.</p>
-                                <p class="bot-message">💳 <strong>Tarjetas de crédito</strong>, con beneficios
-                                    exclusivos para ti.</p>
-                                <p class="bot-message">🛡️ <strong>Seguros</strong> que brindan protección y
-                                    tranquilidad para ti y tu familia.</p>
-                            </ul>
-                            <p class="bot-message">Dime, ¿en qué puedo ayudarte hoy? ¡Estoy listo para asesorarte!</p>
-                        </div>
-
-                        <div id="chat-footer">
-                            <input type="text" id="chat-input" class="form-control" placeholder="Escribe tu mensaje...">
-                            <button id="send-button" type="button" class="btn btn-primary">➤</button>
-                        </div>
-                        <% } %>
+            <div class="login-button-container">
+              <a href="/login" class="login-button">🔐 Iniciar Sesión</a>
             </div>
+          </div>
+
+          <div id="chat-footer">
+            <input
+              type="text"
+              id="chat-input"
+              class="form-control"
+              placeholder="Escribe un mensaje..."
+              disabled
+            />
+            <button
+              id="send-button"
+              type="button"
+              class="btn btn-primary"
+              disabled
+            >
+              ➤
+            </button>
+          </div>
+          <% } else { %>
+          <div id="chat-messages">
+            <p class="bot-message">
+              🤖 ¡Hola de nuevo! Estamos aquí para ayudarte a tomar decisiones
+              financieras informadas. Ofrecemos:
+            </p>
+            <ul>
+              <p class="bot-message">
+                💰 <strong>Préstamos personales</strong>, flexibles y adaptados
+                a tus necesidades.
+              </p>
+              <p class="bot-message">
+                💳 <strong>Tarjetas de crédito</strong>, con beneficios
+                exclusivos para ti.
+              </p>
+              <p class="bot-message">
+                🛡️ <strong>Seguros</strong> que brindan protección y
+                tranquilidad para ti y tu familia.
+              </p>
+            </ul>
+            <p class="bot-message">
+              Dime, ¿en qué puedo ayudarte hoy? ¡Estoy listo para asesorarte!
+            </p>
+          </div>
+
+          <div id="chat-footer">
+            <input
+              type="text"
+              id="chat-input"
+              class="form-control"
+              placeholder="Escribe tu mensaje..."
+            />
+            <button id="send-button" type="button" class="btn btn-primary">
+              ➤
+            </button>
+          </div>
+          <% } %>
         </div>
+      </div>
 
+      <!-- Hero Section -->
+      <section id="hero" class="hero section dark-background">
+        <img
+          src="../../../images/back/back_banco.webp"
+          alt=""
+          data-aos="fade-in"
+        />
 
-
-
-        <!-- Hero Section -->
-        <section id="hero" class="hero section dark-background">
-
-            <img src="../../../images/back/back_banco.webp" alt="" data-aos="fade-in">
-
-            <div class="container">
-
-                <div class="row justify-content-center text-center" data-aos="fade-up" data-aos-delay="100">
-                    <div class="col-xl-6 col-lg-8">
-                        <h2>Raíz Finaciera<span>.</span></h2>
-                        <p>Tú banco de confinza.</p>
-                    </div>
-                </div>
-
-                <div class="row gy-4 mt-5 justify-content-center" data-aos="fade-up" data-aos-delay="200">
-                    <div class="col-xl-2 col-md-4" data-aos="fade-up" data-aos-delay="300">
-                        <div class="icon-box">
-                            <a href="#services"><i class="bi bi-credit-card"></i></a>
-                            <h3><a href="#services">Tarjeta de crédito</a></h3>
-                        </div>
-                    </div>
-                    <div class="col-xl-2 col-md-4" data-aos="fade-up" data-aos-delay="400">
-                        <div class="icon-box">
-                            <a href="#services"><i class="bi bi-shield-lock"></i></a>
-                            <h3><a href="#services">Seguridad financiera</a></h3>
-                        </div>
-                    </div>
-                    <div class="col-xl-2 col-md-4" data-aos="fade-up" data-aos-delay="500">
-                        <div class="icon-box">
-                            <a href="#services"><i class="bi bi-arrow-left-right"></i></a>
-                            <h3><a href="#services">Transacción</a></h3>
-                        </div>
-                    </div>
-                    <div class="col-xl-2 col-md-4" data-aos="fade-up" data-aos-delay="600">
-                        <div class="icon-box">
-                            <a href="#services"><i class="bi bi-briefcase"></i></a>
-                            <h3><a href="#services">Negocios</a></h3>
-                        </div>
-                    </div>
-                    <div class="col-xl-2 col-md-4" data-aos="fade-up" data-aos-delay="700">
-                        <div class="icon-box">
-                            <a href="#services"><i class="bi bi-graph-up"></i></a>
-                            <h3><a href="#services"> Crecimiento económico</a></h3>
-                        </div>
-                    </div>
-                </div>
+        <div class="container">
+          <div
+            class="row justify-content-center text-center"
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
+            <div class="col-xl-6 col-lg-8">
+              <h2>Raíz Finaciera<span>.</span></h2>
+              <p>Tú banco de confinza.</p>
             </div>
+          </div>
 
-        </section><!-- /Hero Section -->
+          <div
+            class="row gy-4 mt-5 justify-content-center"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div
+              class="col-xl-2 col-md-4"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
+              <div class="icon-box">
+                <a href="#services"><i class="bi bi-credit-card"></i></a>
+                <h3><a href="#services">Tarjeta de crédito</a></h3>
+              </div>
+            </div>
+            <div
+              class="col-xl-2 col-md-4"
+              data-aos="fade-up"
+              data-aos-delay="400"
+            >
+              <div class="icon-box">
+                <a href="#services"><i class="bi bi-shield-lock"></i></a>
+                <h3><a href="#services">Seguridad financiera</a></h3>
+              </div>
+            </div>
+            <div
+              class="col-xl-2 col-md-4"
+              data-aos="fade-up"
+              data-aos-delay="500"
+            >
+              <div class="icon-box">
+                <a href="#services"><i class="bi bi-arrow-left-right"></i></a>
+                <h3><a href="#services">Transacción</a></h3>
+              </div>
+            </div>
+            <div
+              class="col-xl-2 col-md-4"
+              data-aos="fade-up"
+              data-aos-delay="600"
+            >
+              <div class="icon-box">
+                <a href="#services"><i class="bi bi-briefcase"></i></a>
+                <h3><a href="#services">Negocios</a></h3>
+              </div>
+            </div>
+            <div
+              class="col-xl-2 col-md-4"
+              data-aos="fade-up"
+              data-aos-delay="700"
+            >
+              <div class="icon-box">
+                <a href="#services"><i class="bi bi-graph-up"></i></a>
+                <h3><a href="#services"> Crecimiento económico</a></h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /Hero Section -->
 
-
-        <!-- Clients Section -->
-        <section id="clients" class="clients section">
-
-            <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-                <div class="swiper init-swiper">
-                    <script type="application/json" class="swiper-config">
-            {
-              "loop": true,
-              "speed": 600,
-              "autoplay": {
-                "delay": 5000
-              },
-              "slidesPerView": "auto",
-              "pagination": {
-                "el": ".swiper-pagination",
-                "type": "bullets",
-                "clickable": true
-              },
-              "breakpoints": {
-                "320": {
-                  "slidesPerView": 2,
-                  "spaceBetween": 40
+      <!-- Clients Section -->
+      <section id="clients" class="clients section">
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+          <div class="swiper init-swiper">
+            <script type="application/json" class="swiper-config">
+              {
+                "loop": true,
+                "speed": 600,
+                "autoplay": {
+                  "delay": 5000
                 },
-                "480": {
-                  "slidesPerView": 3,
-                  "spaceBetween": 60
+                "slidesPerView": "auto",
+                "pagination": {
+                  "el": ".swiper-pagination",
+                  "type": "bullets",
+                  "clickable": true
                 },
-                "640": {
-                  "slidesPerView": 4,
-                  "spaceBetween": 80
-                },
-                "992": {
-                  "slidesPerView": 6,
-                  "spaceBetween": 120
+                "breakpoints": {
+                  "320": {
+                    "slidesPerView": 2,
+                    "spaceBetween": 40
+                  },
+                  "480": {
+                    "slidesPerView": 3,
+                    "spaceBetween": 60
+                  },
+                  "640": {
+                    "slidesPerView": 4,
+                    "spaceBetween": 80
+                  },
+                  "992": {
+                    "slidesPerView": 6,
+                    "spaceBetween": 120
+                  }
                 }
               }
-            }
-          </script>
-                    <div class="swiper-wrapper align-items-center">
-                        <div class="swiper-slide"><img src="../../../images/back/logo_raiz_financiera.webp"
-                                class="img-fluid" alt=""></div>
-                        <div class="swiper-slide"><img src="../../../images/back/Logo_Cuadro.webp" class="img-fluid"
-                                alt="">
-                        </div>
-                        <div class="swiper-slide"><img src="../../../images/back/logo_raiz_financiera.webp"
-                                class="img-fluid" alt=""></div>
-                        <div class="swiper-slide"><img src="../../../images/back/Logo_Cuadro.webp" class="img-fluid"
-                                alt="">
-                        </div>
-                        <div class="swiper-slide"><img src="../../../images/back/logo_raiz_financiera.webp"
-                                class="img-fluid" alt=""></div>
-                        <div class="swiper-slide"><img src="../../../images/back/Logo_Cuadro.webp" class="img-fluid"
-                                alt="">
-                        </div>
-                        <div class="swiper-slide"><img src="../../../images/back/logo_raiz_financiera.webp"
-                                class="img-fluid" alt=""></div>
-                        <div class="swiper-slide"><img src="../../../images/back/Logo_Cuadro.webp" class="img-fluid"
-                                alt="">
-                        </div>
+            </script>
+            <div class="swiper-wrapper align-items-center">
+              <div class="swiper-slide">
+                <img
+                  src="../../../images/back/logo_raiz_financiera.webp"
+                  class="img-fluid"
+                  alt=""
+                />
+              </div>
+              <div class="swiper-slide">
+                <img
+                  src="../../../images/back/Logo_Cuadro.webp"
+                  class="img-fluid"
+                  alt=""
+                />
+              </div>
+              <div class="swiper-slide">
+                <img
+                  src="../../../images/back/logo_raiz_financiera.webp"
+                  class="img-fluid"
+                  alt=""
+                />
+              </div>
+              <div class="swiper-slide">
+                <img
+                  src="../../../images/back/Logo_Cuadro.webp"
+                  class="img-fluid"
+                  alt=""
+                />
+              </div>
+              <div class="swiper-slide">
+                <img
+                  src="../../../images/back/logo_raiz_financiera.webp"
+                  class="img-fluid"
+                  alt=""
+                />
+              </div>
+              <div class="swiper-slide">
+                <img
+                  src="../../../images/back/Logo_Cuadro.webp"
+                  class="img-fluid"
+                  alt=""
+                />
+              </div>
+              <div class="swiper-slide">
+                <img
+                  src="../../../images/back/logo_raiz_financiera.webp"
+                  class="img-fluid"
+                  alt=""
+                />
+              </div>
+              <div class="swiper-slide">
+                <img
+                  src="../../../images/back/Logo_Cuadro.webp"
+                  class="img-fluid"
+                  alt=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /Clients Section -->
 
-                    </div>
+      <!-- About Section -->
+      <section id="about" class="about section">
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+          <div class="row gy-4">
+            <div class="col-lg-6 order-1 order-lg-2">
+              <img
+                src="../../../images/back/logo_raiz_financiera.webp"
+                class="img-fluid"
+                alt="Logo Raíz Financiera"
+              />
+            </div>
+            <div class="col-lg-6 order-2 order-lg-1 content">
+              <h3>Quienes Somos</h3>
+
+              <ul>
+                <li>
+                  <i class="bi bi-check2-all"></i> <span>Nuestra Historia</span>
+                </li>
+                <li>
+                  <i class="bi bi-check2-all"></i>
+                  <span
+                    >Lo que comenzó como un pequeño equipo apasionado por las
+                    finanzas, hoy se ha convertido en una firma reconocida por
+                    su transparencia, profesionalismo y enfoque en el
+                    crecimiento sostenible. A lo largo de los años, hemos
+                    acompañado a empresas y personas en la toma de decisiones
+                    financieras inteligentes, ayudándoles a alcanzar sus metas
+                    con seguridad y eficiencia.</span
+                  >
+                </li>
+                <li>
+                  <i class="bi bi-check2-all"></i>
+                  <span
+                    >Nuestro compromiso es seguir brindando asesoría financiera
+                    de primer nivel, combinando experiencia y tecnología para
+                    impulsar el futuro económico de quienes confían en
+                    nosotros.</span
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /About Section -->
+
+      <!-- Features Section -->
+      <section id="features" class="features section">
+        <div class="container">
+          <div class="row gy-4">
+            <div
+              class="features-image col-lg-6"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
+              <img
+                src="../../../images/back/back_4.webp"
+                alt="Joven financiero"
+              />
+            </div>
+            <div class="col-lg-6">
+              <div
+                class="features-item d-flex ps-0 ps-lg-3 pt-4 pt-lg-0"
+                data-aos="fade-up"
+                data-aos-delay="200"
+              >
+                <i class="bi bi-cash-stack flex-shrink-0"></i>
+                <div>
+                  <h4>Créditos Personales</h4>
+                  <p>
+                    Accede a préstamos personales con tasas competitivas y
+                    planes de pago flexibles.
+                  </p>
                 </div>
+              </div>
+              <!-- End Features Item-->
 
-            </div>
-
-        </section><!-- /Clients Section -->
-
-        <!-- About Section -->
-        <section id="about" class="about section">
-
-            <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-                <div class="row gy-4">
-                    <div class="col-lg-6 order-1 order-lg-2">
-                        <img src="../../../images/back/logo_raiz_financiera.webp" class="img-fluid" alt="Logo Raíz Financiera">
-                    </div>
-                    <div class="col-lg-6 order-2 order-lg-1 content">
-                        <h3>Quienes Somos</h3>
-
-                        <ul>
-                            <li><i class="bi bi-check2-all"></i> <span>Nuestra Historia</span></li>
-                            <li><i class="bi bi-check2-all"></i> <span>Lo que comenzó como un pequeño equipo apasionado
-                                    por las finanzas, hoy se ha convertido en una firma reconocida por su transparencia,
-                                    profesionalismo y enfoque en el crecimiento sostenible. A lo largo de los años,
-                                    hemos acompañado a empresas y personas en la toma de decisiones financieras
-                                    inteligentes, ayudándoles a alcanzar sus metas con seguridad y eficiencia.</span>
-                            </li>
-                            <li><i class="bi bi-check2-all"></i> <span>Nuestro compromiso es seguir brindando asesoría
-                                    financiera de primer nivel, combinando experiencia y tecnología para impulsar el
-                                    futuro económico de quienes confían en nosotros.</span></li>
-                        </ul>
-
-                    </div>
+              <div
+                class="features-item d-flex mt-5 ps-0 ps-lg-3"
+                data-aos="fade-up"
+                data-aos-delay="300"
+              >
+                <i class="bi bi-credit-card flex-shrink-0"></i>
+                <div>
+                  <h4>Tarjetas de Crédito</h4>
+                  <p>
+                    Disfruta de beneficios exclusivos con nuestras tarjetas de
+                    crédito sin costos ocultos.
+                  </p>
                 </div>
+              </div>
+              <!-- End Features Item-->
 
-            </div>
-
-        </section><!-- /About Section -->
-
-
-        <!-- Features Section -->
-        <section id="features" class="features section">
-            <div class="container">
-                <div class="row gy-4">
-                    <div class="features-image col-lg-6" data-aos="fade-up" data-aos-delay="100">
-                        <img src="../../../images/back/back_4.webp" alt="Joven financiero">
-                    </div>
-                    <div class="col-lg-6">
-
-                        <div class="features-item d-flex ps-0 ps-lg-3 pt-4 pt-lg-0" data-aos="fade-up"
-                            data-aos-delay="200">
-                            <i class="bi bi-cash-stack flex-shrink-0"></i>
-                            <div>
-                                <h4>Créditos Personales</h4>
-                                <p>Accede a préstamos personales con tasas competitivas y planes de pago flexibles.</p>
-                            </div>
-                        </div><!-- End Features Item-->
-
-                        <div class="features-item d-flex mt-5 ps-0 ps-lg-3" data-aos="fade-up" data-aos-delay="300">
-                            <i class="bi bi-credit-card flex-shrink-0"></i>
-                            <div>
-                                <h4>Tarjetas de Crédito</h4>
-                                <p>Disfruta de beneficios exclusivos con nuestras tarjetas de crédito sin costos
-                                    ocultos.</p>
-                            </div>
-                        </div><!-- End Features Item-->
-
-                        <div class="features-item d-flex mt-5 ps-0 ps-lg-3" data-aos="fade-up" data-aos-delay="400">
-                            <i class="bi bi-piggy-bank flex-shrink-0"></i>
-                            <div>
-                                <h4>Ahorros e Inversiones</h4>
-                                <p>Optimiza tu futuro financiero con nuestras opciones de ahorro e inversión.</p>
-                            </div>
-                        </div><!-- End Features Item-->
-
-                        <div class="features-item d-flex mt-5 ps-0 ps-lg-3" data-aos="fade-up" data-aos-delay="500">
-                            <i class="bi bi-bar-chart-line flex-shrink-0"></i>
-                            <div>
-                                <h4>Asesoría Financiera</h4>
-                                <p>Recibe asesoramiento experto para mejorar tus finanzas y planificar tu futuro.</p>
-                            </div>
-                        </div><!-- End Features Item-->
-
-                    </div>
+              <div
+                class="features-item d-flex mt-5 ps-0 ps-lg-3"
+                data-aos="fade-up"
+                data-aos-delay="400"
+              >
+                <i class="bi bi-piggy-bank flex-shrink-0"></i>
+                <div>
+                  <h4>Ahorros e Inversiones</h4>
+                  <p>
+                    Optimiza tu futuro financiero con nuestras opciones de
+                    ahorro e inversión.
+                  </p>
                 </div>
-            </div>
-        </section><!-- /Features Section -->
+              </div>
+              <!-- End Features Item-->
 
-
-        <!-- Services Section -->
-
-        <!-- Call To Action Section -->
-        <section id="services" class="call-to-action services section section dark-background">
-
-            <img src="../../../images/back/back_2.webp" alt="Fachada del banco">
-
-            <div class="container section-title" data-aos="fade-up">
-                <h2>Servicios Financieros</h2>
-                <p>Soluciones para tu bienestar económico</p>
-            </div><!-- End Section Title -->
-
-            <div class="container">
-                <div class="row gy-4">
-
-                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                        <div class="service-item position-relative">
-                            <div class="icon">
-                                <i class="bi bi-cash-stack"></i>
-                            </div>
-                            <a href="https://www.bci.cl/beneficios/beneficios-bci" class="stretched-link">
-                                <h3>Préstamos Personales</h3>
-                            </a>
-                            <p>Solicita un crédito personal con tasas bajas y plazos flexibles adaptados a ti.</p>
-                        </div>
-                    </div><!-- End Service Item -->
-
-                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                        <div class="service-item position-relative">
-                            <div class="icon">
-                                <i class="bi bi-credit-card"></i>
-                            </div>
-                            <a href="https://www.bci.cl/personas/abrir-cuenta-corriente" class="stretched-link">
-                                <h3>Tarjetas de Crédito</h3>
-                            </a>
-                            <p>Accede a tarjetas con beneficios exclusivos y cuotas sin interés en tus compras.</p>
-                        </div>
-                    </div><!-- End Service Item -->
-
-                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                        <div class="service-item position-relative">
-                            <div class="icon">
-                                <i class="bi bi-piggy-bank"></i>
-                            </div>
-                            <a href="https://www.bci.cl/corredora-de-seguros/seguros/seguro-automotriz"
-                                class="stretched-link">
-                                <h3>Cuentas de Ahorro</h3>
-                            </a>
-                            <p>Planifica tu futuro con nuestras opciones de ahorro con intereses preferenciales.</p>
-                        </div>
-                    </div><!-- End Service Item -->
-
-                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
-                        <div class="service-item position-relative">
-                            <div class="icon">
-                                <i class="bi bi-house-door"></i>
-                            </div>
-                            <a href="https://www.bci.cl/personas/credito-hipotecario/simulador" class="stretched-link">
-                                <h3>Créditos Hipotecarios</h3>
-                            </a>
-                            <p>Financia la compra de tu casa con las mejores condiciones del mercado.</p>
-                        </div>
-                    </div><!-- End Service Item -->
-
-                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
-                        <div class="service-item position-relative">
-                            <div class="icon">
-                                <i class="bi bi-bar-chart-line"></i>
-                            </div>
-                            <a href="https://www.bci.cl/personas/creditos-de-consumo?=simular" class="stretched-link">
-                                <h3>Inversiones</h3>
-                            </a>
-                            <p>Multiplica tu dinero con nuestras opciones de inversión y asesoría personalizada.</p>
-                        </div>
-                    </div><!-- End Service Item -->
-
-                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
-                        <div class="service-item position-relative">
-                            <div class="icon">
-                                <i class="bi bi-shield-check"></i>
-                            </div>
-                            <a href="service-details.html" class="stretched-link">
-                                <h3>Seguros Financieros</h3>
-                            </a>
-                            <p>Protege tu patrimonio con seguros de vida, auto y hogar a tu medida.</p>
-                        </div>
-                    </div><!-- End Service Item -->
-
+              <div
+                class="features-item d-flex mt-5 ps-0 ps-lg-3"
+                data-aos="fade-up"
+                data-aos-delay="500"
+              >
+                <i class="bi bi-bar-chart-line flex-shrink-0"></i>
+                <div>
+                  <h4>Asesoría Financiera</h4>
+                  <p>
+                    Recibe asesoramiento experto para mejorar tus finanzas y
+                    planificar tu futuro.
+                  </p>
                 </div>
+              </div>
+              <!-- End Features Item-->
             </div>
-        </section><!-- /Servicios Financieros Section -->
+          </div>
+        </div>
+      </section>
+      <!-- /Features Section -->
 
+      <!-- Services Section -->
 
-        <!-- Clients Section -->
-        <section id="clients" class="clients section">
+      <!-- Call To Action Section -->
+      <section
+        id="services"
+        class="call-to-action services section section dark-background"
+      >
+        <img src="../../../images/back/back_2.webp" alt="Fachada del banco" />
 
-            <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="container section-title" data-aos="fade-up">
+          <h2>Servicios Financieros</h2>
+          <p>Soluciones para tu bienestar económico</p>
+        </div>
+        <!-- End Section Title -->
 
-                <div class="swiper init-swiper">
-                    <script type="application/json" class="swiper-config">
-        {
-          "loop": true,
-          "speed": 600,
-          "autoplay": {
-            "delay": 5000
-          },
-          "slidesPerView": "auto",
-          "pagination": {
-            "el": ".swiper-pagination",
-            "type": "bullets",
-            "clickable": true
-          },
-          "breakpoints": {
-            "320": {
-              "slidesPerView": 2,
-              "spaceBetween": 40
-            },
-            "480": {
-              "slidesPerView": 3,
-              "spaceBetween": 60
-            },
-            "640": {
-              "slidesPerView": 4,
-              "spaceBetween": 80
-            },
-            "992": {
-              "slidesPerView": 6,
-              "spaceBetween": 120
-            }
-          }
-        }
-      </script>
-                    <div class="swiper-wrapper align-items-center">
-                        <div class="swiper-slide"><img src="../../../images/back/logo_raiz_financiera.webp"
-                                class="img-fluid" alt=""></div>
-                        <div class="swiper-slide"><img src="../../../images/back/Logo_Cuadro.webp" class="img-fluid"
-                                alt="">
-                        </div>
-                        <div class="swiper-slide"><img src="../../../images/back/logo_raiz_financiera.webp"
-                                class="img-fluid" alt=""></div>
-                        <div class="swiper-slide"><img src="../../../images/back/Logo_Cuadro.webp" class="img-fluid"
-                                alt="">
-                        </div>
-                        <div class="swiper-slide"><img src="../../../images/back/logo_raiz_financiera.webp"
-                                class="img-fluid" alt=""></div>
-                        <div class="swiper-slide"><img src="../../../images/back/Logo_Cuadro.webp" class="img-fluid"
-                                alt="">
-                        </div>
-                        <div class="swiper-slide"><img src="../../../images/back/logo_raiz_financiera.webp"
-                                class="img-fluid" alt=""></div>
-                        <div class="swiper-slide"><img src="../../../images/back/Logo_Cuadro.webp" class="img-fluid"
-                                alt="">
-                        </div>
-                    </div>
+        <div class="container">
+          <div class="row gy-4">
+            <div
+              class="col-lg-4 col-md-6"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
+              <div class="service-item position-relative">
+                <div class="icon">
+                  <i class="bi bi-cash-stack"></i>
                 </div>
-
+                <a
+                  href="https://www.bci.cl/beneficios/beneficios-bci"
+                  class="stretched-link"
+                >
+                  <h3>Préstamos Personales</h3>
+                </a>
+                <p>
+                  Solicita un crédito personal con tasas bajas y plazos
+                  flexibles adaptados a ti.
+                </p>
+              </div>
             </div>
+            <!-- End Service Item -->
 
-        </section><!-- /Clients Section -->
-
-        <!-- Portfolio Section -->
-        <section id="portfolio" class="stats section">
-            <div class="container" data-aos="fade-up" data-aos-delay="100">
-                <div class="row gy-4 align-items-center justify-content-between">
-
-                    <div class="col-lg-5">
-                        <img src="../../../images/back/back_3.webp" alt="Tarjeta de crédito bancaria" class="img-fluid">
-                    </div>
-
-                    <div class="col-lg-6">
-                        <h3 class="fw-bold fs-2 mb-3">Liderando el Crecimiento Financiero</h3>
-                        <p>
-                            Nuestro compromiso es brindar soluciones financieras innovadoras, ayudando a nuestros
-                            clientes a alcanzar sus objetivos económicos con seguridad y confianza.
-                        </p>
-
-                        <div class="row gy-4">
-
-                            <div class="col-lg-6">
-                                <div class="stats-item d-flex">
-                                    <i class="bi bi-currency-exchange flex-shrink-0"></i>
-                                    <div>
-                                        <span data-purecounter-start="0" data-purecounter-end="5000"
-                                            data-purecounter-duration="1" class="purecounter"></span>
-                                        <p><strong>Transacciones Completadas</strong> <span>Operaciones exitosas en
-                                                tiempo real</span></p>
-                                    </div>
-                                </div>
-                            </div><!-- End Stats Item -->
-
-                            <div class="col-lg-6">
-                                <div class="stats-item d-flex">
-                                    <i class="bi bi-graph-up-arrow flex-shrink-0"></i>
-                                    <div>
-                                        <span data-purecounter-start="0" data-purecounter-end="1200"
-                                            data-purecounter-duration="1" class="purecounter"></span>
-                                        <p><strong>Portafolios de Inversión</strong> <span>Clientes gestionando sus
-                                                activos con éxito</span></p>
-                                    </div>
-                                </div>
-                            </div><!-- End Stats Item -->
-
-                            <div class="col-lg-6">
-                                <div class="stats-item d-flex">
-                                    <i class="bi bi-headset flex-shrink-0"></i>
-                                    <div>
-                                        <span data-purecounter-start="0" data-purecounter-end="3000"
-                                            data-purecounter-duration="1" class="purecounter"></span>
-                                        <p><strong>Asesorías Financieras</strong> <span>Soporte y consultoría
-                                                personalizada</span></p>
-                                    </div>
-                                </div>
-                            </div><!-- End Stats Item -->
-
-                            <div class="col-lg-6">
-                                <div class="stats-item d-flex">
-                                    <i class="bi bi-bank flex-shrink-0"></i>
-                                    <div>
-                                        <span data-purecounter-start="0" data-purecounter-end="50"
-                                            data-purecounter-duration="1" class="purecounter"></span>
-                                        <p><strong>Instituciones Asociadas</strong> <span>Bancos y entidades financieras
-                                                aliadas</span></p>
-                                    </div>
-                                </div>
-                            </div><!-- End Stats Item -->
-
-                        </div>
-
-                    </div>
-
+            <div
+              class="col-lg-4 col-md-6"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
+              <div class="service-item position-relative">
+                <div class="icon">
+                  <i class="bi bi-credit-card"></i>
                 </div>
+                <a
+                  href="https://www.bci.cl/personas/abrir-cuenta-corriente"
+                  class="stretched-link"
+                >
+                  <h3>Tarjetas de Crédito</h3>
+                </a>
+                <p>
+                  Accede a tarjetas con beneficios exclusivos y cuotas sin
+                  interés en tus compras.
+                </p>
+              </div>
             </div>
-        </section><!-- /Estadísticas Financieras Section -->
+            <!-- End Service Item -->
 
-
-        <!-- Stats Section -->
-        <section id="stats" class="stats section">
-
-
-
-        </section><!-- /Stats Section -->
-
-        <!-- Testimonials Section -->
-        <section id="testimonials" class="testimonials section dark-background">
-
-            <img src="../../../images/back/back_1.webp" class="testimonials-bg" alt="">
-
-            <div class="container section-title" data-aos="fade-up">
-                <h2>Beneficios Exclusivos</h2>
-                <p>Disfruta de nuestras alianzas</p>
+            <div
+              class="col-lg-4 col-md-6"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
+              <div class="service-item position-relative">
+                <div class="icon">
+                  <i class="bi bi-piggy-bank"></i>
+                </div>
+                <a
+                  href="https://www.bci.cl/corredora-de-seguros/seguros/seguro-automotriz"
+                  class="stretched-link"
+                >
+                  <h3>Cuentas de Ahorro</h3>
+                </a>
+                <p>
+                  Planifica tu futuro con nuestras opciones de ahorro con
+                  intereses preferenciales.
+                </p>
+              </div>
             </div>
+            <!-- End Service Item -->
 
-            <div class="container" data-aos="fade-up" data-aos-delay="100">
+            <div
+              class="col-lg-4 col-md-6"
+              data-aos="fade-up"
+              data-aos-delay="400"
+            >
+              <div class="service-item position-relative">
+                <div class="icon">
+                  <i class="bi bi-house-door"></i>
+                </div>
+                <a
+                  href="https://www.bci.cl/personas/credito-hipotecario/simulador"
+                  class="stretched-link"
+                >
+                  <h3>Créditos Hipotecarios</h3>
+                </a>
+                <p>
+                  Financia la compra de tu casa con las mejores condiciones del
+                  mercado.
+                </p>
+              </div>
+            </div>
+            <!-- End Service Item -->
 
-                <div class="swiper init-swiper">
-                    <script type="application/json" class="swiper-config">
-            {
-              "loop": true,
-              "speed": 600,
-              "autoplay": {
-                "delay": 5000
-              },
-              "slidesPerView": "auto",
-              "pagination": {
-                "el": ".swiper-pagination",
-                "type": "bullets",
-                "clickable": true
+            <div
+              class="col-lg-4 col-md-6"
+              data-aos="fade-up"
+              data-aos-delay="500"
+            >
+              <div class="service-item position-relative">
+                <div class="icon">
+                  <i class="bi bi-bar-chart-line"></i>
+                </div>
+                <a
+                  href="https://www.bci.cl/personas/creditos-de-consumo?=simular"
+                  class="stretched-link"
+                >
+                  <h3>Inversiones</h3>
+                </a>
+                <p>
+                  Multiplica tu dinero con nuestras opciones de inversión y
+                  asesoría personalizada.
+                </p>
+              </div>
+            </div>
+            <!-- End Service Item -->
+
+            <div
+              class="col-lg-4 col-md-6"
+              data-aos="fade-up"
+              data-aos-delay="600"
+            >
+              <div class="service-item position-relative">
+                <div class="icon">
+                  <i class="bi bi-shield-check"></i>
+                </div>
+                <a href="service-details.html" class="stretched-link">
+                  <h3>Seguros Financieros</h3>
+                </a>
+                <p>
+                  Protege tu patrimonio con seguros de vida, auto y hogar a tu
+                  medida.
+                </p>
+              </div>
+            </div>
+            <!-- End Service Item -->
+          </div>
+        </div>
+      </section>
+      <!-- /Servicios Financieros Section -->
+
+      <!-- Clients Section -->
+      <section id="clients" class="clients section">
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+          <div class="swiper init-swiper">
+            <script type="application/json" class="swiper-config">
+              {
+                "loop": true,
+                "speed": 600,
+                "autoplay": {
+                  "delay": 5000
+                },
+                "slidesPerView": "auto",
+                "pagination": {
+                  "el": ".swiper-pagination",
+                  "type": "bullets",
+                  "clickable": true
+                },
+                "breakpoints": {
+                  "320": {
+                    "slidesPerView": 2,
+                    "spaceBetween": 40
+                  },
+                  "480": {
+                    "slidesPerView": 3,
+                    "spaceBetween": 60
+                  },
+                  "640": {
+                    "slidesPerView": 4,
+                    "spaceBetween": 80
+                  },
+                  "992": {
+                    "slidesPerView": 6,
+                    "spaceBetween": 120
+                  }
+                }
               }
-            }
-          </script>
-                    <div class="swiper-wrapper">
+            </script>
+            <div class="swiper-wrapper align-items-center">
+              <div class="swiper-slide">
+                <img
+                  src="../../../images/back/logo_raiz_financiera.webp"
+                  class="img-fluid"
+                  alt=""
+                />
+              </div>
+              <div class="swiper-slide">
+                <img
+                  src="../../../images/back/Logo_Cuadro.webp"
+                  class="img-fluid"
+                  alt=""
+                />
+              </div>
+              <div class="swiper-slide">
+                <img
+                  src="../../../images/back/logo_raiz_financiera.webp"
+                  class="img-fluid"
+                  alt=""
+                />
+              </div>
+              <div class="swiper-slide">
+                <img
+                  src="../../../images/back/Logo_Cuadro.webp"
+                  class="img-fluid"
+                  alt=""
+                />
+              </div>
+              <div class="swiper-slide">
+                <img
+                  src="../../../images/back/logo_raiz_financiera.webp"
+                  class="img-fluid"
+                  alt=""
+                />
+              </div>
+              <div class="swiper-slide">
+                <img
+                  src="../../../images/back/Logo_Cuadro.webp"
+                  class="img-fluid"
+                  alt=""
+                />
+              </div>
+              <div class="swiper-slide">
+                <img
+                  src="../../../images/back/logo_raiz_financiera.webp"
+                  class="img-fluid"
+                  alt=""
+                />
+              </div>
+              <div class="swiper-slide">
+                <img
+                  src="../../../images/back/Logo_Cuadro.webp"
+                  class="img-fluid"
+                  alt=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /Clients Section -->
 
-                        <div class="swiper-slide d-flex justify-content-center">
-                            <div class="testimonial-item">
-                                <div class="card mb-3" style="max-width: 540px;">
-                                    <div class="row g-0">
-                                        <div class="col-md-4">
-                                            <img src="../../../images/back/sale.webp"
-                                                class="img-fluid rounded-start" alt="Descuentos en Retail">
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="card-body">
-                                                <h5 class="card-title">Descuentos en Retail</h5>
-                                                <p class="card-text">
-                                                    Accede a descuentos exclusivos en grandes tiendas y supermercados
-                                                    pagando con nuestras tarjetas.
-                                                </p>
-                                                <p class="card-text"><small>Actualizado hace 3 min</small></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+      <!-- Portfolio Section -->
+      <section id="portfolio" class="stats section">
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+          <div class="row gy-4 align-items-center justify-content-between">
+            <div class="col-lg-5">
+              <img
+                src="../../../images/back/back_3.webp"
+                alt="Tarjeta de crédito bancaria"
+                class="img-fluid"
+              />
+            </div>
 
-                        <div class="swiper-slide d-flex justify-content-center">
-                            <div class="testimonial-item">
-                                <div class="card mb-3" style="max-width: 540px;">
-                                    <div class="row g-0">
-                                        <div class="col-md-4">
-                                            <img src="../../../images/back/productos.webp"
-                                                class="img-fluid rounded-start" alt="Programa de Recompensas">
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="card-body">
-                                                <h5 class="card-title">Programa de Recompensas</h5>
-                                                <p class="card-text">
-                                                    Acumula puntos con cada compra y canjéalos por viajes, productos y
-                                                    experiencias únicas.
-                                                </p>
-                                                <p class="card-text"><small>Actualizado hace 5 min</small></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <div class="col-lg-6">
+              <h3 class="fw-bold fs-2 mb-3">
+                Liderando el Crecimiento Financiero
+              </h3>
+              <p>
+                Nuestro compromiso es brindar soluciones financieras
+                innovadoras, ayudando a nuestros clientes a alcanzar sus
+                objetivos económicos con seguridad y confianza.
+              </p>
 
-                        <div class="swiper-slide d-flex justify-content-center">
-                            <div class="testimonial-item">
-                                <div class="card mb-3" style="max-width: 540px;">
-                                    <div class="row g-0">
-                                        <div class="col-md-4">
-                                            <img src="../../../images/back/medico.webp"
-                                                class="img-fluid rounded-start" alt="Beneficios en Salud">
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="card-body">
-                                                <h5 class="card-title">Beneficios en Salud</h5>
-                                                <p class="card-text">
-                                                    Obtén descuentos en consultas médicas, farmacias y seguros de vida
-                                                    para tu tranquilidad y bienestar.
-                                                </p>
-                                                <p class="card-text"><small>Actualizado hace 8 min</small></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide d-flex justify-content-center">
-                            <div class="testimonial-item">
-                                <div class="card mb-3" style="max-width: 540px;">
-                                    <div class="row g-0">
-                                        <div class="col-md-4">
-                                            <img src="../../../images/back/viaje.webp"
-                                                class="img-fluid rounded-start" alt="Viajes y Turismo">
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="card-body">
-                                                <h5 class="card-title">Viajes y Turismo</h5>
-                                                <p class="card-text">
-                                                    Disfruta de promociones exclusivas en hoteles, vuelos y paquetes
-                                                    turísticos con nuestras alianzas estratégicas.
-                                                </p>
-                                                <p class="card-text"><small>Actualizado hace 10 min</small></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide d-flex justify-content-center">
-                            <div class="testimonial-item">
-                                <div class="card mb-3" style="max-width: 540px;">
-                                    <div class="row g-0">
-                                        <div class="col-md-4">
-                                            <img src="../../../images/back/seguros.webp"
-                                                class="img-fluid rounded-start" alt="Acceso a Eventos VIP">
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="card-body">
-                                                <h5 class="card-title">Acceso a Eventos VIP</h5>
-                                                <p class="card-text">
-                                                    Disfruta de experiencias exclusivas en conciertos, teatro y eventos
-                                                    deportivos con nuestros convenios.
-                                                </p>
-                                                <p class="card-text"><small>Actualizado hace 15 min</small></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+              <div class="row gy-4">
+                <div class="col-lg-6">
+                  <div class="stats-item d-flex">
+                    <i class="bi bi-currency-exchange flex-shrink-0"></i>
+                    <div>
+                      <span
+                        data-purecounter-start="0"
+                        data-purecounter-end="5000"
+                        data-purecounter-duration="1"
+                        class="purecounter"
+                      ></span>
+                      <p>
+                        <strong>Transacciones Completadas</strong>
+                        <span>Operaciones exitosas en tiempo real</span>
+                      </p>
                     </div>
-                    <div class="swiper-pagination"></div>
+                  </div>
                 </div>
+                <!-- End Stats Item -->
 
-            </div>
-
-        </section><!-- /Testimonial Section -->
-
-
-        <!-- Team Section -->
-        <section id="team" class="team section">
-
-            <!-- Section Title -->
-            <div class="container section-title" data-aos="fade-up">
-                <h2>Grupo</h2>
-                <p>Equipo de Trabajo</p>
-            </div><!-- End Section Title -->
-
-            <div class="container">
-
-                <div class="row gy-4">
-
-                    <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="100">
-                        <div class="team-member">
-                            <div class="member-img">
-                                <img src="../../../images/grupo/jocelyn_rivera.jpg" class="img-fluid" alt="Jocelyn Rivera">
-                                <div class="social">
-                                    <a href=""><i class="bi bi-twitter-x"></i></a>
-                                    <a href=""><i class="bi bi-facebook"></i></a>
-                                    <a href=""><i class="bi bi-instagram"></i></a>
-                                    <a href=""><i class="bi bi-linkedin"></i></a>
-                                </div>
-                            </div>
-                            <div class="member-info">
-                                <h4>Jocelyn Rivera</h4>
-                                <span>Estudiante Programación</span>
-                            </div>
-                        </div>
-                    </div><!-- End Team Member -->
-
-                    <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="200">
-                        <div class="team-member">
-                            <div class="member-img">
-                                <img src="../../../images/grupo/lisette_godoy.jpg" class="img-fluid" alt="Lisette Godoy">
-                                <div class="social">
-                                    <a href=""><i class="bi bi-twitter-x"></i></a>
-                                    <a href=""><i class="bi bi-facebook"></i></a>
-                                    <a href=""><i class="bi bi-instagram"></i></a>
-                                    <a href=""><i class="bi bi-linkedin"></i></a>
-                                </div>
-                            </div>
-                            <div class="member-info">
-                                <h4>Lisette Godoy</h4>
-                                <span>Estudiante Programación</span>
-                            </div>
-                        </div>
-                    </div><!-- End Team Member -->
-
-                    <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="300">
-                        <div class="team-member">
-                            <div class="member-img">
-                                <img src="../../../images/grupo/maximiliano_caniullan.jpg" class="img-fluid" alt="Maximiliano Caniullan">
-                                <div class="social">
-                                    <a href=""><i class="bi bi-twitter-x"></i></a>
-                                    <a href=""><i class="bi bi-facebook"></i></a>
-                                    <a href=""><i class="bi bi-instagram"></i></a>
-                                    <a href=""><i class="bi bi-linkedin"></i></a>
-                                </div>
-                            </div>
-                            <div class="member-info">
-                                <h4>Maximiliano Caniullan</h4>
-                                <span>Estudiante Programación</span>
-                            </div>
-                        </div>
-                    </div><!-- End Team Member -->
-
-                    <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="400">
-                        <div class="team-member">
-                            <div class="member-img">
-                                <img src="../../../images/grupo/ramiro_fonseca.jpg" class="img-fluid" alt="Ramiro Fonseca">
-                                <div class="social">
-                                    <a href=""><i class="bi bi-twitter-x"></i></a>
-                                    <a href=""><i class="bi bi-facebook"></i></a>
-                                    <a href=""><i class="bi bi-instagram"></i></a>
-                                    <a href=""><i class="bi bi-linkedin"></i></a>
-                                </div>
-                            </div>
-                            <div class="member-info">
-                                <h4>Ramiro Fonseca</h4>
-                                <span>Estudiante Programación</span>
-                            </div>
-                        </div>
-                    </div><!-- End Team Member -->
-
+                <div class="col-lg-6">
+                  <div class="stats-item d-flex">
+                    <i class="bi bi-graph-up-arrow flex-shrink-0"></i>
+                    <div>
+                      <span
+                        data-purecounter-start="0"
+                        data-purecounter-end="1200"
+                        data-purecounter-duration="1"
+                        class="purecounter"
+                      ></span>
+                      <p>
+                        <strong>Portafolios de Inversión</strong>
+                        <span>Clientes gestionando sus activos con éxito</span>
+                      </p>
+                    </div>
+                  </div>
                 </div>
+                <!-- End Stats Item -->
 
+                <div class="col-lg-6">
+                  <div class="stats-item d-flex">
+                    <i class="bi bi-headset flex-shrink-0"></i>
+                    <div>
+                      <span
+                        data-purecounter-start="0"
+                        data-purecounter-end="3000"
+                        data-purecounter-duration="1"
+                        class="purecounter"
+                      ></span>
+                      <p>
+                        <strong>Asesorías Financieras</strong>
+                        <span>Soporte y consultoría personalizada</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <!-- End Stats Item -->
+
+                <div class="col-lg-6">
+                  <div class="stats-item d-flex">
+                    <i class="bi bi-bank flex-shrink-0"></i>
+                    <div>
+                      <span
+                        data-purecounter-start="0"
+                        data-purecounter-end="50"
+                        data-purecounter-duration="1"
+                        class="purecounter"
+                      ></span>
+                      <p>
+                        <strong>Instituciones Asociadas</strong>
+                        <span>Bancos y entidades financieras aliadas</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <!-- End Stats Item -->
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
+      <!-- /Estadísticas Financieras Section -->
 
-        </section><!-- /Team Section -->
+      <!-- Stats Section -->
+      <section id="stats" class="stats section"></section>
+      <!-- /Stats Section -->
 
-        <!-- Contact Section -->
-        <section id="contact" class="contact section">
+      <!-- Testimonials Section -->
+      <section id="testimonials" class="testimonials section dark-background">
+        <img
+          src="../../../images/back/back_1.webp"
+          class="testimonials-bg"
+          alt=""
+        />
 
+        <div class="container section-title" data-aos="fade-up">
+          <h2>Beneficios Exclusivos</h2>
+          <p>Disfruta de nuestras alianzas</p>
+        </div>
 
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+          <div class="swiper init-swiper">
+            <script type="application/json" class="swiper-config">
+              {
+                "loop": true,
+                "speed": 600,
+                "autoplay": {
+                  "delay": 5000
+                },
+                "slidesPerView": "auto",
+                "pagination": {
+                  "el": ".swiper-pagination",
+                  "type": "bullets",
+                  "clickable": true
+                }
+              }
+            </script>
+            <div class="swiper-wrapper">
+              <div class="swiper-slide d-flex justify-content-center">
+                <div class="testimonial-item">
+                  <div class="card mb-3" style="max-width: 540px">
+                    <div class="row g-0">
+                      <div class="col-md-4">
+                        <img
+                          src="../../../images/back/sale.webp"
+                          class="img-fluid rounded-start"
+                          alt="Descuentos en Retail"
+                        />
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card-body">
+                          <h5 class="card-title">Descuentos en Retail</h5>
+                          <p class="card-text">
+                            Accede a descuentos exclusivos en grandes tiendas y
+                            supermercados pagando con nuestras tarjetas.
+                          </p>
+                          <p class="card-text">
+                            <small>Actualizado hace 3 min</small>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-        </section><!-- /Contact Section -->
+              <div class="swiper-slide d-flex justify-content-center">
+                <div class="testimonial-item">
+                  <div class="card mb-3" style="max-width: 540px">
+                    <div class="row g-0">
+                      <div class="col-md-4">
+                        <img
+                          src="../../../images/back/productos.webp"
+                          class="img-fluid rounded-start"
+                          alt="Programa de Recompensas"
+                        />
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card-body">
+                          <h5 class="card-title">Programa de Recompensas</h5>
+                          <p class="card-text">
+                            Acumula puntos con cada compra y canjéalos por
+                            viajes, productos y experiencias únicas.
+                          </p>
+                          <p class="card-text">
+                            <small>Actualizado hace 5 min</small>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
+              <div class="swiper-slide d-flex justify-content-center">
+                <div class="testimonial-item">
+                  <div class="card mb-3" style="max-width: 540px">
+                    <div class="row g-0">
+                      <div class="col-md-4">
+                        <img
+                          src="../../../images/back/medico.webp"
+                          class="img-fluid rounded-start"
+                          alt="Beneficios en Salud"
+                        />
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card-body">
+                          <h5 class="card-title">Beneficios en Salud</h5>
+                          <p class="card-text">
+                            Obtén descuentos en consultas médicas, farmacias y
+                            seguros de vida para tu tranquilidad y bienestar.
+                          </p>
+                          <p class="card-text">
+                            <small>Actualizado hace 8 min</small>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="swiper-slide d-flex justify-content-center">
+                <div class="testimonial-item">
+                  <div class="card mb-3" style="max-width: 540px">
+                    <div class="row g-0">
+                      <div class="col-md-4">
+                        <img
+                          src="../../../images/back/viaje.webp"
+                          class="img-fluid rounded-start"
+                          alt="Viajes y Turismo"
+                        />
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card-body">
+                          <h5 class="card-title">Viajes y Turismo</h5>
+                          <p class="card-text">
+                            Disfruta de promociones exclusivas en hoteles,
+                            vuelos y paquetes turísticos con nuestras alianzas
+                            estratégicas.
+                          </p>
+                          <p class="card-text">
+                            <small>Actualizado hace 10 min</small>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="swiper-slide d-flex justify-content-center">
+                <div class="testimonial-item">
+                  <div class="card mb-3" style="max-width: 540px">
+                    <div class="row g-0">
+                      <div class="col-md-4">
+                        <img
+                          src="../../../images/back/seguros.webp"
+                          class="img-fluid rounded-start"
+                          alt="Acceso a Eventos VIP"
+                        />
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card-body">
+                          <h5 class="card-title">Acceso a Eventos VIP</h5>
+                          <p class="card-text">
+                            Disfruta de experiencias exclusivas en conciertos,
+                            teatro y eventos deportivos con nuestros convenios.
+                          </p>
+                          <p class="card-text">
+                            <small>Actualizado hace 15 min</small>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-pagination"></div>
+          </div>
+        </div>
+      </section>
+      <!-- /Testimonial Section -->
+
+      <!-- Team Section -->
+      <section id="team" class="team section">
+        <!-- Section Title -->
+        <div class="container section-title" data-aos="fade-up">
+          <h2>Grupo</h2>
+          <p>Equipo de Trabajo</p>
+        </div>
+        <!-- End Section Title -->
+
+        <div class="container">
+          <div class="row gy-4">
+            <div
+              class="col-lg-3 col-md-6 d-flex align-items-stretch"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
+              <div class="team-member">
+                <div class="member-img">
+                  <img
+                    src="../../../images/grupo/jocelyn_rivera.jpg"
+                    class="img-fluid"
+                    alt="Jocelyn Rivera"
+                  />
+                  <div class="social">
+                    <a href=""><i class="bi bi-twitter-x"></i></a>
+                    <a href=""><i class="bi bi-facebook"></i></a>
+                    <a href=""><i class="bi bi-instagram"></i></a>
+                    <a href=""><i class="bi bi-linkedin"></i></a>
+                  </div>
+                </div>
+                <div class="member-info">
+                  <h4>Jocelyn Rivera</h4>
+                  <span>Estudiante Programación</span>
+                </div>
+              </div>
+            </div>
+            <!-- End Team Member -->
+
+            <div
+              class="col-lg-3 col-md-6 d-flex align-items-stretch"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
+              <div class="team-member">
+                <div class="member-img">
+                  <img
+                    src="../../../images/grupo/lisette_godoy.jpg"
+                    class="img-fluid"
+                    alt="Lisette Godoy"
+                  />
+                  <div class="social">
+                    <a href=""><i class="bi bi-twitter-x"></i></a>
+                    <a href=""><i class="bi bi-facebook"></i></a>
+                    <a href=""><i class="bi bi-instagram"></i></a>
+                    <a href=""><i class="bi bi-linkedin"></i></a>
+                  </div>
+                </div>
+                <div class="member-info">
+                  <h4>Lisette Godoy</h4>
+                  <span>Estudiante Programación</span>
+                </div>
+              </div>
+            </div>
+            <!-- End Team Member -->
+
+            <div
+              class="col-lg-3 col-md-6 d-flex align-items-stretch"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
+              <div class="team-member">
+                <div class="member-img">
+                  <img
+                    src="../../../images/grupo/maximiliano_caniullan.jpg"
+                    class="img-fluid"
+                    alt="Maximiliano Caniullan"
+                  />
+                  <div class="social">
+                    <a href=""><i class="bi bi-twitter-x"></i></a>
+                    <a href=""><i class="bi bi-facebook"></i></a>
+                    <a href=""><i class="bi bi-instagram"></i></a>
+                    <a href=""><i class="bi bi-linkedin"></i></a>
+                  </div>
+                </div>
+                <div class="member-info">
+                  <h4>Maximiliano Caniullan</h4>
+                  <span>Estudiante Programación</span>
+                </div>
+              </div>
+            </div>
+            <!-- End Team Member -->
+
+            <div
+              class="col-lg-3 col-md-6 d-flex align-items-stretch"
+              data-aos="fade-up"
+              data-aos-delay="400"
+            >
+              <div class="team-member">
+                <div class="member-img">
+                  <img
+                    src="../../../images/grupo/ramiro_fonseca.jpg"
+                    class="img-fluid"
+                    alt="Ramiro Fonseca"
+                  />
+                  <div class="social">
+                    <a href=""><i class="bi bi-twitter-x"></i></a>
+                    <a href=""><i class="bi bi-facebook"></i></a>
+                    <a href=""><i class="bi bi-instagram"></i></a>
+                    <a href=""><i class="bi bi-linkedin"></i></a>
+                  </div>
+                </div>
+                <div class="member-info">
+                  <h4>Ramiro Fonseca</h4>
+                  <span>Estudiante Programación</span>
+                </div>
+              </div>
+            </div>
+            <!-- End Team Member -->
+          </div>
+        </div>
+      </section>
+      <!-- /Team Section -->
+
+      <!-- Contact Section -->
+      <section id="contact" class="contact section"></section>
+      <!-- /Contact Section -->
     </main>
 
     <footer id="footer" class="footer dark-background">
+      <div class="footer-top">
+        <div class="container">
+          <div class="row gy-4">
+            <div class="col-lg-4 col-md-6 footer-about">
+              <a href="/" class="logo d-flex align-items-center">
+                <img
+                  src="../../../images/back/logo_raiz_financiera.webp"
+                  alt="Logo Raíz Financiera"
+                  style="max-height: 120px"
+                />
+              </a>
 
-        <div class="footer-top">
-            <div class="container">
-                <div class="row gy-4">
-                    <div class="col-lg-4 col-md-6 footer-about">
-                        <a href="/" class="logo d-flex align-items-center">
-                            <img src="../../../images/back/logo_raiz_financiera.webp" alt="Logo Raíz Financiera" style="max-height: 120px;">
-                        </a>
+              <div class="social-links d-flex mt-4">
+                <a href=""><i class="bi bi-twitter-x"></i></a>
+                <a href=""><i class="bi bi-facebook"></i></a>
+                <a href=""><i class="bi bi-instagram"></i></a>
+                <a href=""><i class="bi bi-linkedin"></i></a>
+              </div>
+            </div>
 
-                        <div class="social-links d-flex mt-4">
-                            <a href=""><i class="bi bi-twitter-x"></i></a>
-                            <a href=""><i class="bi bi-facebook"></i></a>
-                            <a href=""><i class="bi bi-instagram"></i></a>
-                            <a href=""><i class="bi bi-linkedin"></i></a>
-                        </div>
-                    </div>
+            <div class="col-lg-2 col-md-3 footer-links">
+              <h4>Acceso Rapido</h4>
+              <ul>
+                <li>
+                  <i class="bi bi-chevron-right"></i> <a href="#hero"> Home</a>
+                </li>
+                <li>
+                  <i class="bi bi-chevron-right"></i>
+                  <a href="#about"> Acerca de Nosotros</a>
+                </li>
+                <li>
+                  <i class="bi bi-chevron-right"></i>
+                  <a href="#services"> Servicios</a>
+                </li>
+                <li>
+                  <i class="bi bi-chevron-right"></i>
+                  <a href="#portfolio"> Otros</a>
+                </li>
+                <li>
+                  <i class="bi bi-chevron-right"></i>
+                  <a href="#team"> Grupo de Trabajo</a>
+                </li>
+              </ul>
+            </div>
 
-                    <div class="col-lg-2 col-md-3 footer-links">
-                        <h4>Acceso Rapido</h4>
-                        <ul>
-                            <li><i class="bi bi-chevron-right"></i> <a href="#hero"> Home</a></li>
-                            <li><i class="bi bi-chevron-right"></i> <a href="#about"> Acerca de Nosotros</a></li>
-                            <li><i class="bi bi-chevron-right"></i> <a href="#services"> Servicios</a></li>
-                            <li><i class="bi bi-chevron-right"></i> <a href="#portfolio"> Otros</a></li>
-                            <li><i class="bi bi-chevron-right"></i> <a href="#team"> Grupo de Trabajo</a></li>
-                        </ul>
-                    </div>
+            <div class="col-lg-2 col-md-3 footer-links">
+              <h4>Nuestros Servicios</h4>
+              <ul>
+                <li>
+                  <i class="bi bi-chevron-right"></i>
+                  <a href="#"> Web Design</a>
+                </li>
+                <li>
+                  <i class="bi bi-chevron-right"></i>
+                  <a href="#"> Web Development</a>
+                </li>
+                <li>
+                  <i class="bi bi-chevron-right"></i>
+                  <a href="#"> Product Management</a>
+                </li>
+                <li>
+                  <i class="bi bi-chevron-right"></i> <a href="#"> Marketing</a>
+                </li>
+                <li>
+                  <i class="bi bi-chevron-right"></i>
+                  <a href="#"> Graphic Design</a>
+                </li>
+              </ul>
+            </div>
 
-                    <div class="col-lg-2 col-md-3 footer-links">
-                        <h4>Nuestros Servicios</h4>
-                        <ul>
-                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Web Design</a></li>
-                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Web Development</a></li>
-                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Product Management</a></li>
-                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Marketing</a></li>
-                            <li><i class="bi bi-chevron-right"></i> <a href="#"> Graphic Design</a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Footer Newsletter Mejorado -->
-                    <div class="col-lg-4 col-md-12 footer-newsletter">
-                        <h4>Our Newsletter</h4>
-                        <p>Subscribe to our newsletter and receive the latest news about our products and services!</p>
-                        <form action="forms/newsletter.php" method="post" class="php-email-form">
-                            <div class="newsletter-form row g-2 align-items-center">
-                                <div class="col-12 col-sm-8">
-                                    <label for="newsletter-email" class="visually-hidden">Correo electrónico</label>
-                                    <input type="email" id="newsletter-email" name="email" class="form-control" placeholder="Tu correo electrónico" required>
-                                </div>
-                                <div class="col-12 col-sm-4">
-                                    <input type="submit" value="Subscribe" class="btn btn-primary w-100">
-                                </div>
-                            </div>
-                            <div class="loading">Loading</div>
-                            <div class="error-message"></div>
-                            <div class="sent-message">Your subscription request has been sent. Thank you!</div>
-                        </form>
-                    </div>
-
+            <!-- Footer Newsletter Mejorado -->
+            <div class="col-lg-4 col-md-12 footer-newsletter">
+              <h4>Our Newsletter</h4>
+              <p>
+                Subscribe to our newsletter and receive the latest news about
+                our products and services!
+              </p>
+              <form
+                action="forms/newsletter.php"
+                method="post"
+                class="php-email-form"
+              >
+                <div class="newsletter-form row g-2 align-items-center">
+                  <div class="col-12 col-sm-8">
+                    <label for="newsletter-email" class="visually-hidden"
+                      >Correo electrónico</label
+                    >
+                    <input
+                      type="email"
+                      id="newsletter-email"
+                      name="email"
+                      class="form-control"
+                      placeholder="Tu correo electrónico"
+                      required
+                    />
+                  </div>
+                  <div class="col-12 col-sm-4">
+                    <input
+                      type="submit"
+                      value="Subscribe"
+                      class="btn btn-primary w-100"
+                    />
+                  </div>
                 </div>
+                <div class="loading">Loading</div>
+                <div class="error-message"></div>
+                <div class="sent-message">
+                  Your subscription request has been sent. Thank you!
+                </div>
+              </form>
             </div>
+          </div>
         </div>
+      </div>
 
-        <div class="copyright">
-            <div class="container text-center">
-                <p>© <span>Copyright</span> <strong class="px-1 sitename">Raíz Financiera</strong> <span>All Rights
-                        Reserved</span></p>
-
-            </div>
+      <div class="copyright">
+        <div class="container text-center">
+          <p>
+            © <span>Copyright</span>
+            <strong class="px-1 sitename">Raíz Financiera</strong>
+            <span>All Rights Reserved</span>
+          </p>
         </div>
-
+      </div>
     </footer>
 
     <!-- Scroll Top -->
-    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
-            class="bi bi-arrow-up-short"></i></a>
+    <a
+      href="#"
+      id="scroll-top"
+      class="scroll-top d-flex align-items-center justify-content-center"
+      ><i class="bi bi-arrow-up-short"></i
+    ></a>
 
     <!-- Preloader -->
     <div id="preloader"></div>
@@ -921,7 +1338,5 @@
     <!-- Main JS File -->
     <script src="../../../js/main.js"></script>
     <script src="../../../js/chat.js"></script>
-
-</body>
-
+  </body>
 </html>
