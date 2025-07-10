@@ -77,13 +77,28 @@
 
   <div class="register-container">
     <% if (error) { %>
-      <div class="alert alert-danger text-center">
-        <p><%= error %></p>
-      </div>
+  <div class="alert rounded-3 shadow-sm p-4" 
+       style="background-color: #D4AF37; color: white; border: none;">
+    
+    <h5 class="text-dark fw-bold text-center mb-3">
+      Por favor revisa los siguientes puntos:
+    </h5>
+
+    <% if (Array.isArray(error)) { %>
+      <ul class="mb-0 ps-4">
+        <% error.forEach(function(err) { %>
+          <li><%= err %></li>
+        <% }); %>
+      </ul>
+    <% } else { %>
+      <p class="mb-0 text-center"><%= error %></p>
     <% } %>
+  </div>
+<% } %>
+
 
     <form action="/registro_usuario" method="POST" novalidate>
-      <h2>Crear Cuenta</h2>
+      <h2 class="text-warning text-center">Crear Cuenta</h2>
 
       <div class="row">
         <div class="col-md-6 form-group-horizontal">

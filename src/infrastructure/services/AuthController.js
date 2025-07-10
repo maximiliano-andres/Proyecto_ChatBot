@@ -139,7 +139,7 @@ export default class AuthController {
 
             if (!user) {
                 if (process.env.NODE_ENV !== "production") {
-                    logger.info("NO HAY USER QUE COINCIDA CON LAS CREDENCIALES INGRESADAS");
+                    logger.warn("NO HAY USER QUE COINCIDA CON LAS CREDENCIALES INGRESADAS");
                 }
                 return res.status(400).render("login", { title: "Login", error: "Usuario o Contraseña No son Validas" });
             }
@@ -147,7 +147,7 @@ export default class AuthController {
             const validPassword = await bcrypt.compare(password, user.password);
             if (!validPassword) {
                 if (process.env.NODE_ENV !== "production") {
-                    logger.info("CONTRASEÑA INVALIDA");
+                    logger.warn("CONTRASEÑA INVALIDA");
                 }
                 return res.status(400).render("login", { title: "Login", error: "Usuario o Contraseña No son Validas" });
             }
