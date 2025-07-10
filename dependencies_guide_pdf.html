@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Dependencias - Proyecto Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 210mm;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #007bff;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            page-break-inside: avoid;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #28a745;
+            margin-bottom: 20px;
+            padding: 10px 0;
+            border-bottom: 2px solid #28a745;
+        }
+
+        .dependency {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            border-radius: 0 8px 8px 0;
+            page-break-inside: avoid;
+        }
+
+        .dependency-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .dependency-version {
+            font-size: 0.9em;
+            color: #666;
+            font-family: 'Courier New', monospace;
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .what-it-does {
+            margin-bottom: 15px;
+        }
+
+        .what-it-does h4 {
+            color: #dc3545;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .why-efficient h4 {
+            color: #fd7e14;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .what-it-does p, .why-efficient p {
+            margin-bottom: 10px;
+            text-align: justify;
+        }
+
+        .why-efficient ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .why-efficient li {
+            margin-bottom: 5px;
+            color: #495057;
+        }
+
+        .toc {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .toc h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .toc ul {
+            list-style: none;
+            column-count: 2;
+            column-gap: 30px;
+        }
+
+        .toc li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .toc li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #007bff;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .performance-badge {
+            background: #28a745;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .dev-badge {
+            background: #ffc107;
+            color: #212529;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .prod-badge {
+            background: #dc3545;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .container {
+                box-shadow: none;
+                max-width: none;
+            }
+            
+            .dependency {
+                page-break-inside: avoid;
+            }
+        }
+
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .print-button:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,123,255,0.4);
+        }
+
+        @media print {
+            .print-button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="print-button" onclick="window.print()">📄 Imprimir PDF</button>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Guía de Dependencias</h1>
+            <p>Proyecto Chatbot - Análisis Detallado de Rendimiento</p>
+        </div>
+
+        <div class="toc">
+            <h3>Tabla de Contenidos</h3>
+            <ul>
+                <li>Dependencias de Producción (5)</li>
+                <li>Dependencias de Desarrollo (25)</li>
+                <li>Frameworks y Librerías Core</li>
+                <li>Herramientas de Seguridad</li>
+                <li>Utilidades de Testing</li>
+                <li>Herramientas de Desarrollo</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🚀 Dependencias de Producción</h2>
+            <p style="margin-bottom: 20px; font-style: italic; color: #666;">
+                Estas dependencias se ejecutan en el servidor en producción y afectan directamente el rendimiento de la aplicación.
+            </p>
+
+            <div class="dependency">
+                <div class="dependency-name">pino <span class="prod-badge">PRODUCCIÓN</span><span class="performance-badge">ALTO RENDIMIENTO</span></div>
+                <div class="dependency-version">^9.7.0</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Es como un "diario" para tu aplicación. Registra todo lo que pasa: errores, acciones de usuarios, información del sistema. Imagínalo como una caja negra de un avión que guarda información importante.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Escribe los logs de forma asíncrona (no bloquea la aplicación)</li>
+                        <li>Usa formato JSON nativo que es más rápido de procesar</li>
+                        <li>Consume hasta 5x menos CPU que otras librerías de logging</li>
+                        <li>Permite logs estructurados que se procesan más eficientemente</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">qs <span class="prod-badge">PRODUCCIÓN</span><span class="performance-badge">OPTIMIZADO</span></div>
+                <div class="dependency-version">^6.14.0</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Convierte las URLs complejas en objetos JavaScript que tu aplicación puede entender. Por ejemplo, transforma "?usuario=juan&edad=25" en un objeto que puedes usar en tu código.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Algoritmo optimizado para parsing de queries</li>
+                        <li>Manejo eficiente de memoria sin crear copias innecesarias</li>
+                        <li>Soporte nativo para objetos anidados sin recursión excesiva</li>
+                        <li>Menor overhead que el parser nativo de Node.js</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">swagger-jsdoc <span class="prod-badge">PRODUCCIÓN</span></div>
+                <div class="dependency-version">^6.2.8</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Genera automáticamente la documentación de tu API (como un manual de instrucciones) basándose en comentarios que escribes en tu código.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Genera documentación una sola vez al iniciar la aplicación</li>
+                        <li>No afecta el rendimiento en tiempo de ejecución</li>
+                        <li>Cachea la documentación generada en memoria</li>
+                        <li>Procesamiento mínimo durante las peticiones</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">swagger-ui-express <span class="prod-badge">PRODUCCIÓN</span></div>
+                <div class="dependency-version">^5.0.1</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Crea una interfaz web bonita donde los desarrolladores pueden ver y probar tu API directamente desde el navegador.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Sirve archivos estáticos pre-compilados</li>
+                        <li>Usa compresión gzip automáticamente</li>
+                        <li>Cachea recursos en el navegador</li>
+                        <li>Mínimo impacto en el servidor de aplicación</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">zod <span class="prod-badge">PRODUCCIÓN</span><span class="performance-badge">ALTO RENDIMIENTO</span></div>
+                <div class="dependency-version">^3.25.67</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Es como un "guardia de seguridad" que verifica que los datos que llegan a tu aplicación sean correctos. Si alguien envía un email malformado, Zod lo detecta y lo rechaza.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Validación en tiempo de compilación cuando es posible</li>
+                        <li>Algoritmos optimizados para validación de esquemas</li>
+                        <li>Menor overhead que Joi o otras librerías de validación</li>
+                        <li>Tree-shaking compatible (solo incluye código que usas)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🛠️ Dependencias de Desarrollo</h2>
+            <p style="margin-bottom: 20px; font-style: italic; color: #666;">
+                Estas dependencias solo se usan durante el desarrollo y testing, no afectan el rendimiento en producción.
+            </p>
+
+            <div class="dependency">
+                <div class="dependency-name">express <span class="dev-badge">DESARROLLO</span><span class="performance-badge">FRAMEWORK CORE</span></div>
+                <div class="dependency-version">^4.21.2</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Es el "esqueleto" de tu aplicación web. Maneja las peticiones HTTP, rutas, middleware.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Framework minimalista y modular</li>
+                        <li>Routing optimizado con caching interno</li>
+                        <li>Manejo eficiente de middleware stack</li>
+                        <li>Amplia adopción = optimizaciones continuas</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">mongodb <span class="dev-badge">DESARROLLO</span><span class="performance-badge">BASE DE DATOS</span></div>
+                <div class="dependency-version">^6.16.0</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Driver oficial para conectar con bases de datos MongoDB.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Connection pooling automático</li>
+                        <li>Protocolo binario optimizado</li>
+                        <li>Cachea conexiones y cursors</li>
+                        <li>Operaciones asíncronas nativas</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">mongoose <span class="dev-badge">DESARROLLO</span><span class="performance-badge">ODM OPTIMIZADO</span></div>
+                <div class="dependency-version">^8.14.3</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Facilita el trabajo con MongoDB proporcionando esquemas, validaciones y una API más amigable.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Validación en aplicación reduce roundtrips a DB</li>
+                        <li>Query building optimizado</li>
+                        <li>Middleware eficiente</li>
+                        <li>Cachea esquemas compilados</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">bcryptjs <span class="dev-badge">DESARROLLO</span><span class="performance-badge">SEGURIDAD</span></div>
+                <div class="dependency-version">^3.0.2</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Convierte contraseñas en códigos secretos imposibles de descifrar. Como una caja fuerte digital para passwords.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Implementación pura en JavaScript (no requiere compilación nativa)</li>
+                        <li>Algoritmo adaptativo que ajusta la complejidad</li>
+                        <li>Menor consumo de memoria que bcrypt nativo</li>
+                        <li>Mejor compatibilidad cross-platform</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">jsonwebtoken <span class="dev-badge">DESARROLLO</span><span class="performance-badge">AUTENTICACIÓN</span></div>
+                <div class="dependency-version">^9.0.2</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Crea y verifica "tokens" de autenticación. Como pases digitales que prueban que un usuario está autorizado.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Algoritmos criptográficos optimizados</li>
+                        <li>Cachea claves de verificación</li>
+                        <li>Menor overhead que sessions tradicionales</li>
+                        <li>Stateless (no requiere almacenamiento en servidor)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">helmet <span class="dev-badge">DESARROLLO</span><span class="performance-badge">SEGURIDAD</span></div>
+                <div class="dependency-version">^8.1.0</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Agrega capas de seguridad a tu aplicación configurando headers HTTP apropiados.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Headers configurados una sola vez</li>
+                        <li>Mínimo overhead por request</li>
+                        <li>Políticas cacheadas en memoria</li>
+                        <li>Optimizado para producción</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">express-rate-limit <span class="dev-badge">DESARROLLO</span><span class="performance-badge">PROTECCIÓN</span></div>
+                <div class="dependency-version">^7.5.0</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Limita cuántas peticiones puede hacer un usuario en un tiempo determinado. Previene ataques y sobrecarga.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Almacenamiento en memoria por defecto</li>
+                        <li>Algoritmos optimizados para counting</li>
+                        <li>Limpieza automática de registros expirados</li>
+                        <li>Configuración flexible para diferentes escenarios</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">axios <span class="dev-badge">DESARROLLO</span><span class="performance-badge">HTTP CLIENT</span></div>
+                <div class="dependency-version">^1.9.0</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Permite que tu aplicación "hable" con otras aplicaciones en internet. Como un mensajero que lleva y trae información entre servicios.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Reutiliza conexiones HTTP (connection pooling)</li>
+                        <li>Soporte nativo para interceptores sin overhead</li>
+                        <li>Manejo automático de timeouts y reintentos</li>
+                        <li>Compresión automática de requests/responses</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">nodemailer <span class="dev-badge">DESARROLLO</span></div>
+                <div class="dependency-version">^6.10.1</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Envía emails desde tu aplicación.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Connection pooling para SMTP</li>
+                        <li>Soporte para múltiples transportes</li>
+                        <li>Streaming para attachments grandes</li>
+                        <li>Configuración reutilizable</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">validator <span class="dev-badge">DESARROLLO</span><span class="performance-badge">VALIDACIÓN</span></div>
+                <div class="dependency-version">^13.15.0</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Valida y sanitiza strings (emails, URLs, números de teléfono, etc.).</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Regex precompiladas y optimizadas</li>
+                        <li>Validaciones específicas sin overhead</li>
+                        <li>Amplia librería de validadores</li>
+                        <li>Cero dependencias externas</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">uuid <span class="dev-badge">DESARROLLO</span><span class="performance-badge">GENERACIÓN ID</span></div>
+                <div class="dependency-version">^11.1.0</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Genera identificadores únicos universales.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Algoritmos optimizados para generación</li>
+                        <li>Diferentes versiones para diferentes necesidades</li>
+                        <li>Generación extremadamente rápida</li>
+                        <li>Minimal memory footprint</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">dotenv <span class="dev-badge">DESARROLLO</span></div>
+                <div class="dependency-version">^16.5.0</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Lee archivos de configuración (.env) donde guardas información sensible como passwords y APIs keys.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Carga variables solo una vez al inicio</li>
+                        <li>Parsing simple y directo</li>
+                        <li>Cero overhead después de la inicialización</li>
+                        <li>Manejo eficiente de memoria</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">cors <span class="dev-badge">DESARROLLO</span></div>
+                <div class="dependency-version">^2.8.5</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Permite que tu aplicación sea accesible desde otros dominios web de forma segura.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Middleware ligero con mínimo overhead</li>
+                        <li>Configuración en tiempo de inicialización</li>
+                        <li>Cachea headers de CORS</li>
+                        <li>Procesamiento optimizado de preflight requests</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">morgan <span class="dev-badge">DESARROLLO</span></div>
+                <div class="dependency-version">^1.10.0</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Registra automáticamente todas las peticiones HTTP que llegan a tu aplicación.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Logging asíncrono</li>
+                        <li>Formato de logs optimizado</li>
+                        <li>Minimal overhead por request</li>
+                        <li>Configuración flexible para diferentes entornos</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">pdfkit <span class="dev-badge">DESARROLLO</span></div>
+                <div class="dependency-version">^0.16.0</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Genera archivos PDF programáticamente.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Streaming de PDF (no carga todo en memoria)</li>
+                        <li>Rendering optimizado</li>
+                        <li>Compresión automática</li>
+                        <li>API declarativa eficiente</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Herramientas de Testing -->
+            <div class="dependency">
+                <div class="dependency-name">mocha <span class="dev-badge">TESTING</span></div>
+                <div class="dependency-version">^11.5.0</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Framework para ejecutar pruebas automatizadas de tu código.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Solo ejecuta durante desarrollo</li>
+                        <li>Paralelización de tests</li>
+                        <li>Reporting optimizado</li>
+                        <li>Manejo eficiente de memoria durante tests</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">chai <span class="dev-badge">TESTING</span></div>
+                <div class="dependency-version">^5.2.0</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Herramienta para escribir tests. Es como un asistente que verifica que tu código funcione correctamente.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Solo se ejecuta durante desarrollo/testing</li>
+                        <li>Assertions optimizadas para velocidad</li>
+                        <li>Menor overhead que otras librerías de testing</li>
+                        <li>Soporte para async/await nativo</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="dependency">
+                <div class="dependency-name">supertest <span class="dev-badge">TESTING</span></div>
+                <div class="dependency-version">^7.1.1</div>
+                
+                <div class="what-it-does">
+                    <h4>¿Qué hace?</h4>
+                    <p>Facilita testing de APIs HTTP.</p>
+                </div>
+                
+                <div class="why-efficient">
+                    <h4>¿Por qué es eficiente?</h4>
+                    <ul>
+                        <li>Solo ejecuta durante testing</li>
+                        <li>Requests optimizados para testing</li>
+                        <li>Manejo eficiente de aserciones HTTP</li>
+                        <li>Integración nativa con frameworks de testing</li>
+                    

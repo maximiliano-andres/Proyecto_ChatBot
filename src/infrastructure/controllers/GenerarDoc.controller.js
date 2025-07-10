@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
-import os from 'os';
 import { logger } from '../../config/logger.js';
 
 const nameGenerarDocController = "GENERADOR DOCUMENTO: ";

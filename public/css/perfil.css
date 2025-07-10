@@ -1,24 +1,57 @@
+/* Fondo elegante general */
 body {
-        background: linear-gradient(to right, #007BFF, #00BFFF);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    min-height: 100vh;
+    background: linear-gradient(to right, #000000, #ff9900);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
 
-    section {
-        padding-top: 120px; /* para compensar el header fijo */
-        padding-bottom: 60px;
-        background-color: rgba(255, 255, 255, 0.8);
-    }
+/* Sección de contenido sobre fondo translúcido */
+section {
+    padding-top: 120px; /* para compensar header fijo */
+    padding-bottom: 60px;
+    background-color: rgba(0, 0, 0, 0.3); /* translúcido oscuro para mejor contraste */
+}
 
-    .card {
-        border-radius: 1rem;
-        background-color: #ffffff;
-    }
+/* Tarjetas elegantes */
+.card {
+    border-radius: 1rem;
+    background-color: rgba(255, 255, 255, 0.9); /* blanco suavizado */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    color: #000;
+    padding: 2rem;
+}
 
-    .card h3 {
-        color: #003366;
-    }
+/* Título de tarjeta en azul oscuro */
+.card h3 {
+    color: #003366;
+    font-weight: bold;
+}
 
-    .badge {
-        font-weight: 500;
-        font-size: 0.95rem;
-    }
+/* Badges con estilo refinado */
+.badge {
+    background-color: #FFD000;
+    color: #000;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.4em 0.8em;
+    border-radius: 0.5rem;
+}
+
+/* Botones estilo corporativo */
+.btn-dorado {
+    background-color: #FFD000;
+    color: #000;
+    font-weight: bold;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn-dorado:hover {
+    background-color: #e6bf00;
+    color: #000;
+}
