@@ -7,9 +7,9 @@ const nameUser = "VELIDADOR MODELO USER: ";
 // Esquema de usuario
 const userSchema = new mongoose.Schema({
     nombre1: { type: String, required: true, uppercase: true, trim: true },
-    nombre2: { type: String, required: true, uppercase: true, trim: true },
+    nombre2: { type: String, required: false, uppercase: true, trim: true },
     apellido1: { type: String, required: true, uppercase: true, trim: true },
-    apellido2: { type: String, required: true, uppercase: true, trim: true },
+    apellido2: { type: String, required: false, uppercase: true, trim: true },
     rut: { 
         type: String, 
         required: true, 
@@ -49,9 +49,9 @@ export const User = mongoose.model("User", userSchema);
 export const validateUser = (data) => {
     const schema = z.object({
         nombre1: z.string().min(1, "El primer nombre no puede estar vacío.").transform(val => val.trim().toUpperCase()),
-        nombre2: z.string().min(1, "El segundo nombre no puede estar vacío.").transform(val => val.trim().toUpperCase()),
+        //nombre2: z.string().min(1, "El segundo nombre no puede estar vacío.").transform(val => val.trim().toUpperCase()),
         apellido1: z.string().min(1, "El primer apellido no puede estar vacío.").transform(val => val.trim().toUpperCase()),
-        apellido2: z.string().min(1, "El segundo apellido no puede estar vacío.").transform(val => val.trim().toUpperCase()),
+        //apellido2: z.string().min(1, "El segundo apellido no puede estar vacío.").transform(val => val.trim().toUpperCase()),
         rut: z.string().regex(/^[\d]{7,8}-[0-9kK]{1}$/, "El RUT debe tener el formato 12345678-9."),
         numero_documento: z.string().regex(/^[\d]{3}\.[\d]{3}\.[\d]{3}$/, "El número de documento debe tener el formato 123.456.789."),
         telefono: z.string().regex(/^\+569\d{8}$/, "El teléfono debe tener el formato +569XXXXXXXX."),
