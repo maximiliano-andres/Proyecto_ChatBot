@@ -17,46 +17,25 @@ export default class AuthController {
             // Validar datos con Joi
             //logger.info("Datos recibidos:", req.body);
             const { error } = validateUser(req.body);
-
-            const verificador_role = req.body.role;
-
-            logger.info(`${nameAuthController}  ${verificador_role}`)
-
             if (error) {
-                logger.error(`${nameAuthController} Datos validados ERRORES: ${error}`);
                 const errorMessages = error.details ? error.details.map(err => err.message) : ["Error de validación debes llenar los campos que faltan"];
-                
                 return res.status(400).render("registro",{title:"Login", error: errorMessages });
             }
 
+            logger.info(nameAuthController + "Datos validados ERRORES: ", error);
+
             // Verificar si el usuario ya existe
             const existingUser = await User.findOne({ email: req.body.email });
-            if (existingUser){
-                if(verificador_role == "admin") return res.status(400).render("registroADMIN",{ error: "El Email ya está registrado" });
-
-                return res.status(400).render("registro",{ error: "El Email ya está registrado" });
-            } 
+            if (existingUser) return res.status(400).render("registro",{ error: "El Email ya está registrado" });
 
             const existingRut = await User.findOne({ rut: req.body.rut });
-            if (existingRut){
-                if(verificador_role == "admin") return res.status(400).render("registroADMIN",{ error: "El rut ya está registrado" });
-
-                return res.status(400).render("registro",{ error: "El rut ya está registrado" });
-            } 
+            if (existingRut) return res.status(400).render("registro",{ error: "El rut ya está registrado" });
 
             const existingNumero_documento = await User.findOne({ numero_documento: req.body.numero_documento });
-            if (existingNumero_documento) {
-                if(verificador_role == "admin") return res.status(400).render("registroADMIN",{ error: "El Numero de Documento ya está registrado" }); 
-
-                return res.status(400).render("registro",{ error: "El Numero de Documento ya está registrado" });
-            }
+            if (existingNumero_documento) return res.status(400).render("registro",{ error: "El Numero de Documento ya está registrado" });
 
             const existingTelefono = await User.findOne({ telefono: req.body.telefono });
-            if (existingTelefono){
-                if(verificador_role == "admin") return res.status(400).render("registroADMIN",{ error: "El telefono ya está registrado" }); 
-
-                return res.status(400).render("registro",{ error: "El telefono ya está registrado" });
-            }                 
+            if (existingTelefono) return res.status(400).render("registro",{ error: "El telefono ya está registrado" });
 
             //Agregar validaciones por que el registro nno maneja errores???
             //revisar validaciones que no sirven
@@ -64,9 +43,9 @@ export default class AuthController {
             // Crear nuevo usuario con la contraseña hasheada
             let user = new User({
                 nombre1: req.body.nombre1.trim(),
-                nombre2: req.body.nombre2,
+                nombre2: req.body.nombre2.trim(),
                 apellido1: req.body.apellido1.trim(),
-                apellido2: req.body.apellido2,
+                apellido2: req.body.apellido2.trim(),
                 rut: req.body.rut.trim(),
                 numero_documento: req.body.numero_documento.trim(),
                 telefono: req.body.telefono.trim(),
@@ -77,7 +56,7 @@ export default class AuthController {
             });
 
             await user.save();
-            logger.info(`${nameAuthController} Usuario registrado exitosamente`);
+            logger.info(nameAuthController + "Usuario registrado exitosamente");
             logger.info(user);
             logger.info("=======================================");
 
@@ -139,7 +118,7 @@ export default class AuthController {
 
             if (!user) {
                 if (process.env.NODE_ENV !== "production") {
-                    logger.warn("NO HAY USER QUE COINCIDA CON LAS CREDENCIALES INGRESADAS");
+                    logger.info("NO HAY USER QUE COINCIDA CON LAS CREDENCIALES INGRESADAS");
                 }
                 return res.status(400).render("login", { title: "Login", error: "Usuario o Contraseña No son Validas" });
             }
@@ -147,7 +126,7 @@ export default class AuthController {
             const validPassword = await bcrypt.compare(password, user.password);
             if (!validPassword) {
                 if (process.env.NODE_ENV !== "production") {
-                    logger.warn("CONTRASEÑA INVALIDA");
+                    logger.info("CONTRASEÑA INVALIDA");
                 }
                 return res.status(400).render("login", { title: "Login", error: "Usuario o Contraseña No son Validas" });
             }

@@ -49,9 +49,9 @@ export const User = mongoose.model("User", userSchema);
 export const validateUser = (data) => {
     const schema = z.object({
         nombre1: z.string().min(1, "El primer nombre no puede estar vacío.").transform(val => val.trim().toUpperCase()),
-        //nombre2: z.string().min(1, "El segundo nombre no puede estar vacío.").transform(val => val.trim().toUpperCase()),
+        nombre2: z.string().transform(val => val.trim().toUpperCase()),
         apellido1: z.string().min(1, "El primer apellido no puede estar vacío.").transform(val => val.trim().toUpperCase()),
-        //apellido2: z.string().min(1, "El segundo apellido no puede estar vacío.").transform(val => val.trim().toUpperCase()),
+        apellido2: z.string().transform(val => val.trim().toUpperCase()),
         rut: z.string().regex(/^[\d]{7,8}-[0-9kK]{1}$/, "El RUT debe tener el formato 12345678-9."),
         numero_documento: z.string().regex(/^[\d]{3}\.[\d]{3}\.[\d]{3}$/, "El número de documento debe tener el formato 123.456.789."),
         telefono: z.string().regex(/^\+569\d{8}$/, "El teléfono debe tener el formato +569XXXXXXXX."),
@@ -65,7 +65,7 @@ export const validateUser = (data) => {
             }
             return age >= 18;
         }, { message: "Debes tener al menos 18 años para registrarte." }),
-        email: z.string().email("El formato del correo electrónico no es válido."),
+        email: z.string().email("El formato del correo electrónico no es válido debe tener @."),
         password: z.string()
             .min(8, "La contraseña debe tener al menos 8 caracteres.")
             .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, "La contraseña debe incluir al menos una mayúscula, una minúscula, un número y un símbolo especial (@$!%*?&)."),

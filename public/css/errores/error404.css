@@ -35,7 +35,7 @@
 }
 
 .error-message {
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(148, 0, 0, 0.9);
 }
 
 @keyframes pulse {
@@ -53,7 +53,7 @@
 }
 
 .btn-glass {
-    background: linear-gradient(135deg, #002855, #004080); /* Azul financiero */
+    background: linear-gradient(135deg, #e6e6e6, #004080); /* Azul financiero */
     border: 2px solid #C9A227; /* Borde dorado para un toque premium */
     color: white;
     font-weight: 600;
