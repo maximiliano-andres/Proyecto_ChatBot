@@ -174,6 +174,11 @@ export default class Contrato {
 
             let role = user_data.role;
 
+            const mensaje_titulo = "Confirmación de Contrato de Servicios - Raíz Financiera";
+            const mensaje_cuerpo = `El/la Sr./Sra. ${user_data.nombre1} ${user_data.nombre2} ${user_data.apellido1} ${user_data.apellido2}, titular del RUT ${user_data.rut}, ha formalizado exitosamente la firma del contrato correspondiente a los servicios prestados por Raíz Financiera.`;
+            const mensaje_final = "Agradecemos su confianza en Raíz Financiera. Es un honor para nosotros acompañarle en sus decisiones financieras.";
+
+
             return res.render("index", {
                 role,
                 token: token,
@@ -183,6 +188,9 @@ export default class Contrato {
                 titulo_NH: "Nuestra Historia",
                 texto_NH1:
                     "En Raíz Finanziera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes.",
+                mensaje_titulo,
+                mensaje_cuerpo,
+                mensaje_final
             });
         } catch (error) {
             logger.error(`Error en Firmar Contrato: ${error}`);
