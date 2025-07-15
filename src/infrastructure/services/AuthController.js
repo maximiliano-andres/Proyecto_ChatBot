@@ -24,18 +24,31 @@ export default class AuthController {
 
             logger.info(nameAuthController + "Datos validados ERRORES: ", error);
 
+            const r_admin = req.body.role;
             // Verificar si el usuario ya existe
             const existingUser = await User.findOne({ email: req.body.email });
-            if (existingUser) return res.status(400).render("registro",{ error: "El Email ya está registrado" });
+            if (existingUser) {
+                if (r_admin) return res.status(400).render("registroADMIN",{ error: "El Email ya está registrado" });
+                return res.status(400).render("registro",{ error: "El Email ya está registrado" });
+            }
 
             const existingRut = await User.findOne({ rut: req.body.rut });
-            if (existingRut) return res.status(400).render("registro",{ error: "El rut ya está registrado" });
+            if (existingRut) {
+                if (r_admin) return res.status(400).render("registroADMIN",{ error: "El RUT ya está registrado" });
+                return res.status(400).render("registro",{ error: "El rut ya está registrado" });
+            }
 
             const existingNumero_documento = await User.findOne({ numero_documento: req.body.numero_documento });
-            if (existingNumero_documento) return res.status(400).render("registro",{ error: "El Numero de Documento ya está registrado" });
+            if (existingNumero_documento) {
+                if (r_admin) return res.status(400).render("registroADMIN",{ error: "El Numero Documento ya está registrado" });
+                return res.status(400).render("registro",{ error: "El Numero de Documento ya está registrado" });
+            }
 
             const existingTelefono = await User.findOne({ telefono: req.body.telefono });
-            if (existingTelefono) return res.status(400).render("registro",{ error: "El telefono ya está registrado" });
+            if (existingTelefono){
+                if (r_admin) return res.status(400).render("registroADMIN",{ error: "El Telefono ya está registrado" });
+                return res.status(400).render("registro",{ error: "El telefono ya está registrado" });
+            } 
 
             //Agregar validaciones por que el registro nno maneja errores???
             //revisar validaciones que no sirven
