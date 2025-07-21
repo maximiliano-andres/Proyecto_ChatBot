@@ -90,11 +90,11 @@ export default class AuthController {
 
             return res.render("index", { token: token ,
                 role,
-                title: 'Raíz Finanziera',
-                titulo_1: "Bienvenido a Raíz Finanziera",
+                title: 'Raiz Financiera',
+                titulo_1: "Bienvenido a Raíz Financiera",
                 subtitulo:"Seguridad, crecimiento y confianza en cada inversión.",
                 titulo_NH:"Nuestra Historia",
-                texto_NH1:"En Raíz Finanziera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes."
+                texto_NH1:"En Raíz Financiera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes."
             });
         } catch (error) {
             logger.error(`Error REGISTRO: ${error}`)
@@ -162,11 +162,11 @@ export default class AuthController {
             
             return res.render("index", { token: token ,
                 role: user.role,
-                title: 'Raíz Finanziera',
-                titulo_1: "Bienvenido a Raíz Finanziera",
+                title: 'Raíz Financiera',
+                titulo_1: "Bienvenido a Raíz Financiera",
                 subtitulo:"Seguridad, crecimiento y confianza en cada inversión.",
                 titulo_NH:"Nuestra Historia",
-                texto_NH1:"En Raíz Finanziera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes."
+                texto_NH1:"En Raíz Financiera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes."
             });
         } catch (error) {
             logger.error(`Error en login: ${error}`);
@@ -194,11 +194,11 @@ export default class AuthController {
             return res.status(200).render('index', { 
                 role: "",
                 token: "",
-                title: 'Raíz Finanziera',
-                titulo_1: "Bienvenido a Raíz Finanziera",
+                title: 'Raíz Financiera',
+                titulo_1: "Bienvenido a Raíz Financiera",
                 subtitulo:"Seguridad, crecimiento y confianza en cada inversión.",
                 titulo_NH:"Nuestra Historia",
-                texto_NH1:"En Raíz Finanziera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes."
+                texto_NH1:"En Raíz Financiera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes."
             });
         } catch (error) {
             logger.error(`Error en logout: ${error}`);

@@ -13,7 +13,7 @@ class HomeController {
     static index(req, res) {
         try {
             const token = req.cookies.token || "";
-            const title = "Raiz Finaciera";
+            const title = "Raiz Financiera";
             let role = "";
 
             if (token) {
@@ -43,7 +43,7 @@ class HomeController {
     static index_neutro(req, res) {
         try {
             const token = req.cookies.token || "";
-            const title = "Raiz Finaciera";
+            const title = "Raiz Financiera";
             let role = "";
 
             if (token) {

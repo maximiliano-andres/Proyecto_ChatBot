@@ -182,12 +182,12 @@ export default class Contrato {
             return res.render("index", {
                 role,
                 token: token,
-                title: "Raíz Finanziera",
-                titulo_1: "Bienvenido a Raíz Finanziera",
+                title: "Raíz Financiera",
+                titulo_1: "Bienvenido a Raíz Financiera",
                 subtitulo: "Seguridad, crecimiento y confianza en cada inversión.",
                 titulo_NH: "Nuestra Historia",
                 texto_NH1:
-                    "En Raíz Finanziera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes.",
+                    "En Raíz Financiera, creemos que el éxito financiero se construye sobre bases sólidas de confianza, estrategia y compromiso. Desde nuestra fundación en 2025, hemos trabajado incansablemente para ofrecer soluciones financieras innovadoras, adaptadas a las necesidades de nuestros clientes.",
                 mensaje_titulo,
                 mensaje_cuerpo,
                 mensaje_final
