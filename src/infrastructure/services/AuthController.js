@@ -16,26 +16,55 @@ export default class AuthController {
         try {
             // Validar datos con Joi
             //logger.info("Datos recibidos:", req.body);
+            logger.info("Datos recibidos del formulario:", req.body);
             const { error } = validateUser(req.body);
+
+            const r_admin = req.body.role;
+
+            logger.info(req.body);
+            logger.info(`ROLEEEEEEE ${r_admin}`);
+            logger.info(`ERROR: ${error}`);
             if (error) {
+                
                 const errorMessages = error.details ? error.details.map(err => err.message) : ["Error de validación debes llenar los campos que faltan"];
+                logger.info(`Error ERROR: ${errorMessages}`);
                 return res.status(400).render("registro",{title:"Login", error: errorMessages });
             }
 
+
             logger.info(nameAuthController + "Datos validados ERRORES: ", error);
 
+            
+            
             // Verificar si el usuario ya existe
             const existingUser = await User.findOne({ email: req.body.email });
-            if (existingUser) return res.status(400).render("registro",{ error: "El Email ya está registrado" });
+            if (existingUser) {
+                if (r_admin) return res.status(400).render("registroADMIN",{ error: "El Email ya está registrado" });
+                logger.info("Datos recibidos del formulario:", req.body);
+                return res.status(400).render("registro",{ error: "El Email ya está registrado" });
+            }
+
 
             const existingRut = await User.findOne({ rut: req.body.rut });
-            if (existingRut) return res.status(400).render("registro",{ error: "El rut ya está registrado" });
+            if (existingRut) {
+                if (r_admin) return res.status(400).render("registroADMIN",{ error: "El RUT ya está registrado" });
+                logger.info("Datos recibidos del formulario:", req.body);
+                return res.status(400).render("registro",{ error: "El rut ya está registrado" });
+            }
 
             const existingNumero_documento = await User.findOne({ numero_documento: req.body.numero_documento });
-            if (existingNumero_documento) return res.status(400).render("registro",{ error: "El Numero de Documento ya está registrado" });
+            if (existingNumero_documento) {
+                if (r_admin) return res.status(400).render("registroADMIN",{ error: "El Numero Documento ya está registrado" });
+                logger.info("Datos recibidos del formulario:", req.body);
+                return res.status(400).render("registro",{ error: "El Numero de Documento ya está registrado" });
+            }
 
             const existingTelefono = await User.findOne({ telefono: req.body.telefono });
-            if (existingTelefono) return res.status(400).render("registro",{ error: "El telefono ya está registrado" });
+            if (existingTelefono){
+                if (r_admin) return res.status(400).render("registroADMIN",{ error: "El Telefono ya está registrado" });
+                logger.info("Datos recibidos del formulario:", req.body);
+                return res.status(400).render("registro",{ error: "El telefono ya está registrado" });
+            } 
 
             //Agregar validaciones por que el registro nno maneja errores???
             //revisar validaciones que no sirven
